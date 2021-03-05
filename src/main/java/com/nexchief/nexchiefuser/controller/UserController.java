@@ -39,7 +39,7 @@ public class UserController {
         return new ResponseEntity<>(userList, HttpStatus.OK);
     }
 
-    @GetMapping("/login/")
+    @GetMapping("/login/") ///-------------------ini login----------------------------------
     public ResponseEntity<?> login(@RequestParam String username, @RequestParam String password) {
         logger.info("Comparing data!");
 

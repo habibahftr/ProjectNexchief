@@ -9,7 +9,7 @@ public interface UserService {
     User findbyEmail(String email);
     User findByusername(String username);
     User findByPhone (String phone);
-    User login(String username, String password);
+    User login(String username, String password); //-----ini untuk Login ------
     void saveuser(User user);
     void update(User user);
     boolean isUserExist(User user);
