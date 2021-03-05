@@ -3,10 +3,31 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import persistReducer from 'redux-persist/es/persistReducer';
+import reducer from './reducer';
+import { createStore } from 'redux';
+import persistStore from 'redux-persist/es/persistStore';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import storage from 'redux-persist/lib/storage'
+
+const persistConfig = {
+  key: 'root',
+  storage,
+  blacklist: ['AuthReducer']
+}
+
+const persistedReducer = persistReducer(persistConfig, reducer);
+let store = createStore(persistedReducer);
+const persistor = persistStore(store);
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <App />
+      </PersistGate>
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );

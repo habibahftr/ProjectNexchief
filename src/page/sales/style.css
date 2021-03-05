@@ -1,0 +1,83 @@
+.bodySales{
+    border: solid;
+    background-color: #333333;
+    width: 100%;
+    height: 100%;
+}
+.headerSales{
+    width: 100%;
+    border:solid;
+    background-color: black;
+    display: flex;
+    flex-direction: row;
+}
+.titleSales{
+    margin-top: 15px;
+    margin-left: 50px;
+}
+.container1{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height:auto;
+}
+.addButton{
+    /* padding: 20px; */
+    margin-top: 25px;
+}
+.addSales{
+    margin-left: 150px;
+    background-color:#5C97BF ;
+    color: black;
+    box-shadow: 0 6px #1F3A93;
+    border-radius: 10px;
+    padding: 4px;
+    width: 50px;
+}
+.addSales:hover {
+    background-color: #D3D3D3
+}
+.addSales:active {
+    background-color: #D3D3D3;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+  }
+.seacrhSales1{
+    margin-left: 30%;
+    padding-left: 10px;
+}
+.searchSales2{
+    width: 250px;
+    height:22px;
+    margin-top: 10%;
+}
+.container2{
+    height: 80vh;
+    width: 100%;
+    margin: auto;
+    text-align: center;
+    margin-top: 3%;
+}
+
+#tableSales1{
+    margin: auto;
+    padding: 2px;
+}
+.tbodySales{
+    padding: 3px;
+}
+.monthly{
+    color: aquamarine;
+    font-family: Copperplate;
+    font-size: 30px;
+    margin-right: 15px;
+    font-weight: bold;
+    letter-spacing: 4px;
+
+}
+.salesact{
+    color: aliceblue;
+    font-family: Candara;
+    font-size: 25px;
+    margin-right: 20px;
+}

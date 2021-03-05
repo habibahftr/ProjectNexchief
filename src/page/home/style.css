@@ -1,0 +1,107 @@
+.bodyHome{
+    width: 100%;
+    height: 100vh;
+}
+
+.containerHome{
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    background-color: #333333;
+}
+.headerHome{
+    margin-top: 0;
+    margin-left: 0;
+    margin-right: 0;
+    height: 15vh;
+    width: 100%;
+    background-color:  black;
+    /* border: solid; */
+    display: flex;
+    flex-direction: row;
+}
+
+.welcome{
+    margin-top: 4vh;
+    margin-right: 20%;
+    margin-left: 15%;
+    color: white;
+}
+
+.logout{
+    margin-left: 17%;
+    margin-top: 3vh;
+    color:#B22222;
+
+}
+.menuicon{
+    display: flex;
+    flex-direction: row;
+}
+.producticon{
+    margin-left :30%;
+}
+.salesicon{
+    margin-left: 20%;
+}
+.reporticon{
+    margin-left :30%;
+}
+.dashboardicon{
+    margin-left: 20%;
+}
+
+.fa-archive:hover{
+    color: white !important;
+    font-size:120px  !important;
+    letter-spacing: 3px;
+    background: none;
+    /* -webkit-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+    -moz-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57); */
+    transition: all 0.3s ease 0s;
+    border: solid;
+}
+.fa-dollar-sign:hover{
+    color: white !important;
+    font-size:120px  !important;
+    letter-spacing: 3px;
+    background: none;
+    /* -webkit-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+    -moz-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57); */
+    transition: all 0.3s ease 0s;
+    border: solid;
+}
+
+.fa-file-alt:hover{
+    color: white !important;
+    font-size:120px  !important;
+    letter-spacing: 3px;
+    background: none;
+    /* -webkit-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+    -moz-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57); */
+    transition: all 0.3s ease 0s;
+    border: solid;
+}
+
+.fa-tachometer-alt:hover{
+    color: white !important;
+    font-size:120px  !important;
+    letter-spacing: 3px;
+    background: none;
+    /* -webkit-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+    -moz-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57); */
+    transition: all 0.3s ease 0s;
+    border: solid;
+}
+.changePass{
+    margin-right:20%;
+    margin-left: 3%;
+    margin-top: 5vh;
+    color: white;
+    cursor: pointer;
+    font-weight: bolder;
+}
+.changePass:hover{
+    text-decoration: underline;
+}
+

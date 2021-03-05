@@ -1,0 +1,143 @@
+.productPage{
+    width: 100%;
+    height: auto;
+}
+.headerproduct {
+    display: flex;
+    flex-direction: row;
+    background-color: #464E51;
+    height: 10vh;
+    /* border: solid; */
+}
+.buttonProduct{
+    margin-right: 0;
+    margin-top: 2vh;
+    margin-left: 35%;
+}
+.addBtn{
+   padding: 4px 3px;
+  font-size: 15px;
+  text-align: center;
+  cursor: pointer;
+  outline: none;
+  color: black;
+  background-color: #808080;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 9px #999;
+  margin-right: 5px;
+}
+.hiddenBtn{
+    padding: 4px 3px;
+    font-size: 15px;
+    text-align: center;
+    cursor: pointer;
+    outline: none;
+    color: black;
+    background-color: #808080;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 9px #999;
+    margin-right: 5px;
+}
+.addBtn:hover {
+    background-color: #D3D3D3
+}
+.addBtn:active {
+    background-color: #D3D3D3;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+  }
+  .hiddenBtn:hover {
+    background-color: #D3D3D3
+}
+.hiddenBtn:active {
+    background-color: #D3D3D3;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+  }
+
+  .bodyProduct{
+      display: flex;
+      flex-direction: row;
+  }
+  .formProduct{
+      width: 70%;
+      height: 100vh;
+      /* border: solid; */
+      display: flex;
+      flex-direction: row;
+  }
+
+  .labelProduct{
+      /* border: solid; */
+      width: 30%;
+      height: 91vh;
+      background-color: white;
+  }
+  .inputProduct{
+    /* border: solid; */
+    width: 70%;
+    height: 91vh;
+    background-color: #A9A9A9;
+  }
+
+  .tableProduct{
+    width: 30%;
+    height: 100vh;
+    /* border: solid; */
+
+  }
+  .searchProduct{
+      border: solid;
+      height: 7vh;
+  }
+  .listProduct{
+      /* border: solid; */
+      height: 76vh;
+      overflow-y: scroll;
+      background-color:#A9A9A9;
+     
+  }
+  .search{
+      width: 90%;
+
+  }
+  .listProd{
+      height: 8vh;
+      padding: 5vh;
+      border: solid;
+      cursor: pointer;
+      background-color: white;
+      
+  }
+  .listProd:active{
+    background-color:#A9A9A9 ;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+  }
+  .labelProd{
+      background-color: black;
+      width: 100%;
+      /* height: 5vh; */
+      text-align: center;
+      margin-bottom: 2px;
+      color: #fff;
+  }
+  .inputProd{
+    width: 90%;
+    height: 4vh;
+    margin-bottom: 2px;
+    margin-left: 5vh;
+
+  }
+  .search1{
+      width: 70%;
+      margin-top: 1vh;
+      height: 3vh;
+      margin-left: 3vh;
+  }
+  .paginationProd{
+      border: solid;
+      height: 6%;
+  }
