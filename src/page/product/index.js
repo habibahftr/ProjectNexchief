@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Button from '../../component/button';
 import Icon from '../../component/icon';
 import Input from '../../component/input';
@@ -13,6 +14,7 @@ class Product extends Component {
             displayUpdate:"none",
             displayTemp: "flexbox",
             disableInput: true,
+            productList:[],
             
         }
     }
@@ -49,6 +51,37 @@ class Product extends Component {
             disableInput: true,
         })
     }
+
+    componentDidMount(){
+        this.getAllProduct();
+
+    }
+
+    getAllProduct=()=>{
+        fetch(`http://localhost:8080/nexchief/products/`,{
+            method:"get",
+            headers: {
+                "Content-Type": "application/json; ; charset=utf-8",
+                "Access-Control-Allow-Headers": "Authorization, Content-Type",
+                "Access-Control-Allow-Origin": "*"
+            }
+        })
+        .then(response => response.json())
+        .then(json => {
+            this.setState({
+                productList: json
+            });
+            this.props.productData({list: json})
+            console.log("product", this.state.productList);
+        })
+        .catch(() =>{
+            alert("Failed fetching")
+          })
+    }
+
+
+
+
 
     render() {
         return (
@@ -134,5 +167,16 @@ class Product extends Component {
         );
     }
 }
+const mapStateToProps = state => ({
+    checkLogin: state.authReducer.isLogin,
+    productList: state.productReducer.productList,
 
-export default Product;
+})
+
+const mapDispatchToProps = dispatch => {
+    return {
+        productData: (data) => dispatch({ type: "GETALL_PRODUCT", payload: data }),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps) (Product);

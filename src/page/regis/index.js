@@ -37,20 +37,20 @@ class Regis extends Component {
             alert(`Insert all data!`)
         } 
         else if(password !== validationpwd){
-            alert(`password get wrong!`)
+            alert(`validation password get wrong!`)
         } 
-        else if (!regUname.test(obj.username)){
-            alert(`Username must be 6 to 8 in alphanumeric and without any symbol`)
-        } 
-        else if (!regEmail.test(obj.email)){
-            alert(`email get wrong. ex (xxx.xxx@xxx.com)`)
-        }
-        else if (!regPass.test(obj.password)){
-            alert(`Password must be 6 in alphanumeric and at least 1 uppercase letter`)
-        }
-        else if (!regPhone.test(obj.phone)){
-            alert(`Phone number must in Indonesia type (ex: 628113912109 or 08134455555)`)
-        }
+        // else if (!regUname.test(obj.username)){
+        //     alert(`Username must be 6 to 8 in alphanumeric and without any symbol`)
+        // } 
+        // else if (!regEmail.test(obj.email)){
+        //     alert(`email get wrong. ex (xxx.xxx@xxx.com)`)
+        // }
+        // else if (!regPass.test(obj.password)){
+        //     alert(`Password must be 6 in alphanumeric and at least 1 uppercase letter`)
+        // }
+        // else if (!regPhone.test(obj.phone)){
+        //     alert(`Phone number must in Indonesia type (ex: 628113912109 or 08134455555)`)
+        // }
         else {
             const objRegis={
                 name: name,
@@ -71,19 +71,31 @@ class Regis extends Component {
             .then((response) => {
                 return response.json()
             })
+           
             .then((result) => {
                 if (result.successMessage === "New user successfully created") {
                     alert(result.successMessage)
+                    this.setClear();
                 }
                 else if (result.errorMessage !== 'undefined'){
                     alert(result.errorMessage)
                 }
             })
-            .catch((result) => {
-                alert("Failed post data!");
-                // alert(result.errorMessage)
-              });
+            .catch((e) => {
+                alert(e);
+            });
         }
+    }
+
+    setClear=()=>{
+        this.setState({
+            name : "",
+            email: "",
+            phone:"",
+            username:"",
+            password:"",
+            validationpwd:"",
+        })
     }
 
     passClick = () => {
@@ -117,29 +129,29 @@ class Regis extends Component {
                     <div className="form">
                         <div className="label1">
                             <div className="labelRegis">Name</div>
-                            <input className="inputRegis" pattern="" type="text" name="name" onChange={this.setValue} placeholder="Write your name.."></input>
+                            <input className="inputRegis" pattern="" type="text" name="name" value={this.state.name} onChange={this.setValue} placeholder="Write your name.."></input>
                         </div>
                         <div className="label1">
                             <div className="labelRegis">Email</div>
-                            <input className="inputRegis" type="text" name="email" onChange={this.setValue} placeholder="xxx@xxx.xxx"></input>
+                            <input className="inputRegis" type="text" name="email" value={this.state.email} onChange={this.setValue} placeholder="xxx@xxx.xxx"></input>
                         </div>
                         <div className="label1">
                             <div className="labelRegis">Phone Number</div>
-                            <input className="inputRegis" type="text" name="phone" onChange={this.setValue} placeholder="08** **** ***"></input>
+                            <input className="inputRegis" type="text" name="phone" value={this.state.phone} onChange={this.setValue} placeholder="08** **** ***"></input>
                         </div>
                         <div className="label1">
                             <div className="labelRegis">Username</div>
-                            <input className="inputRegis" type="text" name="username" onChange={this.setValue} placeholder="Write your username.."></input>
+                            <input className="inputRegis" type="text" name="username" value={this.state.username} onChange={this.setValue} placeholder="Write your username.."></input>
                         </div>
                         <div className="pass2">
                             <div className="labelPass" style={{ marginLeft: "20px" }}>
                                 <div className="labelRegis">Password</div>
-                                <input className="inputPass" type={this.state.passType} name="password" onChange={this.setValue} placeholder="Write password.."></input>
+                                <input className="inputPass" type={this.state.passType} name="password" value={this.state.password} onChange={this.setValue} placeholder="Write password.."></input>
                                 <Icon className={this.state.passType === "password" ? 'fa fa-eye-slash' : 'fa fa-eye'} onClick={() => this.passClick()} style={{ color: "grey", marginLeft: "-25px" }}></Icon>
                             </div>
                             <div className="labelPass">
                                 <div className="labelRegis">Confirm Password</div>
-                                <input className="inputPass" type={this.state.passType} name="validationpwd" onChange={this.setValue} placeholder="Confirm password.."></input>
+                                <input className="inputPass" type={this.state.passType} name="validationpwd" value={this.state.validationpwd} onChange={this.setValue} placeholder="Confirm password.."></input>
                                 <Icon className={this.state.passType === "password" ? 'fa fa-eye-slash' : 'fa fa-eye'} onClick={() => this.passClick()} style={{ color: "grey", marginLeft: "-25px" }}></Icon>
                             </div>
                         </div>
