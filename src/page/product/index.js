@@ -84,6 +84,7 @@ class Product extends Component {
 
 
     render() {
+        console.log("productlist: ", this.props.productList);
         return (
             <div className="productPage">
                 <div className="headerproduct">
@@ -105,14 +106,19 @@ class Product extends Component {
 
                         </div>
                         <div className="listProduct">
-                            <div className="listProd">ini Product 1</div>
-                            <div className="listProd">ini product 2</div>
-                            <div className="listProd">ini Product 1</div>
-                            <div className="listProd">ini product 2</div>
-                            <div className="listProd">ini Product 1</div>
-                            <div className="listProd">ini product 2</div>
-                            <div className="listProd">ini Product 1</div>
-                            <div className="listProd">ini product 2</div>
+                            {
+                                this.props.productList.map((prod, index)=>{
+                                    return(
+                                        <div className="listProd">
+                                            <span>{prod.code}</span>
+                                            <span>{prod.nameProduct}</span>
+                                            <span>{prod.packaging}</span>
+                                            <div>Price(Rp.)</div><div>{prod.price}</div>
+                                        </div>
+                                    )
+                                })
+                            }
+                            
                         </div>
                         <div className="paginationProd">
                             <div>untuk pagination</div>

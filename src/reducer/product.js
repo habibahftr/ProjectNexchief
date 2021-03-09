@@ -11,9 +11,7 @@ const productReducer = (state=defaultState, action)=>{
             console.log(action);
             return{
                 ...state,
-                productList:[
-                    action.payload.list
-                ]
+                productList:action.payload.list
             }
         default:
             return state;

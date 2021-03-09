@@ -104,8 +104,8 @@
 
   }
   .listProd{
-      height: 8vh;
-      padding: 5vh;
+      height: auto;
+      padding-left: 3vh;
       border: solid;
       cursor: pointer;
       background-color: white;
