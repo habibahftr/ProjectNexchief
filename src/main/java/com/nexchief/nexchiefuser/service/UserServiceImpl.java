@@ -71,6 +71,13 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    public User findbyId(String id) {
+        synchronized (this){
+            return userRepository.findbyId(id);
+        }
+    }
+
+    @Override
     public boolean emptyValidation(User user) {
         if (user.getUsername().isBlank())
         {

@@ -135,6 +135,29 @@ public class UserRepositoryImpl implements UserRepository{
     }
 
     @Override
+    public User findbyId(String id) {
+        User user;
+        try{
+            user=jdbcTemplate.query(
+                    "SELECT * FROM user WHERE id=?",
+                    preparedStatement -> preparedStatement.setString(1, id),
+                    (rs, rowNum)->
+                            new User(
+                                    rs.getString("id"),
+                                    rs.getString("name"),
+                                    rs.getString("username"),
+                                    rs.getString("password"),
+                                    rs.getString("email"),
+                                    rs.getString("phone")
+                            )
+            ).get(0);
+        }catch (IndexOutOfBoundsException e){
+            user=null;
+        }
+        return  user;
+    }
+
+    @Override
     public int saveuser(User user) {
         return jdbcTemplate.update(
                 "INSERT INTO user(id, name, username, password, phone, email) values(?,?,?,?,?,?)",
@@ -145,8 +168,8 @@ public class UserRepositoryImpl implements UserRepository{
     @Override
     public int update(User user) {
         return jdbcTemplate.update(
-                "UPDATE user SET password=?, username=?" ,
-                user.getPassword(), user.getUsername()
+                "UPDATE user SET password=? WHERE id=? " ,
+                user.getPassword(), user.getId()
         );
     }
 

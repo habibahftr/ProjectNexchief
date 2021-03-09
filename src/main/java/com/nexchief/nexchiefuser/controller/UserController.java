@@ -8,6 +8,7 @@ import com.nexchief.nexchiefuser.util.CustomSuccessType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -114,14 +115,31 @@ public class UserController {
         }
     }
 
-//    @PutMapping("/changePass/{username}")
-//    public ResponseEntity<?> updateData (@PathVariable("username") String username, @RequestBody User user){
-//        if(user.getUsername().isBlank() || user.getPassword().isBlank()){
-//            return new ResponseEntity<>(new CustomErrorType("Insert all data!"), HttpStatus.BAD_REQUEST));
-//        }else{
-//
-//        }
-//    }
+    @PutMapping("/changePass/{id}")
+    public ResponseEntity<?> updateData (@PathVariable("id") String id, @RequestBody User user){
+        if(user.getPassword().isBlank()){
+            return new ResponseEntity<>(new CustomErrorType("Insert all data!"), HttpStatus.BAD_REQUEST);
+        }else{
+            try{
+                User finduser = userService.findbyId(id);
+                if (finduser != null){
+                    if (Pattern.matches("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{6}$", user.getPassword())){
+                        user.setId(finduser.getId());
+                        userService.update(user);
+                        return new ResponseEntity<>(new CustomSuccessType("Update success!"), HttpStatus.CREATED);
+                    }else{
+                        return new ResponseEntity<>(new CustomErrorType("Password must be 6 in alphanumeric and at least 1 uppercase letter"), HttpStatus.BAD_REQUEST);
+                    }
+                }else{
+                    return new ResponseEntity<>(new CustomErrorType("User with username "+user.getUsername()+" not found"), HttpStatus.NOT_FOUND);
+                }
+            }catch (DataAccessException e){
+                e.printStackTrace();
+                return new ResponseEntity<>(new CustomErrorType("Update failed"), HttpStatus.EXPECTATION_FAILED);
+            }
+
+        }
+    }
 
 
 

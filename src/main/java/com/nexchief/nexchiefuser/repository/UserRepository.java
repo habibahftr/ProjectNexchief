@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface UserRepository {
     List<User> findAll();
+    User findbyId(String id);
     User findbyEmail(String email);
     User findByusername(String username);
     User findByPhone (String phone);
