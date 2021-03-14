@@ -19,8 +19,8 @@ class Sales extends Component {
         return (
             <div className="salesPage">
                 <div className="headerSales">
-                    <Icon onClick={() => this.props.history.push("/home")} className="fas fa-home" style={{ color: "white", display: 'inline-block', marginTop: "2vh", marginRight: "20%", marginLeft: "5%", fontSize: "40px", cursor: "pointer" }}></Icon>
-                    <div className="titleSales">
+                    <Icon onClick={() => this.props.history.push("/home")} className="fas fa-home" style={{ color: "white", display: 'inline-block', marginTop: "2vh", fontSize: "40px", cursor: "pointer" }}></Icon>
+                    <div className="titleSalesPage">
                         <Label className="monthly">MONTHLY</Label>
                         <Label className="salesact">SALES ACTIVITY</Label>
                     </div>

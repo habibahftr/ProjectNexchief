@@ -39,18 +39,18 @@ class Regis extends Component {
         else if(password !== validationpwd){
             alert(`validation password get wrong!`)
         } 
-        // else if (!regUname.test(obj.username)){
-        //     alert(`Username must be 6 to 8 in alphanumeric and without any symbol`)
-        // } 
-        // else if (!regEmail.test(obj.email)){
-        //     alert(`email get wrong. ex (xxx.xxx@xxx.com)`)
-        // }
-        // else if (!regPass.test(obj.password)){
-        //     alert(`Password must be 6 in alphanumeric and at least 1 uppercase letter`)
-        // }
-        // else if (!regPhone.test(obj.phone)){
-        //     alert(`Phone number must in Indonesia type (ex: 628113912109 or 08134455555)`)
-        // }
+        else if (!regUname.test(obj.username)){
+            alert(`Username must be 6 to 8 in alphanumeric and without any symbol`)
+        } 
+        else if (!regEmail.test(obj.email)){
+            alert(`email get wrong. ex (xxx.xxx@xxx.com)`)
+        }
+        else if (!regPass.test(obj.password)){
+            alert(`Password must be 6 in alphanumeric and at least 1 uppercase letter`)
+        }
+        else if (!regPhone.test(obj.phone)){
+            alert(`Phone number must in Indonesia type (ex: 628113912109 or 08134455555)`)
+        }
         else {
             const objRegis={
                 name: name,
@@ -76,6 +76,7 @@ class Regis extends Component {
                 if (result.successMessage === "New user successfully created") {
                     alert(result.successMessage)
                     this.setClear();
+                    this.props.history.push("/")
                 }
                 else if (result.errorMessage !== 'undefined'){
                     alert(result.errorMessage)

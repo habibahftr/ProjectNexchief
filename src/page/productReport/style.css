@@ -1,0 +1,72 @@
+.prodReportPage{
+    height: 100%;
+    width: 100%;
+}
+
+.headerProdReport{
+    width: 100%;
+    height: 15vh;
+    /* border:solid; */
+    background-color: black;
+    display: flex;
+    flex-direction: row;
+}
+
+.titleSales{
+    margin-top: 30px;
+    margin-left: 20%;
+    width: 50%;
+    text-align: center;
+}
+.printProdReport{
+    margin: auto;
+    text-align: center;
+    width: 20%;
+    color: white;
+    cursor: pointer;
+}
+
+.bodyProdReport{
+    background-color: #333333;
+    width: 100%;
+    height: 82vh;
+    margin: auto;
+}
+
+.container3{
+    width: 100%;
+    height: 15vh;
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+
+}
+.seacrhProd1{
+    margin: auto;
+    text-align: center;
+    width: 50%;
+}
+
+.container4{
+    width: 100%;
+    text-align: center;
+    margin: auto;
+    /* padding-left: 5%; */
+}
+
+.tableProdReport1{
+    margin: auto;
+    text-align: center;
+    
+}
+
+.backReport{
+    margin-top: 4%;
+    margin-left: 80%;
+    background-color: #FF0800;
+    border: #FF0800;
+    color: white;
+    box-shadow: 0 6px #800000;
+    border-radius: 10px;
+    padding: 4px;
+}

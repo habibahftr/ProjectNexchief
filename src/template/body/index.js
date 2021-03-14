@@ -7,6 +7,8 @@ import Regis from '../../page/regis';
 import Password from "../../page/password";
 import Sales from '../../page/sales';
 import SalesDetail from '../../page/salesDetail';
+import Report from '../../page/report';
+import ProductReport from '../../page/productReport';
 
 class Body extends Component {
     constructor(props) {
@@ -58,6 +60,19 @@ class Body extends Component {
                         return <SalesDetail history={history}/>
                     }
                 }></Route>
+                <Route exact path="/report" component={
+                    ()=>{
+                        let history = useHistory()
+                        return <Report history={history}/>
+                    }
+                }></Route>
+                <Route exact path="/report/product" component={
+                    ()=>{
+                        let history = useHistory()
+                        return <ProductReport history={history}/>
+                    }
+                }></Route>
+               
 
             </Switch>
          );

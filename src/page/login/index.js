@@ -60,17 +60,17 @@ class Login extends Component {
                         user: json
                     });
                     console.log("Data", this.state.user)
-                    
+
 
                     if (typeof json.errorMessage !== 'undefined') {
                         alert(json.errorMessage);
-                    }else{
+                    } else {
                         this.props.submitLogin({ dataLogin: json })
                         alert(`Login Success`)
                         this.props.history.push("/home")
                     }
-                    
-                    
+
+
                 })
                 .catch((e) => {
                     console.log(e);
@@ -98,7 +98,7 @@ class Login extends Component {
         const { username, password } = this.state;
         console.log("user", this.state.user);
         console.log("statuslogin", this.props.checkLogin);
-        if(this.props.checkLogin=== true){
+        if (this.props.checkLogin === true) {
             this.props.history.push("/home")
         }
         return (
@@ -111,14 +111,16 @@ class Login extends Component {
                         <Label className="power">Powerred By Habibah</Label>
                     </div>
                     <div className="form">
-                        <div>
-                            <Icon className="fa fa-user-circle" style={{ border: "solid", padding: "1px", color: "white", marginRight: "8px", fontSize: "30px" }}></Icon>
+                        <div className="usernameDiv">
+                            <Icon className="fa fa-user-circle" style={{ border: "solid", padding: "1px", color: "white", fontSize: "30px" }}></Icon>
                             <Input className="userName" type="text" name="username" onChange={this.setValue} placeholder="username.."></Input>
                         </div>
-                        <div>
-                            <Icon className="fa fa-lock" style={{ border: "solid", padding: "1.5px", color: "white", marginRight: "8px", fontSize: "30px" }}></Icon>
-                            <Input className="password" type={this.state.passType} name="password" placeholder="******" onChange={this.setValue}></Input>
-                            <Icon className={this.state.passType === "password" ? 'fa fa-eye-slash' : 'fa fa-eye'} onClick={() => this.passClick()} style={{ color: "grey", marginLeft: "-30px" }}></Icon>
+                        <div className="passDiv">
+                            <Icon className="fa fa-lock" style={{ border: "solid", padding: "1.5px", color: "white", fontSize: "30px" }}></Icon>
+                            <div className="passDiv2">
+                                <Input className="password" type={this.state.passType} name="password" placeholder="******" onChange={this.setValue}></Input>
+                                <Icon className={this.state.passType === "password" ? 'fa fa-eye-slash' : 'fa fa-eye'} onClick={() => this.passClick()} style={{ color: "grey", marginTop: "1.5vh", marginLeft:"-5vh" }}></Icon>
+                            </div>
                         </div>
                         <div>
                             <Button onClick={() => this.doLogin({ username, password })} className="login">LOGIN</Button>

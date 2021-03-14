@@ -8,13 +8,48 @@ class Password extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            passType:"password",
+            passType1:"password",
+            passType2:"password",
+            passType3:"password",
             // username: "",
-            // oldPass: "",
+            truePass:"",
+            oldPass: "",
             newPass: "",
             newPass1: "",
         }
     }
+
+    componentDidMount(){
+        fetch(`http://localhost:8080/nexchief/user/`+this.props.dataLoginUser.id, {
+                method: "get",
+                headers: {
+                    "Content-Type": "application/json; ; charset=utf-8",
+                    "Access-Control-Allow-Headers": "Authorization, Content-Type",
+                    "Access-Control-Allow-Origin": "*"
+                }
+            })
+
+                .then(response => response.json())
+                .then(json => {
+                    this.setState({
+                        truePass: json.password
+                    });
+                    console.log("Data", this.state.truePass)
+
+
+                    if (typeof json.errorMessage !== 'undefined') {
+                        alert(json.errorMessage);
+                    } 
+
+                })
+                .catch((e) => {
+                    console.log(e);
+                    alert("Failed fetching data!!");
+                });
+
+        }
+
+    
     setValue = el => {
         this.setState({
             [el.target.name]: el.target.value
@@ -23,7 +58,7 @@ class Password extends Component {
 
     changePass = (changePass) => {
         console.log("idChange", this.props.dataLoginUser.id);
-        const {newPass, newPass1} = changePass
+        const {oldPass, newPass, newPass1} = changePass
         // console.log("changePass", changePass);
         // console.log("newPass1", newPass1);
         // console.log("newPass", newPass);
@@ -32,7 +67,11 @@ class Password extends Component {
         }
         else if (newPass !== newPass1) {
             alert(`validation Password wrong`)
-        }else{
+        }
+        else if(oldPass !== this.state.truePass){
+            alert(`Invalid Old Password`)
+        }
+        else{
             const objPass={
                 password: newPass
             }
@@ -71,57 +110,79 @@ class Password extends Component {
         })
     }
 
-    passClick = () => {
+    passClick1 = () => {
         console.log("pass");
-        const passTypeTemp = this.state.passType
-        if (passTypeTemp === "password") {
+        const passTypeTemp1 = this.state.passType1
+        if (passTypeTemp1 === "password") {
             this.setState({
-                passType: "text"
+                passType1: "text",
             })
-        } else {
+        }else if(passTypeTemp1==="text"){
             this.setState({
-                passType: "password"
+                passType1: "password",
             })
         }
+    } 
 
+    passClick2=()=>{
+        const passTypeTemp2 = this.state.passType2
+        if(passTypeTemp2==="password"){
+            this.setState({
+                passType2:"text",
+            })
+        } 
+        else if(passTypeTemp2==="text"){
+            this.setState({
+                passType2:"password",
+            })
+        }
     }
 
+    passClick3=()=>{
+        const passTypeTemp3 = this.state.passType3
+        if(passTypeTemp3==="password"){
+            this.setState({
+                passType3:"text"
+            })
+        }else if(passTypeTemp3==="text"){
+            this.setState({
+                passType3:"password",
+            })
+        } 
+    }
 
 render() {
-    const { newPass, newPass1 } = this.state
+    const {oldPass, newPass, newPass1 } = this.state
     if (this.props.checkLogin === false) {
         this.props.history.push("/")
     }
     return (
         <div className="bodyPass">
             <div className="detailHeader">
-                <Button className="backSales" onClick={() => this.props.history.push("/home")}>Back to Home</Button>
+                <Button className="backPass" onClick={() => this.props.history.push("/home")}>Back to Home</Button>
             </div>
             <div className="containerPass">
-                <i className="fa fa-lock" aria-hidden="true" style={{ color: "white", marginRight: "8px", width: "50px", fontSize: "-webkit-xxx-large" }}></i>
+                <i className="fa fa-lock" aria-hidden="true" style={{ color: "white", margin:"auto", width: "50px", fontSize: "-webkit-xxx-large" }}></i>
                 <div className="passlabel">CHANGE PASSWORD</div>
                 <div className="form">
-                    {/* <div className="label2">
-                            <div className="labelPass">Username</div>
-                            <input className="inputPass" type="text" name="username" onChange={this.setValue}></input>
-                        </div> */}
-                    {/* <div className="label2">
+                    <div className="label2">
                         <div className="labelPass">Old Password</div>
-                        <input className="inputPass" type={this.state.passType} value={this.state.oldPass} name="oldPass" onChange={this.setValue} placeholder="Write your old Password.."></input>
-                        <Icon className={this.state.passType === "password" ? 'fa fa-eye-slash' : 'fa fa-eye'} onClick={() => this.passClick()} style={{ color: "grey", marginLeft: "-25px" }}></Icon>
-                    </div> */}
+                        <input className="inputPass" type={this.state.passType1} value={this.state.oldPass} name="oldPass" onChange={this.setValue} placeholder="Write your old Password.."></input>
+                        <Icon className={this.state.passType1 === "password" ? 'fa fa-eye-slash' : 'fa fa-eye'} onClick={() => this.passClick1()} style={{ color: "grey", marginLeft: "-25px" }}></Icon>
+                    </div>
                     <div className="label1">
                         <div className="labelPass">New Password</div>
-                        <input className="inputPass" type={this.state.passType} value={this.state.newPass} name="newPass" onChange={this.setValue} placeholder="Write your new Password.."></input>
-                        <Icon className={this.state.passType === "password" ? 'fa fa-eye-slash' : 'fa fa-eye'} onClick={() => this.passClick()} style={{ color: "grey", marginLeft: "-25px" }}></Icon>
+                        <input className="inputPass" type={this.state.passType2} value={this.state.newPass} name="newPass" onChange={this.setValue} placeholder="Write your new Password.."></input>
+                        <Icon className={this.state.passType2 === "password" ? 'fa fa-eye-slash' : 'fa fa-eye'} onClick={() => this.passClick2()} style={{ color: "grey", marginLeft: "-25px" }}></Icon>
                     </div>
                     <div className="label1">
                         <div className="labelPass">Validation New Password</div>
-                        <input className="inputPass" type={this.state.passType} value={this.state.newPass1} name="newPass1" onChange={this.setValue} placeholder="Confirm your new Password.."></input>
-                        <Icon className={this.state.passType === "password" ? 'fa fa-eye-slash' : 'fa fa-eye'} onClick={() => this.passClick()} style={{ color: "grey", marginLeft: "-25px" }}></Icon>
+                        <input className="inputPass" type={this.state.passType3} value={this.state.newPass1} name="newPass1" onChange={this.setValue} placeholder="Confirm your new Password.."></input>
+                        <Icon className={this.state.passType3 === "password" ? 'fa fa-eye-slash' : 'fa fa-eye'} onClick={() => this.passClick3()} style={{ color: "grey", marginLeft: "-25px" }}></Icon>
                     </div>
                     <div>
-                        <button className="pass" onClick={() => this.changePass({newPass, newPass1})}>CHANGE</button>
+                        <button className="pass" onClick={() => this.changePass({oldPass, newPass, newPass1})}>CHANGE</button>
+                        <button className="cancelBtn" onClick={()=>this.setClear()}>CANCEL</button>
                     </div>
                 </div>
             </div>

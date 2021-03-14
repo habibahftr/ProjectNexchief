@@ -1,6 +1,7 @@
 .productPage{
     width: 100%;
-    height: auto;
+    height: 100%;
+    /* border: solid; */
 }
 .headerproduct {
     display: flex;
@@ -63,7 +64,7 @@
   }
   .formProduct{
       width: 70%;
-      height: 100vh;
+      height: 100%;
       /* border: solid; */
       display: flex;
       flex-direction: row;
@@ -72,29 +73,29 @@
   .labelProduct{
       /* border: solid; */
       width: 30%;
-      height: 91vh;
+      height: 100%;
       background-color: white;
   }
   .inputProduct{
     /* border: solid; */
     width: 70%;
-    height: 91vh;
+    height: 100%;
     background-color: #A9A9A9;
   }
 
   .tableProduct{
     width: 30%;
-    height: 100vh;
+    height: 100%;
     /* border: solid; */
 
   }
   .searchProduct{
-      border: solid;
+      /* border: solid; */
       height: 7vh;
   }
   .listProduct{
-      /* border: solid; */
-      height: 76vh;
+      border: solid;
+      height: 70vh;
       overflow-y: scroll;
       background-color:#A9A9A9;
      
@@ -104,7 +105,7 @@
 
   }
   .listProd{
-      height: auto;
+      height: 14vh;
       padding-left: 3vh;
       border: solid;
       cursor: pointer;
@@ -139,5 +140,13 @@
   }
   .paginationProd{
       border: solid;
-      height: 6%;
+      height: 6.7vh;
   }
+  .spanProd{
+      margin-left: 6px;
+  }
+  div[disabled]
+{
+  pointer-events: none;
+  opacity: 0.7;
+}

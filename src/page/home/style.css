@@ -1,13 +1,14 @@
 .bodyHome{
     width: 100%;
-    height: 100vh;
+    height: 100%;
 }
 
 .containerHome{
     text-align: center;
     width: 100%;
-    height: 100%;
+    height: 84.7vh;
     background-color: #333333;
+    margin: auto;
 }
 .headerHome{
     margin-top: 0;
@@ -37,18 +38,26 @@
 .menuicon{
     display: flex;
     flex-direction: row;
+    margin: auto;
+    text-align: center;
+    width: 100%;
+    height: 50%;
 }
 .producticon{
-    margin-left :30%;
+    margin: auto;
+    width: 50%;
 }
 .salesicon{
-    margin-left: 20%;
+    margin: auto;
+    width: 50%;
 }
 .reporticon{
-    margin-left :30%;
+    margin: auto;
+    width: 50%;
 }
 .dashboardicon{
-    margin-left: 20%;
+    margin: auto;
+    width: 50%;
 }
 
 .fa-archive:hover{
