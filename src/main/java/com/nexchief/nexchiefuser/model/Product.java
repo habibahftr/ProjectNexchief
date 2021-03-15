@@ -16,8 +16,19 @@ public class Product {
     private String created_by;
     private Date updated_at;
     private String updated_by;
+    private int qty;
+    private double totalPrice;
 
     public Product() {
+    }
+
+    public Product(String code, String nameProduct, int price, int stock, int qty, int totalPrice) {
+        this.code = code;
+        this.nameProduct = nameProduct;
+        this.price = price;
+        this.stock = stock;
+        this.qty = qty;
+        this.totalPrice= totalPrice;
     }
 
     public Product(String code, String nameProduct, String packaging, String product_desc, String category,
@@ -111,7 +122,9 @@ public class Product {
         return stock;
     }
 
-    public void setStock(int stock) {
+    public void setStock() {
+        int stock;
+        stock = (getStock()-getQty());
         this.stock = stock;
     }
 
@@ -141,6 +154,22 @@ public class Product {
 
     public void setUpdated_by(String updated_by) {
         this.updated_by = updated_by;
+    }
+
+    public int getQty() {
+        return qty;
+    }
+
+    public void setQty(int qty) {
+        this.qty = qty;
+    }
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
     @Override

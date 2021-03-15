@@ -40,6 +40,17 @@ public class UserController {
         return new ResponseEntity<>(userList, HttpStatus.OK);
     }
 
+    @GetMapping("/user/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable("id") String id){
+        User userFind = userService.findbyId(id);
+        if(userFind== null){
+            return new ResponseEntity<>(userFind, HttpStatus.NOT_FOUND);
+        }
+        else{
+            return new ResponseEntity<>(userFind, HttpStatus.OK);
+        }
+    }
+
     @GetMapping("/login/") ///-------------------ini login----------------------------------
     public ResponseEntity<?> login(@RequestParam String username, @RequestParam String password) {
         logger.info("Comparing data!");
@@ -108,7 +119,7 @@ public class UserController {
                             , HttpStatus.BAD_REQUEST);
                 }
             }else {
-                return new ResponseEntity<>(new CustomErrorType("email get wrong. ex (xxx.xxx@xxx.com)")
+                return new ResponseEntity<>(new CustomErrorType("email get wrong. ex (xxx@xxx.)")
                         , HttpStatus.BAD_REQUEST);
             }
 
