@@ -70,3 +70,7 @@
     border-radius: 10px;
     padding: 4px;
 }
+
+.custom-toggle.react-toggle--checked .react-toggle-track {
+    background-color: #ab199f;
+  }

@@ -18,10 +18,10 @@ class Product extends Component {
             disableCode: true,
             disableProd: false,
             disableBtn: true,
-            search:"",
+            search: "",
             searchIcon: true,
-            limit:3,
-            count:0,
+            limit: 3,
+            count: 0,
             page: 1,
             // -----------------------INI STATE PRODUCT-------------------------------
             productList: [],
@@ -44,16 +44,44 @@ class Product extends Component {
         }
     }
 
-//----------------------------------------COMPONENT DID MOUNT--------------------------------------------------
+    //----------------------------------------COMPONENT DID MOUNT--------------------------------------------------
     componentDidMount() {
         // this.getAllProduct();
         this.getAPICount();
-        this.getPaging(this.state.page,this.state.limit)
-        
-
+        this.getPaging(this.state.page, this.state.limit)
     }
 
-//------------------------------------------------------ADD CLICK---------------------------------------------
+    //------------------------------------SET VALUE------------------------------------------------------
+    setValue = el => {
+        this.setState({
+            [el.target.name]: el.target.value
+        })
+    }
+
+    //-----------------------------------------------------GET ALL PRODUCT SESUAI DENGAN USER LOGIN-----------------------------------
+    getAllProduct = () => {
+        fetch(`http://localhost:8080/nexchief/products/` + this.props.dataLoginUser.id, {
+            method: "get",
+            headers: {
+                "Content-Type": "application/json; ; charset=utf-8",
+                "Access-Control-Allow-Headers": "Authorization, Content-Type",
+                "Access-Control-Allow-Origin": "*"
+            }
+        })
+            .then(response => response.json())
+            .then(json => {
+                this.setState({
+                    productList: json
+                });
+                this.props.productData({ list: json })
+                console.log("product", this.state.productList);
+            })
+            .catch(() => {
+                alert("Failed fetching")
+            })
+    }
+
+    //------------------------------------------------------ADD CLICK---------------------------------------------
     addClick = () => {
         console.log("addclick");
         let today = new Date();
@@ -99,7 +127,7 @@ class Product extends Component {
         })
     }
 
-    
+
     //-----------------------------------UPDATED CLICK-----------------------------------------------------------------
     updateClick = (obj) => {
         console.log("updateClick");
@@ -145,10 +173,10 @@ class Product extends Component {
                             disableInput: true,
                             disableCode: true,
                             disableProd: false,
-                            disableBtn:true,
+                            disableBtn: true,
                         })
                         // this.getAllProduct();
-                        this.getPaging(this.state.page,this.state.limit)
+                        this.getPaging(this.state.page, this.state.limit)
                     }
                 })
 
@@ -167,41 +195,11 @@ class Product extends Component {
             disableInput: true,
             disableCode: true,
             disableProd: false,
-            disableBtn:true,
+            disableBtn: true,
         })
         this.setClear();
     }
 
-    //------------------------------------SET VALUE------------------------------------------------------
-    setValue = el => {
-        this.setState({
-            [el.target.name]: el.target.value
-        })
-    }
-
-    
-//-----------------------------------------------------GET ALL PRODUCT SESUAI DENGAN USER LOGIN-----------------------------------
-    getAllProduct = () => {
-        fetch(`http://localhost:8080/nexchief/products/` + this.props.dataLoginUser.id, {
-            method: "get",
-            headers: {
-                "Content-Type": "application/json; ; charset=utf-8",
-                "Access-Control-Allow-Headers": "Authorization, Content-Type",
-                "Access-Control-Allow-Origin": "*"
-            }
-        })
-            .then(response => response.json())
-            .then(json => {
-                this.setState({
-                    productList: json
-                });
-                this.props.productData({ list: json })
-                console.log("product", this.state.productList);
-            })
-            .catch(() => {
-                alert("Failed fetching")
-            })
-    }
 
     //-----------------------------------------------SAVE CLICK--------------------------------------------------------------------------------------
     saveClick = (obj) => {
@@ -229,23 +227,6 @@ class Product extends Component {
                 }
 
             }
-            // else if(launch_date==="") {
-            //     objProduct = {
-            //         code: code,
-            //         nameProduct: nameProduct,
-            //         packaging: packaging,
-            //         product_desc: product_desc,
-            //         category: category,
-            //         launch_date: null,
-            //         status: status,
-            //         price: price,
-            //         stock: stock,
-            //         created_at: new Date(),
-            //         created_by: this.props.dataLoginUser.id,
-            //         updated_at: new Date(),
-            //         updated_by: this.props.dataLoginUser.id,
-            //     }
-            // }
             else {
                 objProduct = {
                     code: code,
@@ -286,11 +267,11 @@ class Product extends Component {
                             disableInput: true,
                             disableCode: true,
                             disableProd: false,
-                            disableBtn:true,
+                            disableBtn: true,
                         })
                         this.setClear();
                         // this.getAllProduct();
-                        this.getPaging(this.state.page,this.state.limit)
+                        this.getPaging(this.state.page, this.state.limit)
                     } else {
                         alert(result.errorMessage)
                     }
@@ -303,7 +284,7 @@ class Product extends Component {
     }
 
     //------------------------------------------------DELETE CLICK--------------------------------------------------------------------------
-    delClick=()=>{
+    delClick = () => {
         fetch(`http://localhost:8080/nexchief/product/` + this.state.code, {
             method: "delete",
             headers: {
@@ -312,24 +293,24 @@ class Product extends Component {
                 "Access-Control-Allow-Origin": "*"
             }
         })
-        .then((result)=>{
-            if(result.successMessage !== "undefined"){
-                alert(result.successMessage)
-                this.setClear();
-                this.getPaging(this.state.page,this.state.limit)
-                this.setState({
-                    disableBtn:true,
-                })
-                // this.getAllProduct();
+            .then((result) => {
+                if (result.successMessage !== "undefined") {
+                    alert(result.successMessage)
+                    this.setClear();
+                    this.getPaging(this.state.page, this.state.limit)
+                    this.setState({
+                        disableBtn: true,
+                    })
+                    // this.getAllProduct();
 
-            }
-            else if(result.errorMessage !== 'undefined'){
-                alert(result.errorMessage)
-            } 
-        })
-        .catch((e)=>{
-            alert(e);
-        })
+                }
+                else if (result.errorMessage !== 'undefined') {
+                    alert(result.errorMessage)
+                }
+            })
+            .catch((e) => {
+                alert(e);
+            })
 
 
     }
@@ -367,7 +348,7 @@ class Product extends Component {
             .then(response => response.json())
             .then(json => {
                 this.setState({
-                    disableBtn:false,
+                    disableBtn: false,
                     code: json.code,
                     nameProduct: json.nameProduct,
                     packaging: json.packaging,
@@ -391,8 +372,8 @@ class Product extends Component {
     }
 
     //---------------------------------------------------GET COUNT UNTUK MENGETAHUI JUMLAH DATA-----------------------------------------------
-    getAPICount=()=>{
-        fetch(`http://localhost:8080/nexchief/product/count/`+this.props.dataLoginUser.id,{
+    getAPICount = () => {
+        fetch(`http://localhost:8080/nexchief/product/count/` + this.props.dataLoginUser.id, {
             method: "get",
             headers: {
                 "Content-Type": "application/json; ; charset=utf-8",
@@ -400,112 +381,135 @@ class Product extends Component {
                 "Access-Control-Allow-Origin": "*"
             }
         })
-        .then(response => response.json())
-        .then(json => {
-            let limitPage = json/this.state.limit
-          this.setState({
-             count :Math.ceil(limitPage)
-            })
-            console.log("INI RESPON COUNT ", json)
-        })
-        .catch(() =>{
-          alert("Failed fetching")
-        })
-    }
-
-    // ------------------------------------------------GET COUNT UNTUK MENGETAHUI JUMLAH DATA SEARCH-----------------------------------------
-    getAPICountSearch=()=>{
-        fetch(`http://localhost:8080/nexchief/search/count/?updated_by=`+this.props.dataLoginUser.id+`&nameProduct=`+this.state.search,{
-            method: "get",
-            headers: {
-                "Content-Type": "application/json; ; charset=utf-8",
-                "Access-Control-Allow-Headers": "Authorization, Content-Type",
-                "Access-Control-Allow-Origin": "*"
-            }
-        })
-        .then(response => response.json())
-        .then(json => {
-            let limitPage = json/this.state.limit
-          this.setState({
-             count :Math.ceil(limitPage)
-            })
-            console.log("INI RESPON COUNT ", json)
-        })
-        .catch(() =>{
-          alert("Failed fetching")
-        })
-    }
-
-
-    //------------------------------------------------SEARCH CLICK---------------------------------------------------------
-    searchClick=()=>{
-        console.log("src");
-        const searchIconTemp= this.state.searchIcon
-        if(searchIconTemp === true){
-            if(this.state.search===""){
-                alert(`Input product name for searching`)
-            }else{
-            fetch(`http://localhost:8080/nexchief/product/search/?page=`+value+"&limit="+limit+"&id="+this.props.dataLoginUser.id+"&nameProduct="+this.state.search, {
-                method: "get",
-                headers: {
-                    "Content-Type": "application/json; ; charset=utf-8",
-                    "Access-Control-Allow-Headers": "Authorization, Content-Type",
-                    "Access-Control-Allow-Origin": "*"
-                }
-            })
             .then(response => response.json())
             .then(json => {
+                let limitPage = json / this.state.limit
                 this.setState({
-                    productList: json,
-                    searchIcon:false,
-                });
+                    count: Math.ceil(limitPage)
+                })
+                console.log("INI RESPON COUNT ", json)
             })
             .catch(() => {
                 alert("Failed fetching")
             })
-        }
-        }else{
-            this.setState({
-                search:"",
-                searchIcon:true,
+    }
+
+    // ------------------------------------------------GET COUNT UNTUK MENGETAHUI JUMLAH DATA SEARCH-----------------------------------------
+    getAPICountSearch = () => {
+        fetch(`http://localhost:8080/nexchief/search/count/?updated_by=` + this.props.dataLoginUser.id + `&nameProduct=` + this.state.search, {
+            method: "get",
+            headers: {
+                "Content-Type": "application/json; ; charset=utf-8",
+                "Access-Control-Allow-Headers": "Authorization, Content-Type",
+                "Access-Control-Allow-Origin": "*"
+            }
+        })
+            .then(response => response.json())
+            .then(json => {
+                let limitPage = json / this.state.limit
+                this.setState({
+                    count: Math.ceil(limitPage)
+                })
+                console.log("INI RESPON COUNT ", json)
             })
-            this.getPaging(this.state.page,this.state.limit)
-            // this.getAllProduct();
+            .catch(() => {
+                alert("Failed fetching")
+            })
+    }
+
+    // --------------------------------------PAGINATION SEARCH--------------------------------------------------------------
+    searchName = (value, limit) => {
+        fetch(`http://localhost:8080/nexchief/product/search/?page=` + value + "&limit=" + limit + "&id=" + this.props.dataLoginUser.id + "&nameProduct=" + this.state.search, {
+            method: "get",
+            headers: {
+                "Content-Type": "application/json; ; charset=utf-8",
+                "Access-Control-Allow-Headers": "Authorization, Content-Type",
+                "Access-Control-Allow-Origin": "*"
+            }
+        })
+            .then(response => response.json())
+            .then(json => {
+                this.setState({
+                    productList: json,
+                    searchIcon: false,
+                });
+                console.log("search name", json);
+            })
+            .catch(() => {
+                alert("Failed fetching")
+            })
+    }
+
+
+    //------------------------------------------------SEARCH CLICK---------------------------------------------------------
+    searchClick = () => {
+        console.log("src");
+        const searchIconTemp = this.state.searchIcon
+        if (searchIconTemp === true) {
+            if (this.state.search === "") {
+                alert(`Input product name for searching`)
+            } else {
+                this.getAPICountSearch();
+
+                if(this.getAPICountSearch()> 0){
+                    this.searchName(this.state.page, this.state.limit)
+                    this.setState({
+                        searchIcon: false,
+                    });
+                }else{
+                    this.setState({
+                        productList:[],
+                        searchIcon: false,
+                    })
+                }
+            }
+        } else {
+            this.setState({
+                search: "",
+                searchIcon: true,
+            })
+            this.getAPICount();
+            this.getPaging(this.state.page, this.state.limit)
         }
-        
+
     }
 
     //------------------------------------------------------INI PAGINATION---------------------------------------------------------------------
     handleChange = (event, value) => {
         this.setState({
             page: value
-        }) 
-        this.getAPICount();
-        this.getPaging(value ,this.state.limit);
+        })
+        if (this.state.search === "") {
+            this.getAPICount();
+            this.getPaging(value, this.state.limit);
+        } else {
+            this.getAPICountSearch();
+            this.searchName(value, this.state.limit)
+        }
     }
 
 
-    getPaging = (value,limit) => {
-        fetch(`http://localhost:8080/nexchief/product/paging/?page=`+value+"&limit="+limit+"&id="+this.props.dataLoginUser.id, {
+    getPaging = (value, limit) => {
+        fetch(`http://localhost:8080/nexchief/product/paging/?page=` + value + "&limit=" + limit + "&id=" + this.props.dataLoginUser.id, {
             method: "get",
-                headers: {
-                    "Content-Type": "application/json; ; charset=utf-8",
-                    "Access-Control-Allow-Headers": "Authorization, Content-Type",
-                    "Access-Control-Allow-Origin": "*"
-                }
+            headers: {
+                "Content-Type": "application/json; ; charset=utf-8",
+                "Access-Control-Allow-Headers": "Authorization, Content-Type",
+                "Access-Control-Allow-Origin": "*"
+            }
         })
-        .then(response => response.json())
+            .then(response => response.json())
             .then(json => {
                 this.setState({
                     productList: json,
                 });
             })
-      };
+    };
 
 
-//============================================================R E N D E R===============================================================
+    //============================================================R E N D E R===============================================================
     render() {
-    console.log("INI CREATED AT : ", this.state.created_at );
+        console.log("INI CREATED AT : ", this.state.created_at);
         console.log("code", this.state.code);
         console.log("productname", this.state.nameProduct);
         console.log("productlist: ", this.state.productList);
@@ -520,7 +524,7 @@ class Product extends Component {
                     <div className="buttonProduct">
                         <Button className="addBtn" onClick={() => this.addClick()} style={{ display: this.state.displayTemp }}>Add</Button>
                         <Button className="addBtn" disabled={this.state.disableBtn} onClick={() => this.editClick()} style={{ display: this.state.displayTemp }}>Edit</Button>
-                        <Button className="addBtn" disabled={this.state.disableBtn} onClick={()=> this.delClick()} style={{ display: this.state.displayTemp }}>Delete</Button>
+                        <Button className="addBtn" disabled={this.state.disableBtn} onClick={() => this.delClick()} style={{ display: this.state.displayTemp }}>Delete</Button>
                         <Button className="hiddenBtn" onClick={() => this.saveClick({ code, nameProduct, packaging, product_desc, category, launch_date, status, price, stock, created_at, created_by, updated_at, updated_by })} style={{ display: this.state.displaySubmit }}>Save</Button>
                         <Button className="hiddenBtn" onClick={() => this.updateClick({ nameProduct, packaging, product_desc, category, launch_date, status, price, stock, updated_at, updated_by })} style={{ display: this.state.displayUpdate }}>Update</Button>
                         <Button className="hiddenBtn" onClick={() => this.cancelClick()} style={{ display: this.state.displayCancel }}>Cancel</Button>
@@ -530,7 +534,7 @@ class Product extends Component {
                     <div className="tableProduct">
                         <div className="searchProduct">
                             <Input className="search1" name="search" onChange={this.setValue} value={this.state.search} placeholder="product name.."></Input>
-                            <Icon className={this.state.searchIcon===true ? "fas fa-search" : "fas fa-window-close" } onChange={this.setValue} onClick={()=>this.searchClick()} style={{ cursor:"pointer", marginLeft: "2vh", fontSize: "20px", marginTop: "2vh" }}></Icon>
+                            <Icon className={this.state.searchIcon === true ? "fas fa-search" : "fas fa-window-close"} onChange={this.setValue} onClick={() => this.searchClick()} style={{ cursor: "pointer", marginLeft: "2vh", fontSize: "20px", marginTop: "2vh" }}></Icon>
 
                         </div>
                         <div className="listProduct">
@@ -549,7 +553,7 @@ class Product extends Component {
 
                         </div>
                         <div className="paginationProd">
-                                <Pagination style={{background:'white',marginTop:'0'}} page={this.state.page} onChange={this.handleChange}  count={this.state.count} />
+                            <Pagination style={{ background: 'white', marginTop: '0' }} page={this.state.page} onChange={this.handleChange} count={this.state.count} />
                         </div>
                     </div>
                     <div className="formProduct">

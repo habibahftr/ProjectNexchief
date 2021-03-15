@@ -6,6 +6,8 @@ import "./style.css"
 import Button from '../../component/button';
 import { connect } from 'react-redux';
 import ReactToPrint from 'react-to-print';
+import Toggle from 'react-toggle'
+import Pagination from '@material-ui/lab/Pagination';
 
 class ComponentToPrint extends Component {
     constructor(props) {
@@ -19,8 +21,46 @@ class ComponentToPrint extends Component {
         this.getAllProduct();
     }
 
-    getAllProduct = () => {
-        fetch(`http://localhost:8080/nexchief/products/` + this.props.id, {
+    handleChange = (event, value) => {
+        this.setState({
+            page: value
+        })
+        this.getAPICount();
+        this.getPaging(value, this.props.limit);
+    }
+
+    getAPICount = () => {
+        fetch(`http://localhost:8080/nexchief/product/count/` + this.props.dataLoginUser.id, {
+            method: "get",
+            headers: {
+                "Content-Type": "application/json; ; charset=utf-8",
+                "Access-Control-Allow-Headers": "Authorization, Content-Type",
+                "Access-Control-Allow-Origin": "*"
+            }
+        })
+            .then(response => response.json())
+            .then(json => {
+                let limitPage = json / this.props.limit
+                this.setState({
+                    count: Math.ceil(limitPage)
+                })
+                console.log("INI RESPON COUNT ", json)
+            })
+            .catch(() => {
+                alert("Failed fetching")
+            })
+    }
+
+    getAllProduct = (value, limit) => {
+        // fetch(`http://localhost:8080/nexchief/products/` + this.props.id, {
+        //     method: "get",
+        //     headers: {
+        //         "Content-Type": "application/json; ; charset=utf-8",
+        //         "Access-Control-Allow-Headers": "Authorization, Content-Type",
+        //         "Access-Control-Allow-Origin": "*"
+        //     }
+        // })
+        fetch(`http://localhost:8080/nexchief/product/paging/?page=` + value + "&limit=" + limit + "&id=" + this.props.dataLoginUser.id, {
             method: "get",
             headers: {
                 "Content-Type": "application/json; ; charset=utf-8",
@@ -87,11 +127,16 @@ class ProductReport extends Component {
         super(props);
         this.state = {
             productList: [],
+            limit: 5,
+            count: 0,
+            page: 1,
 
         }
     }
 
-   
+
+
+
     render() {
         if (this.props.checkLogin === false) {
             this.props.history.push("/")
@@ -113,6 +158,12 @@ class ProductReport extends Component {
                             <Input className="searchProdReport" ></Input>
                             <Icon className="fas fa-search" style={{ color: "grey", marginLeft: "-5vh", fontSize: "15px", marginTop: "2vh" }}></Icon>
                         </div>
+                        <label>
+                            <Toggle
+                                defaultChecked={this.state.aubergineIsReady}
+                                className='custom-toggle'
+                                onChange={this.handleAubergineChange} />
+                        </label>
                         <div className="printProdReport">
                             <ReactToPrint
                                 trigger={() => <Icon className="fas fa-file-pdf" style={{ color: "grey", marginLeft: "-5vh", fontSize: "30px", marginTop: "2vh" }}></Icon>}
@@ -123,9 +174,12 @@ class ProductReport extends Component {
                         </div>
                     </div>
                     <div className="container4">
-                        <ComponentToPrint ref={el => (this.componentRef = el)} id={this.props.dataLoginUser.id} />
+                        <ComponentToPrint ref={el => (this.componentRef = el)} id={this.props.dataLoginUser.id} limit={this.state.limit} />
 
                     </div>
+                    {/* <div className="paginationProd">
+                        <Pagination style={{ background: 'white', marginTop: '0' }} page={this.state.page} onChange={this.props.handleChange} count={this.state.count} />
+                    </div> */}
 
                 </div>
 

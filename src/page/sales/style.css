@@ -1,5 +1,5 @@
 .bodySales{
-    border: solid;
+    /* border: solid; */
     background-color: #333333;
     width: 100%;
     height: 100%;
@@ -7,7 +7,7 @@
 .headerSales{
     width: 100%;
     height: 12vh;
-    border:solid;
+    /* border:solid; */
     background-color: black;
     display: flex;
     flex-direction: row;
@@ -60,7 +60,7 @@
     margin-top: 10%;
 }
 .container2{
-    height: 80vh;
+    height: 72vh;
     width: 100%;
     margin: auto;
     text-align: center;
@@ -88,4 +88,11 @@
     font-family: Candara;
     font-size: 25px;
     margin: auto;
+}
+
+.paginationSales{
+    /* border: solid; */
+    width: 30%;
+    margin: auto;
+    margin-top: 5vh;
 }
