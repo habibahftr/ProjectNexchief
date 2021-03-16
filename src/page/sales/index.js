@@ -13,7 +13,7 @@ class Sales extends Component {
         this.state = {
             sales: [],
             salesClick:{},
-            limit: 2,
+            limit: 7,
             count: 0,
             page: 1,
         }
@@ -144,8 +144,8 @@ class Sales extends Component {
                                             <tr key={index} className="salesList">
                                                 <td>{sales.dateSales}</td>
                                                 <td>{sales.customer}</td>
-                                                <td>{sales.discount}</td>
                                                 <td>{sales.gross}</td>
+                                                <td>{sales.discount}</td>
                                                 <td>{sales.tax}</td>
                                                 <td>{sales.invoice}</td>
                                                 <td>{sales.status}</td>

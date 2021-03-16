@@ -52,15 +52,7 @@ class ComponentToPrint extends Component {
     }
 
     getAllProduct = (value, limit) => {
-        // fetch(`http://localhost:8080/nexchief/products/` + this.props.id, {
-        //     method: "get",
-        //     headers: {
-        //         "Content-Type": "application/json; ; charset=utf-8",
-        //         "Access-Control-Allow-Headers": "Authorization, Content-Type",
-        //         "Access-Control-Allow-Origin": "*"
-        //     }
-        // })
-        fetch(`http://localhost:8080/nexchief/product/paging/?page=` + value + "&limit=" + limit + "&id=" + this.props.dataLoginUser.id, {
+        fetch(`http://localhost:8080/nexchief/products/` + this.props.id, {
             method: "get",
             headers: {
                 "Content-Type": "application/json; ; charset=utf-8",
@@ -68,6 +60,14 @@ class ComponentToPrint extends Component {
                 "Access-Control-Allow-Origin": "*"
             }
         })
+        // fetch(`http://localhost:8080/nexchief/product/paging/?page=` + value + "&limit=" + limit + "&id=" + this.props.dataLoginUser.id, {
+        //     method: "get",
+        //     headers: {
+        //         "Content-Type": "application/json; ; charset=utf-8",
+        //         "Access-Control-Allow-Headers": "Authorization, Content-Type",
+        //         "Access-Control-Allow-Origin": "*"
+        //     }
+        // })
             .then(response => response.json())
             .then(json => {
                 this.setState({
