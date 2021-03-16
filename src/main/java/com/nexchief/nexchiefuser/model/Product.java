@@ -119,6 +119,8 @@ public class Product {
     }
 
     public int getStock() {
+//        int stock;
+//        stock = (getStock()-getQty());
         return stock;
     }
 

@@ -30,4 +30,18 @@ public class SalesServiceImpl implements SalesService {
     public int countSales(String distributor) {
         return salesRepository.countSales(distributor);
     }
+
+    @Override
+    public void saveSales(Sales sales) {
+        synchronized (this){
+            salesRepository.saveSales(sales);
+        }
+    }
+
+    @Override
+    public void updateSales(Sales sales) {
+        synchronized (this){
+            salesRepository.updateSales(sales);
+        }
+    }
 }

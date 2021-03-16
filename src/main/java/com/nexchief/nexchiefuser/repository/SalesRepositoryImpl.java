@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository("salesRepository")
 public class SalesRepositoryImpl implements SalesRepository{
@@ -107,5 +108,49 @@ public class SalesRepositoryImpl implements SalesRepository{
         int countSales;
         countSales= jdbcTemplate.queryForObject("SELECT COUNT(*) as count FROM sales WHERE distributor='"+distributor+"'", Integer.class);
         return countSales;
+    }
+
+    @Override
+    public int saveSales(Sales sales) {
+        UUID salesHeaderId= UUID.randomUUID();
+        jdbcTemplate.update(
+                "INSERT INTO sales (idSales, date, distributor, customer, discount, status) values(?,?,?,?,?,?)",
+                salesHeaderId.toString(),
+                sales.getDateSales(),
+                sales.getDistributor(),
+                sales.getCustomer(),
+                sales.getDiscount(),
+                sales.getStatus()
+        );
+        for(Product product: sales.getProductList()){
+            String salesDetailId = String.valueOf(UUID.randomUUID());
+            jdbcTemplate.update(
+                    "INSERT INTO salesdetail (idDetail, idSales, codeProduct, qty) values (?,?,?,?)",
+                    salesDetailId,
+                    salesHeaderId.toString(),
+                    product.getCode(),
+                    product.getQty()
+            );
+        }
+        return 0;
+    }
+
+    @Override
+    public void updateSales(Sales sales) {
+        jdbcTemplate.update(
+                "UPDATE sales SET status=?, DELETE FROM salesdetail WHERE idSales=?", sales.getStatus(),sales.getIdSales()
+        );
+
+        for(Product product: sales.getProductList()) {
+            String salesDetailId = String.valueOf(UUID.randomUUID());
+            jdbcTemplate.update(
+                    "INSERT INTO salesdetail (idDetail, idSales, codeProduct, qty) values (?,?,?,?)",
+                    salesDetailId,
+                    sales.getIdSales(),
+                    product.getCode(),
+                    product.getQty()
+            );
+        }
+
     }
 }

@@ -8,4 +8,8 @@ public interface SalesService {
     List<Sales> findAll(int page, int limit, String id);
     Sales findById(String idSales);
     int countSales(String distributor);
+    void saveSales(Sales sales);
+    void updateSales(Sales sales);
+
+
 }
