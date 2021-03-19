@@ -5,6 +5,7 @@ import Icon from '../../component/icon';
 import Input from '../../component/input';
 import Label from '../../component/label';
 import "./style.css"
+import Swal from 'sweetalert2';
 
 class Login extends Component {
     constructor(props) {
@@ -43,7 +44,8 @@ class Login extends Component {
         const { username, password } = obj
         console.log("user", obj);
         if (username === "" || password === "") {
-            alert(`Insert all data!`)
+            Swal.fire('Insert all data!')
+            // alert(`Insert all data!`)
         } else {
             fetch(`http://localhost:8080/nexchief/login/?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`, {
                 method: "get",
@@ -63,10 +65,23 @@ class Login extends Component {
 
 
                     if (typeof json.errorMessage !== 'undefined') {
-                        alert(json.errorMessage);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: json.errorMessage,
+                            // footer: '<a href>Why do I have this issue?</a>'
+                          })
+                        // alert(json.errorMessage);
                     } else {
                         this.props.submitLogin({ dataLogin: json })
-                        alert(`Login Success`)
+                        // alert(`Login Success`)
+                        Swal.fire({
+                            // position: 'top-end',
+                            icon: 'success',
+                            title: 'Login Success',
+                            showConfirmButton: false,
+                            timer: 1500
+                          })
                         this.props.history.push("/home")
                     }
 

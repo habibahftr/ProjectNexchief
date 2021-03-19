@@ -9,6 +9,7 @@ import Sales from '../../page/sales';
 import SalesDetail from '../../page/salesDetail';
 import Report from '../../page/report';
 import ProductReport from '../../page/productReport';
+import SalesReport from '../../page/salesReport';
 
 class Body extends Component {
     constructor(props) {
@@ -70,6 +71,12 @@ class Body extends Component {
                     ()=>{
                         let history = useHistory()
                         return <ProductReport history={history}/>
+                    }
+                }></Route>
+                <Route exact path="/report/sales" component={
+                    ()=>{
+                        let history = useHistory()
+                        return <SalesReport history={history}/>
                     }
                 }></Route>
                

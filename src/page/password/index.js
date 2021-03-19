@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import Button from '../../component/button';
 import Icon from '../../component/icon';
 import "./style.css"
+import Swal from 'sweetalert2';
 
 class Password extends Component {
     constructor(props) {
@@ -59,17 +60,22 @@ class Password extends Component {
     changePass = (changePass) => {
         console.log("idChange", this.props.dataLoginUser.id);
         const {oldPass, newPass, newPass1} = changePass
-        // console.log("changePass", changePass);
-        // console.log("newPass1", newPass1);
-        // console.log("newPass", newPass);
         if (newPass === "" || newPass1 === "") {
-            alert(`Insert all data!`)
-        }
-        else if (newPass !== newPass1) {
-            alert(`validation Password wrong`)
+            Swal.fire('Insert all data!')
         }
         else if(oldPass !== this.state.truePass){
-            alert(`Invalid Old Password`)
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Invalid Old Password',
+              })
+        }
+        else if (newPass !== newPass1) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'validation Password wrong!',
+              })
         }
         else{
             const objPass={
@@ -89,9 +95,19 @@ class Password extends Component {
             })
             .then((json)=>{
                 if(typeof json.errorMessage !== 'undefined'){
-                    alert(json.errorMessage)
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: json.errorMessage,
+                      })
                 }else if (typeof json.successMessage !== 'undefined'){
-                    alert(json.successMessage)
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: json.successMessage,
+                        showConfirmButton: false,
+                        timer: 1500
+                      })
                     this.props.logout()
                     this.setClear()
                 }

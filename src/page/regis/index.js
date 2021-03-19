@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import Button from '../../component/button';
 import Icon from '../../component/icon';
 import "./style.css"
+import Swal from 'sweetalert2';
 
 
 class Regis extends Component {
@@ -30,27 +31,51 @@ class Regis extends Component {
         let regEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
         let regUname = /^(?=.{6,8}$)(?![_.])[a-zA-Z0-9._]+(?<![_.])$/;
         let regPass = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{6}$/
-        let regPhone = /^(^\+62|62|^08)(\d{3,4}-?){2}\d{3,4}$/
+        let regPhone = /^(^08)(\d{3,4}-?){2}\d{3,4}$/
 
         console.log("userRegis", obj);
         if (username === "" || password === "" || name===""|| email===""|| phone===""|| validationpwd==="") {
-            alert(`Insert all data!`)
-        } 
-        else if(password !== validationpwd){
-            alert(`validation password get wrong!`)
-        } 
-        else if (!regUname.test(obj.username)){
-            alert(`Username must be 6 to 8 in alphanumeric and without any symbol`)
+            Swal.fire({
+                title:'Insert all data!',
+                icon: 'warning'
+            })
+            // alert(`Insert all data!`)
         } 
         else if (!regEmail.test(obj.email)){
-            alert(`email get wrong. ex (xxx.xxx@xxx.com)`)
-        }
-        else if (!regPass.test(obj.password)){
-            alert(`Password must be 6 in alphanumeric and at least 1 uppercase letter`)
+            Swal.fire({
+                title: 'email get wrong. ex (xxx.xxx@xxx.com)',
+                icon: 'warning'
+            })
+            // alert(`email get wrong. ex (xxx.xxx@xxx.com)`)
         }
         else if (!regPhone.test(obj.phone)){
-            alert(`Phone number must in Indonesia type (ex: 628113912109 or 08134455555)`)
+            Swal.fire({
+                title: 'Phone number min. 11 number and max.14 number, must in Indonesia type (ex: 08134455555)',
+                icon: 'warning'
+            })
+            // alert(`Phone number must in Indonesia type (ex:08134455555)`)
         }
+        else if (!regUname.test(obj.username)){
+            Swal.fire({
+                title: 'Username must be 6 to 8 in alphanumeric and without any symbol',
+                icon: 'warning'
+            })
+            // alert(`Username must be 6 to 8 in alphanumeric and without any symbol`)
+        } 
+        else if (!regPass.test(obj.password)){
+            Swal.fire({
+                title: 'Password must be 6 in alphanumeric and at least 1 uppercase letter',
+                icon: 'warning'
+            })
+            // alert(`Password must be 6 in alphanumeric and at least 1 uppercase letter`)
+        }
+        else if(password !== validationpwd){
+            Swal.fire({
+                title: 'validation password get wrong!',
+                icon: 'warning'
+            })
+            // alert(`validation password get wrong!`)
+        } 
         else {
             const objRegis={
                 name: name,
@@ -74,16 +99,30 @@ class Regis extends Component {
            
             .then((result) => {
                 if (result.successMessage === "New user successfully created") {
-                    alert(result.successMessage)
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: result.successMessage,
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    // alert(result.successMessage)
                     this.setClear();
                     this.props.history.push("/")
                 }
                 else if (result.errorMessage !== 'undefined'){
-                    alert(result.errorMessage)
+                    Swal.fire({
+                        title: result.errorMessage,
+                        icon: 'warning'
+                    })
+                    // alert(result.errorMessage)
                 }
             })
             .catch((e) => {
-                alert(e);
+                Swal.fire({
+                    title: e,
+                    icon: 'warning'
+                })
             });
         }
     }

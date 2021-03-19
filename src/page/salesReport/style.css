@@ -1,0 +1,99 @@
+.salesReportPage{
+    height: 100%;
+    width: 100%;
+}
+
+.headerSalesReport{
+    width: 100%;
+    height: 15vh;
+    /* border:solid; */
+    background-color: black;
+    display: flex;
+    flex-direction: row;
+
+}
+
+.tittleSalesReport{
+    margin-top: 30px;
+    margin-left: 20%;
+    width: 50%;
+    text-align: center;
+}
+
+.labelProduct{
+
+}
+
+.labelReport{
+
+}
+
+.backBtnSalesReport{
+    width: 100%;
+    height: 10vh;
+}
+
+.backReport{
+    margin-top: 4%;
+    margin-left: 80%;
+    background-color: #FF0800;
+    border: #FF0800;
+    color: white;
+    box-shadow: 0 6px #800000;
+    border-radius: 10px;
+    padding: 4px;
+
+}
+
+.bodySalesReport{
+    background-color: #333333;
+    width: 100%;
+    height: 82vh;
+    margin: auto;
+
+}
+
+.container5{
+    width: 100%;
+    height: 15vh;
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+}
+
+.searchSales{
+    margin: auto;
+    text-align: center;
+    width: 50%;
+
+}
+
+.searchProdReport{
+    
+}
+
+.container6{
+    width: 100%;
+    text-align: center;
+    margin: auto;
+    /* padding-left: 5%; */
+
+}
+
+.paginationReportSales{
+    background-color: #ddd;
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+    margin-left: 1.3%;
+    margin-bottom: 13px;
+    position: fixed;
+    bottom: 0;
+    width: 96.4%;
+    justify-content: space-between;
+    color: black;
+    display: flex;
+    flex-direction: row;
+    border: 2px solid black;
+
+}

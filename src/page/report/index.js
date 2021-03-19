@@ -25,7 +25,7 @@ class Report extends Component {
                             <div className="prodReport" style={{ color: "white", display: 'inline-block', fontSize: "20px" }} >PRODUCTS REPORT</div>
                         </div>
                         <div className="salesReporticon">
-                            <Icon onClick={() => this.props.history.push("/sales")} className="fas fa-file-invoice-dollar" style={{ color: "white", display: 'inline-block', fontSize: "100px", cursor: "pointer", border: "solid", padding: "6px" }}></Icon><br />
+                            <Icon onClick={() => this.props.history.push("/report/sales")} className="fas fa-file-invoice-dollar" style={{ color: "white", display: 'inline-block', fontSize: "100px", cursor: "pointer", border: "solid", padding: "6px" }}></Icon><br />
                             <div className="salesReport" style={{ color: "white", display: 'inline-block', fontSize: "20px" }}>SALES REPORT</div>
                         </div>
                     </div>

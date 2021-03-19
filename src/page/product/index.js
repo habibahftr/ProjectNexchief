@@ -5,6 +5,7 @@ import Icon from '../../component/icon';
 import Input from '../../component/input';
 import Pagination from '@material-ui/lab/Pagination';
 import "./style.css";
+import Swal from 'sweetalert2';
 
 class Product extends Component {
     constructor(props) {
@@ -23,6 +24,7 @@ class Product extends Component {
             limit: 3,
             count: 0,
             page: 1,
+            pageNow:1,
             // -----------------------INI STATE PRODUCT-------------------------------
             productList: [],
             product: {},
@@ -84,7 +86,12 @@ class Product extends Component {
     //------------------------------------------------------ADD CLICK---------------------------------------------
     addClick = () => {
         console.log("addclick");
-        let today = new Date();
+        let current_datetime = new Date()
+        let yearTwoDigit = current_datetime.getFullYear();
+        let monthTwoDigit = ("0" + (current_datetime.getMonth() + 1)).slice(-2)
+        let dateTwoDigit = ("0" + current_datetime.getDate()).slice(-2)
+        let formatted_date = yearTwoDigit + "-" + monthTwoDigit + "-" + dateTwoDigit
+        console.log("uji tanggal:", formatted_date)
         this.setState({
             displayTemp: "none",
             displaySubmit: "",
@@ -95,8 +102,8 @@ class Product extends Component {
             disableProd: true,
             created_by: this.props.dataLoginUser.name,
             updated_by: this.props.dataLoginUser.name,
-            updated_at: new Date(),
-            created_at: today,
+            updated_at: formatted_date,
+            created_at: formatted_date,
             code: "",
             nameProduct: "",
             packaging: "",
@@ -133,7 +140,10 @@ class Product extends Component {
         console.log("updateClick");
         const { nameProduct, packaging, product_desc, category, launch_date, status, price, stock, updated_at, updated_by } = obj;
         if (nameProduct === "" || packaging === "" || category === "") {
-            alert(`Insert Product name, Packaging, and Category!`)
+            Swal.fire({
+                title: 'Insert Product name, Packaging, and Category!',
+                icon: 'warning'
+            })
         } else {
             const objEdit = {
                 nameProduct: nameProduct,
@@ -161,9 +171,18 @@ class Product extends Component {
                 })
                 .then((json) => {
                     if (typeof json.errorMessage !== 'undefined') {
-                        alert(json.errorMessage)
+                        Swal.fire({
+                            title: json.errorMessage,
+                            icon: 'warning'
+                        })
                     } else if (typeof json.successMessage !== 'undefined') {
-                        alert(json.successMessage)
+                        Swal.fire({
+                            position: 'center',
+                            icon: 'success',
+                            title: json.successMessage,
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
                         this.setClear();
                         this.setState({
                             displayTemp: "",
@@ -207,7 +226,10 @@ class Product extends Component {
         console.log("obj", obj);
         let objProduct;
         if (nameProduct === "" || packaging === "" || category === "") {
-            alert(`Insert Product name, Packaging, and Category!`)
+            Swal.fire({
+                title: 'Insert Product name, Packaging, and Category!',
+                icon: 'warning'
+            })
         } else {
             if (code === "") {
                 objProduct = {
@@ -258,7 +280,13 @@ class Product extends Component {
                 })
                 .then((result) => {
                     if (result.successMessage === "New product successfully created") {
-                        alert(result.successMessage)
+                        Swal.fire({
+                            position: 'top',
+                            icon: 'success',
+                            title: result.successMessage,
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
                         this.setState({
                             displayTemp: "",
                             displayUpdate: "none",
@@ -273,11 +301,17 @@ class Product extends Component {
                         // this.getAllProduct();
                         this.getPaging(this.state.page, this.state.limit)
                     } else {
-                        alert(result.errorMessage)
+                        Swal.fire({
+                            title: result.errorMessage,
+                            icon: 'warning'
+                        })
                     }
                 })
                 .catch((e) => {
-                    alert(e);
+                    Swal.fire({
+                        title: e,
+                        icon: 'warning'
+                    })
                 })
         }
 
@@ -295,17 +329,36 @@ class Product extends Component {
         })
             .then((result) => {
                 if (result.successMessage !== "undefined") {
-                    alert(result.successMessage)
-                    this.setClear();
-                    this.getPaging(this.state.page, this.state.limit)
-                    this.setState({
-                        disableBtn: true,
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            Swal.fire(
+                                'Deleted!',
+                                result.successMessage,
+                                'success'
+                            )
+                            this.setClear();
+                            this.getPaging(this.state.page, this.state.limit)
+                            this.setState({
+                                disableBtn: true,
+                            })
+                        }
                     })
-                    // this.getAllProduct();
+
 
                 }
                 else if (result.errorMessage !== 'undefined') {
-                    alert(result.errorMessage)
+                    Swal.fire(
+                        result.errorMessage,
+                        'warning'
+                    )
                 }
             })
             .catch((e) => {
@@ -446,22 +499,18 @@ class Product extends Component {
         console.log("src");
         const searchIconTemp = this.state.searchIcon
         if (searchIconTemp === true) {
-            if (this.state.search === "") {
-                alert(`Input product name for searching`)
-            } else {
+            if (this.state.search !== "") {
                 this.getAPICountSearch();
-
-                if(this.getAPICountSearch()> 0){
-                    this.searchName(this.state.page, this.state.limit)
-                    this.setState({
-                        searchIcon: false,
-                    });
-                }else{
-                    this.setState({
-                        productList:[],
-                        searchIcon: false,
-                    })
-                }
+                this.searchName(this.state.pageNow, this.state.limit)
+                this.setState({
+                    page: 1,
+                    searchIcon: false,
+                });
+            } else {
+                Swal.fire({
+                    title: 'Input product name for searching!',
+                    icon: 'warning'
+                })
             }
         } else {
             this.setState({
@@ -509,10 +558,12 @@ class Product extends Component {
 
     //============================================================R E N D E R===============================================================
     render() {
-        console.log("INI CREATED AT : ", this.state.created_at);
-        console.log("code", this.state.code);
-        console.log("productname", this.state.nameProduct);
-        console.log("productlist: ", this.state.productList);
+        // console.log("ini page : ", this.state.page);
+        // console.log("INI CREATED AT : ", this.state.created_at);
+        // console.log("code", this.state.code);
+        // console.log("productname", this.state.nameProduct);
+        // console.log("productlist: ", this.state.productList);
+        // console.log("count", this.state.count);
         const { code, nameProduct, packaging, product_desc, category, launch_date, status, price, stock, created_at, created_by, updated_at, updated_by } = this.state
         if (this.props.checkLogin === false) {
             this.props.history.push("/")

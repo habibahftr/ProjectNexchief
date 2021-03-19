@@ -51,16 +51,20 @@
     transform: translateY(4px);
   }
 .seacrhSales1{
-    margin-left: 30%;
-    padding-left: 10px;
+    width: 40%;
+    margin-left: 7%;
+    display: flex;
+    flex-direction: row;
+    /* margin-right: 0; */
 }
 .searchSales2{
     width: 250px;
     height:22px;
-    margin-top: 10%;
+    margin-top: 5vh;
+    margin-right: 2%
 }
 .container2{
-    height: 72vh;
+    height: 70vh;
     width: 100%;
     margin: auto;
     text-align: center;
@@ -70,6 +74,7 @@
 #tableSales1{
     margin: auto;
     padding: 2px;
+    width: 90%;
 }
 .tbodySales{
     padding: 3px;
@@ -92,7 +97,37 @@
 
 .paginationSales{
     /* border: solid; */
-    width: 30%;
+    /* width: 30%;
     margin: auto;
+    margin-top: 5vh; */
+    background-color: #ddd;
+    display: inline-block;
+    padding: 0;
+    margin: auto;
+    margin-bottom: 1.2vh;
+    position: fixed;
+    bottom: 0;
+    width: 90%;
+    margin-left: 5%;
+    justify-content: space-between;
+    color: black;
+    display: flex;
+    flex-direction: row;
+    border: 2px solid black;
+}
+.searchBtnSales{
+    /* border:solid; */
+    background-color: paleturquoise;
+    color: black;
+    margin-left: 4vh;
+}
+
+.fa-search{
     margin-top: 5vh;
+    cursor: pointer;
+}
+
+.fa-window-close{
+    margin-top: 5vh;
+    cursor: pointer;
 }

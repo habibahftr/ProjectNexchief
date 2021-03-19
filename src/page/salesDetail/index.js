@@ -15,21 +15,23 @@ class SalesDetail extends Component {
             displayAdd: "",
             displayBtn: "none",
             disableInput: true,
+            idSales: "",
             dateSales: "",
             distributor: "",
             customer: "",
-            discount:"",
+            discount: "",
             status: "",
-            gross:"",
-            tax:"",
-            invoice:"",
+            grossArray: [],
+            gross: 0,
+            tax: 0,
+            invoice: 0,
             productData: [],
             productList: [],
             product: {
                 code: "",
                 nameProduct: "",
                 qty: "",
-                price: "",
+                price: 0,
                 totalPrice: "",
                 submit: false
             },
@@ -42,11 +44,13 @@ class SalesDetail extends Component {
         }
     }
 
+    // ------------------------------------------------COMPONENT DID MOUNT----------------------------------------------------
     componentDidMount() {
         console.log("sales detail", this.props.salesClick);
         this.getAllProduct();
         if (this.props.act === 1) {
             this.setState({
+                idSales: this.props.salesClick.idSales,
                 dateSales: this.props.salesClick.dateSales,
                 distributor: this.props.dataLoginUser.name,
                 status: this.props.salesClick.status,
@@ -55,7 +59,7 @@ class SalesDetail extends Component {
                 gross: this.props.salesClick.gross,
                 discount: this.props.salesClick.discount,
                 tax: this.props.salesClick.tax,
-                invoice:this.props.salesClick.invoice,
+                invoice: this.props.salesClick.invoice,
                 displayDel: "",
                 displayEdit: "",
             })
@@ -66,18 +70,25 @@ class SalesDetail extends Component {
                 status: "",
                 customer: "",
                 productList: [],
+                discount: "",
+                status: "UNPAID",
+                gross: 0,
+                tax: 0,
+                invoice: 0,
                 disableInput: false,
             })
 
         }
     }
 
+    // -------------------------------------------------SET VALUE-------------------------------------------------------
     setValue = el => {
         this.setState({
             [el.target.name]: el.target.value
         })
     }
 
+    // -----------------------------------------SET CLEAR(RESET)---------------------------------------------------------
     setClear = () => {
         this.setState({
             dateSales: "",
@@ -88,22 +99,25 @@ class SalesDetail extends Component {
         })
     }
 
+    // -------------------------------------ADD CLICK(ADD BOTTOM)----------------------------------------------------------
     addClick = () => {
-        this.setState({
-            product:{
-                submit: false
-            },
-            displayAdd: "none",
-            displayBtn: "",
-            disableTable: true,
-            displayDel: "none",
-            displayEdit: "none",
-        })
         let prodList = this.state.productList
-        prodList.push(this.state.product);
+        if (prodList.length < 5) {
+            this.setState({
+                displayAdd: "none",
+                displayBtn: "",
+                disableTable: true,
+                displayDel: "none",
+                displayEdit: "none",
+            })
+            prodList.push(this.state.product);
+        } else {
+            Swal.fire("Maximum product quantity 5")
+        }
 
     }
 
+    // --------------------------------------------------CANCEL CLICK------------------------------------------------------
     cancelClick = () => {
         this.setState({
             displayAdd: "",
@@ -113,24 +127,65 @@ class SalesDetail extends Component {
             displayDel: "",
             displayEdit: "",
             displayCancel: "none",
+            gross: 0,
 
         })
         let prodList = this.state.productList
         prodList.pop();
     }
 
-    submitClick = () => {
-        let temp = this.state.productList.map(el => ({...el, submit:true}))
+    // -------------------------------------------------TAX HANDLER---------------------------------------------------------
+    taxhandler = () => {
+        let taxTemp = this.state.tax
+        taxTemp = (this.state.gross - this.state.discount) * 0.1;
         this.setState({
-            productList : temp,
-            displayAdd: "",
-            displayBtn: "none",
-            displayEdit:"",
-            displayDel:""
-            
+            tax: taxTemp,
+        }, () => this.invoiceHandler())
+    }
+
+
+    // -------------------------------------------INVOICE HANDLER----------------------------------------------------------
+    invoiceHandler = () => {
+        let invoiceTemp = this.state.invoice
+        invoiceTemp = ((this.state.gross - this.state.discount) + this.state.tax)
+        this.setState({
+            invoice: invoiceTemp,
         })
     }
 
+    // -------------------------------------------SUBMIT CLICK-----------------------------------------------------------------
+    submitClick = () => {
+        let prodList = this.state.productList
+        if (prodList[prodList.length - 1].code === "") {
+            Swal.fire('Choose Product Code!')
+            // prodList.splice(i,1)
+        }
+        else{
+            let temp = this.state.productList.map(el => ({ ...el, submit: true }))
+            this.setState({
+                productList: temp,
+                displayAdd: "",
+                displayBtn: "none",
+                displayEdit: "",
+                displayDel: "",
+            })
+
+            let grossTemp = 0;
+            for (let i = 0; i < this.state.productList.length; i++) {
+                grossTemp = grossTemp + this.state.productList[i].totalPrice
+            }
+            this.setState({
+                gross: grossTemp,
+            }, () => this.taxhandler())
+            
+        }
+        for (let i = 0; i < prodList.length; i++) {
+        }
+
+        console.log("gross", this.state.grosss);
+    }
+
+    // --------------------------------------------------------BACK TO SALES PAGE-------------------------------------------------
     backSales = () => {
         Swal.fire({
             title: 'Do you want to save the changes?',
@@ -145,8 +200,6 @@ class SalesDetail extends Component {
                 let objSales;
                 if (dateSales === null || customer === "" || status === "") {
                     Swal.fire('Insert All Data')
-                    console.log("dateSales", dateSales);
-                    console.log("status", status);
                 } else {
                     objSales = {
                         dateSales: dateSales,
@@ -156,32 +209,59 @@ class SalesDetail extends Component {
                         status: status,
                         productList: productList,
                     }
-                fetch(`http://localhost:8080/nexchief/sales/`, {
-                    method: "post",
-                    headers: {
-                        "Content-Type": "application/json; ; charset=utf-8",
-                        "Access-Control-Allow-Headers": "Authorization, Content-Type",
-                        "Access-Control-Allow-Origin": "*"
-                    },
-                    body: JSON.stringify(objSales)
-                })
-                    .then((response) => {
-                        return response.json()
-                    })
-                    .then((result) => {
-                        if (result.successMessage === "New Sales succesfully cretaed") {
-                            alert(result.successMessage)
-                            this.setClear();
-                            this.props.backSales();
-                            this.props.history.push("/sales")
-                            Swal.fire('Saved!', '', 'success')
-                        } else {
-                            alert(result.errorMessage)
-                        }
-                    })
-                    .catch((e) => {
-                        // alert(e);
-                    })
+                    if (this.props.act === 1) {
+                        fetch(`http://localhost:8080/nexchief/update/sales/` + this.state.idSales, {
+                            method: "put",
+                            headers: {
+                                "Content-Type": "application/json; ; charset=utf-8",
+                                "Access-Control-Allow-Headers": "Authorization, Content-Type",
+                                "Access-Control-Allow-Origin": "*"
+                            },
+                            body: JSON.stringify(objSales)
+                        })
+                            .then((response) => {
+                                return response.json()
+                            })
+                            .then((json) => {
+                                if (typeof json.errorMessage !== 'undefined') {
+                                    alert(json.errorMessage)
+                                } else if (typeof json.successMessage !== 'undefined') {
+                                    this.setClear();
+                                    this.props.backSales();
+                                    this.props.history.push("/sales")
+                                    Swal.fire('Saved!', '', 'success')
+                                }
+                            })
+
+
+                    } else {
+                        fetch(`http://localhost:8080/nexchief/sales/`, {
+                            method: "post",
+                            headers: {
+                                "Content-Type": "application/json; ; charset=utf-8",
+                                "Access-Control-Allow-Headers": "Authorization, Content-Type",
+                                "Access-Control-Allow-Origin": "*"
+                            },
+                            body: JSON.stringify(objSales)
+                        })
+                            .then((response) => {
+                                return response.json()
+                            })
+                            .then((result) => {
+                                if (result.successMessage === "New Sales succesfully cretaed") {
+                                    alert(result.successMessage)
+                                    this.setClear();
+                                    this.props.backSales();
+                                    this.props.history.push("/sales")
+                                    Swal.fire('Saved!', '', 'success')
+                                } else {
+                                    alert(result.errorMessage)
+                                }
+                            })
+                            .catch((e) => {
+                                // alert(e);
+                            })
+                    }
                 }
 
 
@@ -216,75 +296,87 @@ class SalesDetail extends Component {
             })
     }
 
+    // --------------------------------------------------QTY HANDLER-----------------------------------------------------------
     handleQty = (el, idx, key) => {
         let temp = this.state.productList
-        let priceTemp = temp[idx].price*el.target.value 
-        temp[idx] = {
-            ...temp[idx],
-            [key]: el.target.value,
-            totalPrice: priceTemp,
+        let product = this.state.productData.find(elm => elm.code === temp[idx].code);
+        if (product !== undefined) {
+            if (product.stock < el.target.value) {
+                Swal.fire('lack of stock!')
+            } else {
+                let priceTemp = temp[idx].price * el.target.value
+                temp[idx] = {
+                    ...temp[idx],
+                    [key]: el.target.value,
+                    totalPrice: priceTemp,
+                }
+                console.log("pricetemp", priceTemp);
+                this.setState({
+                    productList: temp,
+                })
+            }
+        } else {
+            Swal.fire('Choose Product Code!')
         }
-        console.log("pricetemp",priceTemp);
-        this.setState({
-            productList: temp
-        })
     }
 
+
+    // --------------------------------------------------------PROD HANDLER----------------------------------------------------------
     handleProd = (el, idx, key) => {
         let temp = this.state.productList
         let product = this.state.productData.find(elm => elm.code === el.target.value);
-        console.log(temp[0]);
-        temp[idx] = {
-            ...temp[idx],
-            [key]: el.target.value,
-            nameProduct: product.nameProduct,
-            price: product.price
+        if (product !== undefined) {
+            console.log(temp[0]);
+            temp[idx] = {
+                ...temp[idx],
+                [key]: el.target.value,
+                nameProduct: product.nameProduct,
+                price: product.price
 
-        }
-        this.setState({
-            productList: temp
-        })
-    }
-
-    saveClick = (obj) => {
-        const { dateSales, distributor, customer, discount, status, productList } = obj
-        let objSales;
-        if (dateSales === "" || customer === "" || discount === "" || status === "") {
-            alert(`Insert All data!`)
-        } else {
-            objSales = {
-                dateSales: dateSales,
-                distributor: this.props.dataLoginUser.id,
-                customer: customer,
-                discount: discount,
-                status: status,
-                productList: productList,
             }
+            this.setState({
+                productList: temp
+            })
+        } else {
+            Swal.fire('Choose Product Code!')
         }
-        fetch(`http://localhost:8080/nexchief/sales/`, {
-            method: "post",
-            headers: {
-                "Content-Type": "application/json; ; charset=utf-8",
-                "Access-Control-Allow-Headers": "Authorization, Content-Type",
-                "Access-Control-Allow-Origin": "*"
-            },
-            body: JSON.stringify(objSales)
-        })
-            .then((response) => {
-                return response.json()
-            })
-            .then((result) => {
-                if (result.successMessage === "New Sales succesfully cretaed") {
-                    alert(result.successMessage)
-                } else {
-                    alert(result.errorMessage)
-                }
-            })
-            .catch((e) => {
-                alert(e);
-            })
+
     }
 
+    delClick = (idx) => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                console.log(idx);
+                let temp = this.state.productList
+                temp.splice(idx, 1)
+                this.setState({
+                    prodList: temp
+                })
+                this.submitClick()
+                Swal.fire(
+                    'Deleted!',
+                    'Your file has been deleted.',
+                    'success'
+                )
+            }
+        })
+    }
+
+    editClick = () => {
+        this.setState({
+            displaySave: "",
+            displayCancel: ""
+        })
+
+    }
 
     render() {
         const { dateSales, distributor, customer, discount, status, productList } = this.state
@@ -331,71 +423,74 @@ class SalesDetail extends Component {
                     </div>
                 </div>
                 <div className="detailBottom">
-                    <table id="tableDetail1" cellspasing="0" border="1 white">
-                        <thead>
-                            <tr className="tableDetail2" >
-                                <th className="tText">Product Code</th>
-                                <th className="tText">Product Name</th>
-                                <th className="tText">Quantity</th>
-                                <th className="tText">Price (Rp)</th>
-                                <th className="tText">Sub Total (Rp)</th>
-                                <th className="tText" style={{ border: "none" }}></th>
-                            </tr>
-                        </thead>
-                        <tbody className="tbodyDetail">
-                            {
-                                this.state.productList.map((detail, index) => {
-                                    return (
-                                        <tr key={index} className="detailList">
-                                            {/* <td><input disabled={this.state.disableTable} value={detail.code} onChange={this.setValue}></input></td> */}
-                                            <td>
-                                                <select disabled={detail.submit ? true : false} name="code" onChange={(el) => { this.handleProd(el, index, "code") }} value={detail.code}>
-                                                    {
-                                                        this.state.productData.map((prod) => {
-                                                            return (
-                                                                <option value={prod.code}>{prod.code}</option>
-                                                            )
-                                                        })
-                                                    }
-                                                </select>
-                                            </td>
-                                            <td><input name="nameProduct" disabled={this.state.disableTable} value={detail.nameProduct}></input></td>
-                                            <td><input name="qty" disabled={detail.submit ? true : false} onChange={(el) => { this.handleQty(el, index, "qty") }} value={detail.qty}></input></td>
-                                            <td><input disabled={this.state.disableTable} value={detail.price}></input></td>
-                                            <td><input disabled={this.state.disableTable} value={detail.totalPrice}></input></td>
-                                            <td style={{ display: this.state.displayDel }}><Icon className="fas fa-trash-alt"></Icon></td>
-                                            <td style={{ display: this.state.displayEdit }}><Icon className="far fa-edit"></Icon></td>
-                                            {/* <td style={{ display: this.state.displaySave }}><Icon className="fas fa-check-square"></Icon></td>
-                                            <td style={{ display: this.state.displayCancel }}><Icon className="fas fa-window-close"></Icon></td> */}
-                                        </tr>
-                                    )
-                                })
-                            }
-                            <tr>
-                                <td colSpan="3"></td>
-                                <th>Total Item</th>
-                                <td>{this.state.gross}</td>
-                            </tr>
-                            <tr>
-                                <td colSpan="3"></td>
-                                <th>Discount</th>
-                                <td>{this.state.discount}</td>
-                            </tr>
-                            <tr>
-                                <td colSpan="3"></td>
-                                <th>Tax (10%)</th>
-                                <td>{this.state.tax}</td>
-                            </tr>
-                            <tr>
-                                <td colSpan="3"></td>
-                                <th>Total</th>
-                                <td>{this.state.invoice}</td>
-                            </tr>
+                    <center>
+                        <table id="tableDetail1" cellspasing="0" border="2 black">
+                            <thead>
+                                <tr className="tableDetail2" >
+                                    <th className="tText">Product Code</th>
+                                    <th className="tText">Product Name</th>
+                                    <th className="tText">Quantity</th>
+                                    <th className="tText">Price (Rp)</th>
+                                    <th className="tText">Sub Total (Rp)</th>
+                                    {/* <th className="tText" style={{ border: "none", backgroundColor:"#333333" }}></th> */}
+                                </tr>
+                            </thead>
+                            <tbody className="tbodyDetail">
+                                {
+                                    this.state.productList.map((detail, index) => {
+                                        return (
+                                            <tr key={index} className="detailList">
+                                                {/* <td><input disabled={this.state.disableTable} value={detail.code} onChange={this.setValue}></input></td> */}
+                                                <td>
+                                                    <select disabled={detail.submit ? true : false} name="code" onChange={(el) => { this.handleProd(el, index, "code") }} value={detail.code} defaultValue="Product Code">
+                                                        <option defaultValue>Product Code</option>
+                                                        {
+                                                            this.state.productData.map((prod) => {
+                                                                return (
+                                                                    <option value={prod.code}>{prod.code} (stock: {prod.stock})</option>
+                                                                )
+                                                            })
+                                                        }
+                                                    </select>
+                                                </td>
+                                                <td><input name="nameProduct" disabled={this.state.disableTable} value={detail.nameProduct}></input></td>
+                                                <td><input name="qty" disabled={detail.submit ? true : false} onChange={(el) => { this.handleQty(el, index, "qty") }} value={detail.qty}></input></td>
+                                                <td><input disabled={this.state.disableTable} value={detail.price}></input></td>
+                                                <td><input disabled={this.state.disableTable} value={detail.totalPrice}></input></td>
+                                                <td onClick={() => this.delClick(index)} style={{ display: this.state.displayDel, border: "none", color: "white", backgroundColor: "#333333" }}><Icon className="fas fa-trash-alt"></Icon></td>
+                                                <td style={{ display: this.state.displayEdit, border: "none", color: "white", backgroundColor: "#333333" }}><Icon className="far fa-edit"></Icon></td>
+                                                <td style={{ display: this.state.displaySave, border: "none", color: "white", backgroundColor: "#333333" }}><Icon className="fas fa-check-square"></Icon></td>
+                                                <td style={{ display: this.state.displayCancel, border: "none", color: "white", backgroundColor: "#333333" }}><Icon className="fas fa-window-close"></Icon></td>
+                                            </tr>
+                                        )
+                                    })
+                                }
+                                <tr>
+                                    <td colSpan="3"></td>
+                                    <th style={{ backgroundColor: "#DCDCDC", color: "black" }}>Total Item</th>
+                                    <th style={{ backgroundColor: "#DCDCDC", color: "black" }}>{this.state.gross}</th>
+                                </tr>
+                                <tr>
+                                    <td colSpan="3"></td>
+                                    <th style={{ backgroundColor: "#DCDCDC", color: "black" }}>Discount</th>
+                                    <th style={{ backgroundColor: "#DCDCDC", color: "black" }}>{this.state.discount}</th>
+                                </tr>
+                                <tr>
+                                    <td colSpan="3"></td>
+                                    <th style={{ backgroundColor: "#DCDCDC", color: "black" }}>Tax (10%)</th>
+                                    <th style={{ backgroundColor: "#DCDCDC", color: "black" }}>{this.state.tax}</th>
+                                </tr>
+                                <tr>
+                                    <td colSpan="3"></td>
+                                    <th style={{ backgroundColor: "#DCDCDC", color: "black" }}>Total</th>
+                                    <th style={{ backgroundColor: "#DCDCDC", color: "black" }}>{this.state.invoice}</th>
+                                </tr>
 
 
 
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </center>
 
 
                 </div>

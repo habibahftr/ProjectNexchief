@@ -12,7 +12,7 @@
     flex-direction: row;
 }
 
-.titleSales{
+.titleProductReport{
     margin-top: 30px;
     margin-left: 20%;
     width: 50%;
@@ -51,12 +51,16 @@
     width: 100%;
     text-align: center;
     margin: auto;
+    display: none;
+
     /* padding-left: 5%; */
 }
 
-.tableProdReport1{
+#tableProdReport1{
     margin: auto;
     text-align: center;
+    width: 90%;
+    border-collapse: collapse;
     
 }
 
@@ -74,3 +78,41 @@
 .custom-toggle.react-toggle--checked .react-toggle-track {
     background-color: #ab199f;
   }
+
+  .paginationReportProd{
+    background-color: #ddd;
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+    margin-left: 1.3%;
+    margin-bottom: 13px;
+    position: fixed;
+    bottom: 0;
+    width: 96.4%;
+    justify-content: space-between;
+    color: black;
+    display: flex;
+    flex-direction: row;
+    border: 2px solid black;
+      
+  }
+  th, td {
+    text-align: left;
+    padding: 6px;
+  }
+  /* tr:nth-child(even){background-color: #DCDCDC} */
+
+th {
+  /* background-color: #0000FE; */
+  color: white;
+  background-color: #020426;
+}
+td{
+    background-color: #DCDCDC
+}
+
+.toggleProd{
+    width: 50%;
+    margin: auto;
+}
+
