@@ -62,6 +62,8 @@ public class ProductServiceImpl implements ProductService{
         return productRepository.countProductStatus(updated_by, status);
     }
 
+
+
     @Override
     public void saveProduct(Product product) {
         if (product.getCode() == null){
@@ -90,8 +92,8 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public Product findByNameProduct(String nameProduct) {
-        return productRepository.findByNameProduct(nameProduct);
+    public Product findByNameProduct(String updated_by, String nameProduct) {
+        return productRepository.findByNameProduct(updated_by, nameProduct);
     }
 
     @Override
@@ -101,7 +103,7 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public boolean isNameSpesificExist(Product product) {
-        return productRepository.findByNameProduct(product.getNameProduct())!=null;
+        return productRepository.findByNameProduct(product.getUpdated_by(), product.getNameProduct())!=null;
     }
 
     @Override

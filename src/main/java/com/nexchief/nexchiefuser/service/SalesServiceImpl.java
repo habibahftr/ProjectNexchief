@@ -27,8 +27,42 @@ public class SalesServiceImpl implements SalesService {
     }
 
     @Override
+    public List<Sales> findAllWithOutPaging(String id) {
+        List<Sales> salesList = salesRepository.findAllWithOutPaging(id);
+        return salesList;
+    }
+
+    @Override
+    public List<Sales> filterByStatus(int page, int limit, String id, String status) {
+        List<Sales> salesList= salesRepository.filterByStatus(page, limit, id, status);
+        return salesList;
+    }
+
+    @Override
+    public List<Sales> filterByStatusWithOutPaging(String id, String status) {
+        List<Sales> salesList = salesRepository.filterByStatusWithOutPaging(id, status);
+        return salesList;
+    }
+
+    @Override
+    public List<Sales> filterByProduct(int page, int limit, String id, String nameProduct) {
+        List<Sales> salesList = salesRepository.filterByNameProduct(page, limit, id, nameProduct);
+        return salesList;
+    }
+
+    @Override
+    public int countSalesStatus(String id, String status) {
+        return salesRepository.countSalesStatus(id, status);
+    }
+
+    @Override
     public int countSales(String distributor) {
         return salesRepository.countSales(distributor);
+    }
+
+    @Override
+    public int countSalesProd(String id, String nameproduct) {
+        return salesRepository.countSalesProduct(id, nameproduct);
     }
 
     @Override

@@ -69,13 +69,50 @@ public class ProductRepositoryImpl implements ProductRepository{
         return productList;
     }
 
+    @Override
+    public List<Product> filterPrint(String id, String status) {
+        List<Product> productList;
+        try{
+            productList = this.jdbcTemplate.query("SELECT p.code, p.nameProduct, p.packaging, p.product_desc, " +
+                            "p.category, p.launch_date, p.status, p.price, p.stock, p.created_at,u.name, p.updated_at, " +
+                            "u.name FROM product p, user u WHERE u.id = p.updated_by AND p.updated_by=? AND p.status=?",
+                    preparedStatement ->  {
+                        preparedStatement.setString(1, id);
+                        preparedStatement.setString(2, status);
+                    },
+                    (rs,rowNum)->
+                            new Product(
+                                    rs.getString("code"),
+                                    rs.getString("nameProduct"),
+                                    rs.getString("packaging"),
+                                    rs.getString("product_desc"),
+                                    rs.getString("category"),
+                                    rs.getDate("launch_date"),
+                                    rs.getString("status"),
+                                    rs.getInt("price"),
+                                    rs.getInt("stock"),
+                                    rs.getDate("created_at"),
+                                    rs.getString("created_by"),
+                                    rs.getDate("updated_at"),
+                                    rs.getString("updated_by")
+                            )
+            );
+        }catch (Exception e){
+            System.out.println(e);
+            productList=null;
+        }
+        return productList;
+    }
+
     public List<Product> findProductForPaging(int page, int limit, String id) {
         int numPages;
         numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM product",
                 (rs, rowNum) -> rs.getInt("count")).get(0);
 
+        if(numPages >0){
+            if (page > numPages) page = numPages;
+        }
         if (page < 1) page = 1;
-        if (page > numPages) page = numPages;
         int start = (page - 1) * limit;
         List<Product> productList = jdbcTemplate.query("SELECT p.code, p.nameProduct, p.packaging, p.product_desc," +
                         "p.category, p.launch_date, p.status, p.price, p.stock, p.created_at,u.name, p.updated_at, " +
@@ -106,9 +143,11 @@ public class ProductRepositoryImpl implements ProductRepository{
         int numPages;
         numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM product WHERE nameProduct LIKE '%"+nameProduct+"%'",
                 (rs, rowNum) -> rs.getInt("count")).get(0);
-
+        if(numPages >0){
+            if (page > numPages)
+                page = numPages;
+        }
         if (page < 1) page = 1;
-        if (page > numPages) page = numPages;
         int start = (page - 1) * limit;
         List<Product> productList;
         try{
@@ -150,8 +189,11 @@ public class ProductRepositoryImpl implements ProductRepository{
         numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM product WHERE status='"+status+"'",
                 (rs, rowNum) -> rs.getInt("count")).get(0);
 
+        if(numPages >0){
+            if (page > numPages)
+                page = numPages;
+        }
         if (page < 1) page = 1;
-        if (page > numPages) page = numPages;
         int start = (page - 1) * limit;
         List<Product> productList;
         try{
@@ -222,14 +264,17 @@ public class ProductRepositoryImpl implements ProductRepository{
 
 
     @Override
-    public Product findByNameProduct(String nameProduct) {
+    public Product findByNameProduct(String id, String nameProduct) {
         Product product;
         try{
             product=jdbcTemplate.query(
                     "SELECT p.code, p.nameProduct, p.packaging, p.product_desc, p.category, p.launch_date, " +
                             "p.status, p.price, p.stock, p.created_at,u.name, p.updated_at, u.name FROM product p, " +
-                            "user u WHERE u.id = p.updated_by AND p.nameProduct=?",
-                    preparedStatement -> preparedStatement.setString(1, nameProduct),
+                            "user u WHERE u.id = p.updated_by AND p.updated_by=? AND p.nameProduct=?",
+                    preparedStatement -> {
+                        preparedStatement.setString(1, id);
+                        preparedStatement.setString(2, nameProduct);
+                    },
                     (rs, rowNum)->
                             new Product(
                                     rs.getString("code"),

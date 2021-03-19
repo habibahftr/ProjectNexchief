@@ -3,6 +3,7 @@ package com.nexchief.nexchiefuser.controller;
 
 import com.nexchief.nexchiefuser.model.Product;
 import com.nexchief.nexchiefuser.model.Sales;
+import com.nexchief.nexchiefuser.service.ProductService;
 import com.nexchief.nexchiefuser.service.SalesService;
 import com.nexchief.nexchiefuser.util.CustomErrorType;
 import com.nexchief.nexchiefuser.util.CustomSuccessType;
@@ -20,6 +21,19 @@ public class SalesController {
 
     @Autowired
     SalesService salesService;
+
+    @Autowired
+    ProductService productService;
+
+    @GetMapping("/sales/{distributor}/")
+    public ResponseEntity<?> getAllSalesList(@PathVariable("distributor") String distributor) {
+        List<Sales> salesList = salesService.findAllWithOutPaging(distributor);
+        if(salesList == null) {
+            return new ResponseEntity<>(salesList, HttpStatus.NOT_FOUND);
+        }else{
+            return new ResponseEntity<>(salesList, HttpStatus.OK);
+        }
+    }
 
     @GetMapping("/sales/paging/")
     public ResponseEntity<?> getSalesForPagin(@RequestParam int page, @RequestParam int limit , @RequestParam String id){
@@ -40,6 +54,48 @@ public class SalesController {
     public ResponseEntity<?> countSales(@RequestParam String distributor){
         int salesCount = salesService.countSales(distributor);
         return new ResponseEntity<>(salesCount, HttpStatus.OK);
+    }
+
+    @GetMapping("/sales/filter/status/")
+    public ResponseEntity<?> filterByStatusPaging (@RequestParam int page, @RequestParam int limit, @RequestParam String distributor, @RequestParam String status){
+        List<Sales> salesList= salesService.filterByStatus(page, limit, distributor,status);
+        if(salesList == null) {
+            return new ResponseEntity<>(salesList, HttpStatus.NOT_FOUND);
+        }else{
+            return new ResponseEntity<>(salesList, HttpStatus.OK);
+        }
+    }
+
+    @GetMapping("/sales/filter/prod/")
+    public ResponseEntity<?> filterByNameproductPaging (@RequestParam int page, @RequestParam int limit, @RequestParam String distributor, @RequestParam String nameProduct){
+        List<Sales> salesList = salesService.filterByProduct(page, limit, distributor, nameProduct);
+        if (salesList == null){
+            return new ResponseEntity<>(salesList, HttpStatus.NOT_FOUND);
+        }else{
+            return new ResponseEntity<>(salesList, HttpStatus.OK);
+        }
+    }
+
+    @GetMapping("/sales/filter")
+    public ResponseEntity<?> filterByStatus (@RequestParam String distributor, @RequestParam String status){
+        List<Sales> salesList =  salesService.filterByStatusWithOutPaging(distributor, status);
+        if(salesList==null){
+            return new ResponseEntity<>(salesList, HttpStatus.NOT_FOUND);
+        }else{
+            return new ResponseEntity<>(salesList, HttpStatus.OK);
+        }
+    }
+
+    @GetMapping("/sales/status/count/")
+    public ResponseEntity<?> countSales(@RequestParam String distributor, @RequestParam String status) {
+        int salesCount= salesService.countSalesStatus(distributor, status);
+        return new ResponseEntity<>(salesCount, HttpStatus.OK);
+    }
+
+    @GetMapping("/sales/product/count/")
+    public ResponseEntity<?> countProduct (@RequestParam String distributor, @RequestParam String nameProduct){
+        int salesProdCount = salesService.countSalesProd(distributor, nameProduct);
+        return new ResponseEntity<>(salesProdCount, HttpStatus.OK);
     }
 
     @PostMapping("/sales/")

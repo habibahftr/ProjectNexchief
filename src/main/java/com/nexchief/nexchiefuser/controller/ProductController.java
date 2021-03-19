@@ -111,7 +111,7 @@ public class ProductController {
         else if (productService.isCodeExist(product)) {
             return new ResponseEntity<>(new CustomErrorType("Product with code " + product.getCode() + " already exist"),
                     HttpStatus.CONFLICT);
-        } else if (productService.isNameSpesificExist(product)) {
+        } else if (productService.findByNameProduct(product.getUpdated_by(), product.getNameProduct())!= null) {
             return new ResponseEntity<>(new CustomErrorType("Product with name " + product.getNameProduct() + " already exist"),
                     HttpStatus.CONFLICT);
         } else {
@@ -133,10 +133,15 @@ public class ProductController {
                 return new ResponseEntity<>(new CustomErrorType("Insert Product name, Packaging, and Category!"),
                         HttpStatus.BAD_REQUEST);
             }
-           else if (productService.isNameSpesificExist(product) && !findProduct.getNameProduct().equalsIgnoreCase(product.getNameProduct())) {
-                  return new ResponseEntity<>(new CustomErrorType("Failed update Product with name " + product.getNameProduct()),
+            else if(productService.findByNameProduct(product.getUpdated_by(), product.getNameProduct())!= null){
+                return new ResponseEntity<>(new CustomErrorType("Failed update Product with name " +
+                        product.getNameProduct()+". Product with name " + product.getNameProduct() + " already exist"),
                             HttpStatus.CONFLICT);
             }
+//           else if (productService.isNameSpesificExist(product) && !findProduct.getNameProduct().equalsIgnoreCase(product.getNameProduct())) {
+//                  return new ResponseEntity<>(new CustomErrorType("Failed update Product with name " + product.getNameProduct()),
+//                            HttpStatus.CONFLICT);
+//            }
             else {
                 product.setCode(findProduct.getCode());
                 productService.update(product);

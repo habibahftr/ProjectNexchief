@@ -83,7 +83,7 @@ public class UserController {
             Pattern p_email = Pattern.compile("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
             Matcher m_email = p_email.matcher(user.getEmail());
 
-            Pattern p_phone = Pattern.compile("^(^\\+62|62|^08)(\\d{3,4}-?){2}\\d{3,4}$");
+            Pattern p_phone = Pattern.compile("^(^08)(\\d{3,4}-?){2}\\d{3,4}$");
             Matcher m_phone = p_phone.matcher(user.getPhone());
 
             if (m_email.matches()){
@@ -115,7 +115,7 @@ public class UserController {
                                 , HttpStatus.BAD_REQUEST);
                     }
                 }else {
-                    return new ResponseEntity<>(new CustomErrorType("Phone number must in Indonesia type (ex: 628113912109 or 08134455555)")
+                    return new ResponseEntity<>(new CustomErrorType("Phone number must in Indonesia type (ex:08134455555)")
                             , HttpStatus.BAD_REQUEST);
                 }
             }else {

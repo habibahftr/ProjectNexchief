@@ -9,7 +9,7 @@ public interface ProductService {
     List<Product> searcProductbyUser (String id);
     public void saveProduct(Product product);
     Product findByCode(String code);
-    Product findByNameProduct(String nameProduct);
+    Product findByNameProduct(String updated_by, String nameProduct);
     List<Product> findByName(int page, int limit, String id, String nameProduct);
     List<Product> findProductForPaging(int page, int limit, String id);
     List<Product> filterProductByStatus (int page, int limit, String id, String status);
