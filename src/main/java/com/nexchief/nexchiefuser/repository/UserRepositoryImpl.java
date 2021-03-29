@@ -116,7 +116,7 @@ public class UserRepositoryImpl implements UserRepository{
 
         try{
             user = this.jdbcTemplate.query(
-                    "SELECT * FROM user WHERE username=? AND password =?",
+                    "SELECT * FROM user WHERE  BINARY username=? AND BINARY  password =?",
                     preparedStatement -> {preparedStatement.setString(1, username);
                         preparedStatement.setString(2, password);},
                     (rs, rowNum)->

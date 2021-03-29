@@ -13,6 +13,7 @@ public interface ProductService {
     List<Product> findByName(int page, int limit, String id, String nameProduct);
     List<Product> findProductForPaging(int page, int limit, String id);
     List<Product> filterProductByStatus (int page, int limit, String id, String status);
+    List<Product> filterPrint(String id, String status);
     int countProduct(String updated_by);
     int countProductName(String updated_by, String nameProduct);
     int countProductStatus(String updated_by, String status);

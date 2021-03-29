@@ -42,6 +42,11 @@ public class ProductServiceImpl implements ProductService{
         return productRepository.filterByStatus(page, limit, id, status);
     }
 
+    @Override
+    public List<Product> filterPrint(String id, String status) {
+        return productRepository.filterPrint(id, status);
+    }
+
     //    @Override
 //    public boolean isNameProductExist(Product product) {
 //        return productRepository.findByName(product.getNameProduct()).size()!=0;

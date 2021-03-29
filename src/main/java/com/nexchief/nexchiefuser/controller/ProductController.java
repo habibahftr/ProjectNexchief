@@ -67,6 +67,12 @@ public class ProductController {
         return new ResponseEntity<>(productList, HttpStatus.OK);
     }
 
+    @GetMapping("/product/filter/active/")
+    public ResponseEntity<?>getProductActive(@RequestParam String updated_by, @RequestParam String status){
+        List<Product> productList = productService.filterPrint(updated_by, status);
+        return new ResponseEntity<>(productList, HttpStatus.OK);
+    }
+
 
 
     @GetMapping("/product/{code}")
@@ -91,6 +97,8 @@ public class ProductController {
         int productCount = productService.countProductName(updated_by, nameProduct);
         return new ResponseEntity<>(productCount, HttpStatus.OK);
     }
+
+
 
     @GetMapping("/filter/count/")
     public ResponseEntity<?> countProductStatus(@RequestParam String updated_by, @RequestParam String status) {
@@ -133,7 +141,8 @@ public class ProductController {
                 return new ResponseEntity<>(new CustomErrorType("Insert Product name, Packaging, and Category!"),
                         HttpStatus.BAD_REQUEST);
             }
-            else if(productService.findByNameProduct(product.getUpdated_by(), product.getNameProduct())!= null){
+            else if(productService.findByNameProduct(product.getUpdated_by(), product.getNameProduct())!= null &&
+                    !findProduct.getNameProduct().equalsIgnoreCase(product.getNameProduct())){
                 return new ResponseEntity<>(new CustomErrorType("Failed update Product with name " +
                         product.getNameProduct()+". Product with name " + product.getNameProduct() + " already exist"),
                             HttpStatus.CONFLICT);
@@ -144,6 +153,8 @@ public class ProductController {
 //            }
             else {
                 product.setCode(findProduct.getCode());
+                if(product.getStock()>0)
+                    product.setStatus("ACTIVE");
                 productService.update(product);
                 return new ResponseEntity<>(new CustomSuccessType("Update success!"), HttpStatus.CREATED);
             }

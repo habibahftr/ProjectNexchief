@@ -70,12 +70,11 @@ public class ProductRepositoryImpl implements ProductRepository{
     }
 
     @Override
-    public List<Product> filterPrint(String id, String status) {
+    public List<Product>  filterPrint(String id, String status) {
         List<Product> productList;
         try{
-            productList = this.jdbcTemplate.query("SELECT p.code, p.nameProduct, p.packaging, p.product_desc, " +
-                            "p.category, p.launch_date, p.status, p.price, p.stock, p.created_at,u.name, p.updated_at, " +
-                            "u.name FROM product p, user u WHERE u.id = p.updated_by AND p.updated_by=? AND p.status=?",
+            productList = this.jdbcTemplate.query("SELECT p.*,u.name " +
+                            "FROM product p, user u WHERE u.id = p.updated_by AND p.updated_by=? AND p.status=?",
                     preparedStatement ->  {
                         preparedStatement.setString(1, id);
                         preparedStatement.setString(2, status);
@@ -116,7 +115,7 @@ public class ProductRepositoryImpl implements ProductRepository{
         int start = (page - 1) * limit;
         List<Product> productList = jdbcTemplate.query("SELECT p.code, p.nameProduct, p.packaging, p.product_desc," +
                         "p.category, p.launch_date, p.status, p.price, p.stock, p.created_at,u.name, p.updated_at, " +
-                        "u.name FROM product p, user u WHERE u.id = p.updated_by AND p.updated_by=? LIMIT " + start + "," + limit + ";",
+                        "u.name FROM product p, user u WHERE u.id = p.updated_by AND p.updated_by=? ORDER BY p.nameProduct LIMIT " + start + "," + limit + ";",
                 preparedStatement -> preparedStatement.setString(1, id),
                 (rs, rowNum) ->
                         new Product(
@@ -315,19 +314,26 @@ public class ProductRepositoryImpl implements ProductRepository{
     public int updateProduct(Product product) {
         return jdbcTemplate.update(
                 "UPDATE product SET nameProduct=?, packaging=?, product_desc=?, category=?, launch_date=?, status=?, " +
-                        "price=?, stock=?, updated_at=?, updated_by=? WHERE code=?",
+                        "price=?, stock=?, updated_at=? WHERE code=?",
                 product.getNameProduct(), product.getPackaging(), product.getProduct_desc(), product.getCategory(),
                 product.getLaunch_date(), product.getStatus(), product.getPrice(), product.getStock(),
-                product.getUpdated_at(), product.getUpdated_by(),product.getCode()
+                product.getUpdated_at(), product.getCode()
         );
     }
 
     @Override
     public int deleteByCode(String code) {
         return jdbcTemplate.update(
-                "DELETE FROM product WHERE code=?", code
+                "UPDATE product SET status='INACTIVE' WHERE code=?", code
         );
     }
+
+    //    @Override
+//    public int deleteByCode(String code) {
+//        return jdbcTemplate.update(
+//                "DELETE FROM product WHERE code=?", code
+//        );
+//    }
 
     @Override
     public int countProduct(String updated_by) {

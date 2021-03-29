@@ -51,8 +51,41 @@ public class SalesServiceImpl implements SalesService {
     }
 
     @Override
+    public List<Sales> filterSearchAndToggle(int page, int limit, String id, String status, String nameProduct) {
+        List<Sales> salesList = salesRepository.filterSearchAndToggle(page, limit, id, status, nameProduct);
+        return salesList;
+    }
+
+    @Override
+    public List<Sales> filterSearchToggle(String id, String status, String nameProduct) {
+        List<Sales> salesList = salesRepository.filterSearchToggle(id, status, nameProduct);
+        return salesList;
+    }
+
+    @Override
+    public List<Sales> filterByProductWoPagination(String id, String nameProduct) {
+        List<Sales> salesList= salesRepository.filterByProductWoPagination(id, nameProduct);
+        return salesList;
+    }
+
+    @Override
     public int countSalesStatus(String id, String status) {
         return salesRepository.countSalesStatus(id, status);
+    }
+
+    @Override
+    public int countSalesToday(String id, String date) {
+        return salesRepository.countSalesToday(id, date);
+    }
+
+    @Override
+    public int countSalesUnpaidMonth(String id, String dateFirst, String dateLast, String status) {
+        return salesRepository.countSalesUnpaidMonth(id, dateFirst, dateLast, status);
+    }
+
+    @Override
+    public int countSalesMonth(String id, String dateFirst, String dateLast) {
+        return salesRepository.countSalesMonth(id, dateFirst, dateLast);
     }
 
     @Override
@@ -63,6 +96,11 @@ public class SalesServiceImpl implements SalesService {
     @Override
     public int countSalesProd(String id, String nameproduct) {
         return salesRepository.countSalesProduct(id, nameproduct);
+    }
+
+    @Override
+    public int countFilterAndToggle(String id, String status, String nameProduct) {
+        return salesRepository.countFilterAndToggle(id, status, nameProduct);
     }
 
     @Override
