@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import "./style.css"
 
 
 class Error404 extends Component {
@@ -7,44 +9,46 @@ class Error404 extends Component {
         this.state = {}
     }
 
-    // document.addEventListener("DOMContentLoaded",function(){
-  
-    //     var body=document.body;
-    //      setInterval(createStar,100);
-    //      function createStar(){
-    //        var right=Math.random()*500;
-    //        var top=Math.random()*screen.height;
-    //        var star=document.createElement("div");
-    //     star.classList.add("star")
-    //      body.appendChild(star);
-    //      setInterval(runStar,10);
-    //        star.style.top=top+"px";
-    //      function runStar(){
-    //        if(right>=screen.width){
-    //          star.remove();
-    //        }
-    //        right+=3;
-    //        star.style.right=right+"px";
-    //      }
-    //      } 
-    //    })
+
     render() {
         return (
-            <div>
-                <div className="text">
-                    <div>ERROR</div>
-                    <h1>404</h1>
-                    <hr>
-                        <div>Page Not Found</div>
-                    </hr>
-                </div>
+            <div className="error">
+                <div className="maincontainer">
+                    <div className="bat">
+                        <img className="wing leftwing" 
+                            src="https://www.blissfullemon.com/wp-content/uploads/2018/09/bat-wing.png"/>
+                        <img className="body"
+                            src="https://www.blissfullemon.com/wp-content/uploads/2018/09/bat-body.png" alt="bat"/>
+                        <img className="wing rightwing"
+                            src="https://www.blissfullemon.com/wp-content/uploads/2018/09/bat-wing.png"/>
+                    </div>
+                    <div className="bat">
+                        <img className="wing leftwing" 
+                            src="https://www.blissfullemon.com/wp-content/uploads/2018/09/bat-wing.png"/>
+                        <img className="body"
+                            src="https://www.blissfullemon.com/wp-content/uploads/2018/09/bat-body.png" alt="bat"/>
+                        <img className="wing rightwing"
+                            src="https://www.blissfullemon.com/wp-content/uploads/2018/09/bat-wing.png"/>
+                    </div>
+                    <div className="bat">
+                        <img className="wing leftwing" 
+                            src="https://www.blissfullemon.com/wp-content/uploads/2018/09/bat-wing.png"/>
+                        <img className="body"
+                            src="https://www.blissfullemon.com/wp-content/uploads/2018/09/bat-body.png" alt="bat"/>
+                        <img className="wing rightwing"
+                            src="https://www.blissfullemon.com/wp-content/uploads/2018/09/bat-wing.png"/>
+                    </div>
+                        <img className="foregroundimg" src="https://www.blissfullemon.com/wp-content/uploads/2018/09/HauntedHouseForeground.png" alt="haunted house"/>
+  
+                    </div>
+                        <h1 className="errorcode">ERROR 404</h1>
+                            <div className="errortext">This page not found.</div>
+                            <Link to="/home">
+                            <div className="turnBack" > Turn back now!</div>
+                            </Link>
 
-                <div className="astronaut">
-                    <img src="https://images.vexels.com/media/users/3/152639/isolated/preview/506b575739e90613428cdb399175e2c8-space-astronaut-cartoon-by-vexels.png" alt="" class="src"/>
-                </div>
-                    
             </div>
-         );
+        );
     }
 }
 

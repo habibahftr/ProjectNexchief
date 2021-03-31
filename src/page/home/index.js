@@ -48,7 +48,7 @@ class Home extends Component {
                             <div className="spanHome">{this.props.dataLoginUser.name}</div>
                         </div>
                         <div className="logout">
-                            <Icon onClick={()=> this.logoutBtn()} className="fas fa-sign-out-alt" style={{ color: "#B22222", marginBottom:"0" ,display: 'inline-block', fontSize: "40px", cursor: "pointer" }}></Icon>
+                            <Icon onClick={()=> this.logoutBtn()} className="fas fa-sign-out-alt" style={{ color: "white", marginBottom:"0" ,display: 'inline-block', fontSize: "40px", cursor: "pointer" }}></Icon>
                             <div style={{marginTop:"0"}}>Logout</div>
                         </div>
                     </div>

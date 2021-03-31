@@ -11,6 +11,7 @@ class Regis extends Component {
         super(props);
         this.state = {
             passType: "password",
+            passType2:"password",
             name: "",
             email: "",
             phone: "",
@@ -147,6 +148,19 @@ class Regis extends Component {
 
     }
 
+    passClick2= ()=>{
+        const passTypeTemp2 = this.state.passType2
+        if (passTypeTemp2 === "password") {
+            this.setState({
+                passType2: "text"
+            })
+        } else {
+            this.setState({
+                passType2: "password"
+            })
+        }
+    }
+
     regisClick = () => {
 
     }
@@ -186,8 +200,8 @@ class Regis extends Component {
                                 </div>
                                 <div className="labelPass">
                                     <div className="labelRegis">Confirm Password</div>
-                                    <input className="inputPass" type={this.state.passType} name="validationpwd" value={this.state.validationpwd} onChange={this.setValue} placeholder="Confirm password.."></input>
-                                    <Icon className={this.state.passType === "password" ? 'fa fa-eye-slash' : 'fa fa-eye'} onClick={() => this.passClick()} style={{ color: "grey", marginLeft: "-25px" }}></Icon>
+                                    <input className="inputPass" type={this.state.passType2} name="validationpwd" value={this.state.validationpwd} onChange={this.setValue} placeholder="Confirm password.."></input>
+                                    <Icon className={this.state.passType2 === "password" ? 'fa fa-eye-slash' : 'fa fa-eye'} onClick={() => this.passClick2()} style={{ color: "grey", marginLeft: "-25px" }}></Icon>
                                 </div>
                             </div>
                         </div>

@@ -65,10 +65,10 @@ class Sales extends Component {
     setOptionSearch = el => {
         this.setState({
             optionSearch: el.target.value,
-        }, () => this.displaySeacrhHandler())
+        }, () => this.displaySearchHandler())
     }
 
-    displaySeacrhHandler = () => {
+    displaySearchHandler = () => {
         let temp = this.state.optionSearch
         if (temp === "Product Name") {
             this.setState({
@@ -107,10 +107,6 @@ class Sales extends Component {
 
     // ------------------------------------------SEARCH CLICK--------------------------------------------------------
     searchClick = () => {
-        console.log("2", this.state.date1);
-        console.log("3", this.state.date2);
-        console.log("object", this.state.optionPrint);
-        console.log("rr", this.state.search);
         const datetemp1 = this.state.date1
         const datetemp2 = this.state.date2
         const iconTemp = this.state.searchIcon
@@ -144,11 +140,18 @@ class Sales extends Component {
             }
         }
         else if (optionSearchTemp === "Date") {
-            if (datetemp1 !== "" && datetemp2 !== "") {
-                this.setState({
-                    dateFirst: datetemp1,
-                    dateLast: datetemp2
-                }, () => this.getCountSales())
+            if (optionTemp === "paid") {
+                this.getCountStatus("paid")
+                this.getAllSalesStatus(this.state.pageNow, this.state.limit, "paid")
+                this.getSalesStatusPrint("paid")
+            } else if (optionTemp === "unpaid") {
+                this.getCountStatus("unpaid")
+                this.getAllSalesStatus(this.state.pageNow, this.state.limit, "unpaid")
+                this.getSalesStatusPrint("unpaid")
+            } else if (optionTemp === "all") {
+                this.getCountSales();
+                this.getAllSales(this.state.pageNow, this.state.limit)
+                this.getAllPrint();
             }
             else {
                 Swal.fire({
@@ -158,10 +161,6 @@ class Sales extends Component {
             }
         }
         else if(optionSearchTemp !== "Date" || optionSearchTemp !== "Product Name"){
-            this.setState({
-                date1:"",
-                date:"",
-            })
             if (optionTemp === "paid") {
                 this.getCountStatus("paid")
                 this.getAllSalesStatus(this.state.pageNow, this.state.limit, "paid")
@@ -195,7 +194,7 @@ class Sales extends Component {
 
     // -----------------------------------------GET SALES STATUS PRINT---------------------------------------------------------------S
     getSalesStatusPrint = (status) => {
-        fetch(`http://localhost:8080/nexchief/sales/filter?distributor=` + this.props.dataLoginUser.id + `&status=` + status, {
+        fetch(`http://localhost:8080/nexchief/sales/filter?distributor=` + this.props.dataLoginUser.id + `&status=` + status+`&dateFirst=`+this.state.dateFirst+`&dateLast=`+this.state.dateLast, {
             method: "get",
             headers: {
                 "Content-Type": "application/json; ; charset=utf-8",
@@ -211,7 +210,7 @@ class Sales extends Component {
                 console.log("ini data sales print", this.state.salesPrint);
             })
             .catch(() => {
-                alert("Failed fetching")
+                alert("Failed fetching status print")
             })
 
     }
@@ -288,6 +287,21 @@ class Sales extends Component {
         })
         let searchTemp = this.state.search
         let optionTemp = this.state.optionPrint
+        const optionSearchTemp = this.state.optionSearch
+        if (optionSearchTemp === "Date") {
+            if (optionTemp === "paid") {
+                this.getCountStatus("paid")
+                this.getAllSalesStatus(value, this.state.limit, "paid")
+            } else if (optionTemp === "unpaid") {
+                this.getCountStatus("unpaid")
+                this.getAllSalesStatus(value, this.state.limit, "unpaid")
+                this.getSalesStatusPrint("unpaid")
+            } else if (optionTemp === "all") {
+                this.getCountSales();
+                this.getAllSales(value, this.state.limit)
+                this.getAllPrint();
+            }
+        }
         if (searchTemp === "" && optionTemp === "all") {
             this.getCountSales();
             this.getAllSales(value, this.state.limit);
@@ -360,7 +374,7 @@ class Sales extends Component {
     // ----------------------------------------GET COUNT ALL STATUS----------------------------------------
     getCountStatus = (status) => {
 
-        fetch(`http://localhost:8080/nexchief/sales/status/count/?distributor=` + this.props.dataLoginUser.id + `&status=` + status, {
+        fetch(`http://localhost:8080/nexchief/sales/status/count/?distributor=` + this.props.dataLoginUser.id + `&status=` + status+`&dateFirst=`+this.state.dateFirst+`&dateLast=`+this.state.dateLast, {
             method: "get",
             headers: {
                 "Content-Type": "application/json; ; charset=utf-8",
@@ -377,7 +391,7 @@ class Sales extends Component {
                 console.log("INI RESPON COUNT Sales ", json)
             })
             .catch(() => {
-                alert("Failed fetching")
+                alert("Failed fetching count status")
             })
 
     }
@@ -433,7 +447,7 @@ class Sales extends Component {
     // --------------------------------------GET ALL STATUS------------------------------------------------------
     getAllSalesStatus = (value, limit, status) => {
         console.log("stsussssss", status);
-        fetch(`http://localhost:8080/nexchief/sales/filter/status/?page=` + value + `&limit=` + limit + `&distributor=` + this.props.dataLoginUser.id + `&status=` + status, {
+        fetch(`http://localhost:8080/nexchief/sales/filter/status/?page=` + value + `&limit=` + limit + `&distributor=` + this.props.dataLoginUser.id + `&status=` + status+`&dateFirst=`+this.state.dateFirst+`&dateLast=`+this.state.dateLast, {
             method: "get",
             headers: {
                 "Content-Type": "application/json; ; charset=utf-8",
@@ -450,7 +464,7 @@ class Sales extends Component {
                 console.log("ini data sales", this.state.sales);
             })
             .catch(() => {
-                alert("Failed fetching")
+                alert("Failed fetching get all")
             })
     }
 
@@ -541,6 +555,12 @@ class Sales extends Component {
         return rupiah;
     }
 
+    closeDate=()=>{
+        this.setState({
+            optionSearch:"Select Option Search"
+        },()=>  this.displaySearchHandler())
+    }
+
     render() {
         if (this.props.checkLogin === false) {
             this.props.history.push("/")
@@ -563,7 +583,7 @@ class Sales extends Component {
                 <div className="bodySales">
                     <div className="container1">
                         <div className="optionStatus">
-                            <select className="optionSearch" name="optionSearch" onChange={this.setOptionSearch} value={this.state.optionSearch} defaultValue="Select Option Search" >
+                            <select className="optionSearch" name="optionSearch" onChange={this.setOptionSearch} value={this.state.optionSearch} >
                                 <option defaultValue>Select Option Search</option>
                                 <option value="Product Name">Product Name</option>
                                 <option value="Date">Date</option>
@@ -571,13 +591,15 @@ class Sales extends Component {
                             <div className="seacrhSales1" style={{ display: this.state.displaySearch }}>
                                 <Input className="searchSales2" name="search" onChange={this.setValueSearch} value={this.state.search} placeholder="seacrh by name product.."></Input>
                                 <Icon className="far fa-window-close" onClick={() => this.closeClick()} style={{ marginLeft: "-50px", marginTop: "35px" }}></Icon>
+                                <Icon className="far fa-times-circle" onClick={()=>this.closeDate()}></Icon>
                             </div>
                             <div className="searchDate" style={{ display: this.state.displaySearch2 }}>
-                                <input className="searchDate1" name="date1" type="date" value={this.state.date1} onChange={this.setValue}></input>
+                                <input className="searchDate1" name="dateFirst" type="date" value={this.state.dateFirst} onChange={this.setValue}></input>
                                 <span style={{ color: "white", marginRight: "2vh", marginTop: "6vh" }}> to </span>
-                                <input type="date" name="date2" className="searchDate2" value={this.state.date2} onChange={this.setValue}></input>
+                                <input type="date" name="dateLast" className="searchDate2" value={this.state.dateLast} onChange={this.setValue}></input>
+                                <Icon className="far fa-times-circle" onClick={()=>this.closeDate()}></Icon>
                             </div>
-                            <select className="optionStatus2" name="optionPrint" onChange={this.setValue} value={this.state.optionPrint} defaultValue="Select Option Filter" >
+                            <select className="optionStatus2" name="optionPrint" onChange={this.setValue} value={this.state.optionPrint} >
                                 <option value="all">All</option>
                                 <option value="paid">Status : Paid</option>
                                 <option value="unpaid">Status : Unpaid</option>
@@ -586,10 +608,10 @@ class Sales extends Component {
                                 style={{ color: "black", marginLeft: "2vh", marginTop: "5vh", fontSize: "19px", border: "solid", padding: "2px", height: "23px", backgroundColor: "white", }}>
                             </Icon>
                         </div>
-                        <div className="addButton">
-                            {/* <Icon className="fas fa-coins" onClick={() => this.props.history.push("/sales/detail")}></Icon>
-                            <div className="labeladd">Add new Sales</div> */}
-                            <Button className="addSales" onClick={() => this.props.history.push("/sales/detail")}>Add</Button>
+                        <div className="addButton" onClick={() => this.props.history.push("/sales/detail")}>
+                            <Icon className="fas fa-file-invoice-dollar" ></Icon>
+                            <div className="labeladd">Add new Sales</div>
+                            {/* <Button className="addSales" onClick={() => this.props.history.push("/sales/detail")}>Add</Button> */}
                         </div>
                         <div className="printSales">
                             <ReactToPrint
@@ -634,6 +656,15 @@ class Sales extends Component {
 
                                         )
                                     })
+                                }
+                                {
+                                    (this.state.sales.length >0)?
+                                    ""
+                                    :
+                                    <tr>
+                                        <td className="dataEmpty" colSpan="8" style={{textAlign:"center"}}> Data Empty</td>
+                                    </tr>
+
                                 }
 
                             </tbody>

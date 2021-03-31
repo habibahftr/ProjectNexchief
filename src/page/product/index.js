@@ -596,7 +596,10 @@ class Product extends Component {
 
     backHome=()=>{
         if(this.state.displayTemp==="none"){
-            Swal.fire('Finish or cancel your activity')
+            Swal.fire({
+                text: 'Finish or cancel your activity',
+                icon: 'warning'
+            })
         }else{
             this.props.history.push("/home")
         }
@@ -615,12 +618,12 @@ class Product extends Component {
                 <div className="headerproduct">
                     <Icon onClick={() =>this.backHome() } className="fas fa-home" style={{ color: "white", display: 'inline-block', marginTop: "2vh", marginRight: "20%", marginLeft: "5%", fontSize: "40px", cursor: "pointer" }}></Icon>
                     <div className="buttonProduct">
-                        <Button className="addBtn" onClick={() => this.addClick()} style={{ display: this.state.displayTemp }}>Add</Button>
-                        <Button className="addBtn" disabled={this.state.disableBtn} onClick={() => this.editClick()} style={{ cursor:this.state.disableBtn===true ? "text" : "pointer" ,display: this.state.displayTemp }}>Edit</Button>
-                        <Button className="addBtn" disabled={this.state.disableBtn} onClick={() => this.delClick()} style={{ cursor:this.state.disableBtnDel===true ? "text" : "pointer", display: this.state.displayDel }}>Delete</Button>
-                        <Button className="hiddenBtn" onClick={() => this.saveClick({ code, nameProduct, packaging, product_desc, category, launch_date, status, price, stock, created_at, created_by, updated_at, updated_by })} style={{ display: this.state.displaySubmit }}>Save</Button>
-                        <Button className="hiddenBtn" onClick={() => this.updateClick({ nameProduct, packaging, product_desc, category, launch_date, status, price, stock, updated_at, updated_by })} style={{ display: this.state.displayUpdate }}>Update</Button>
-                        <Button className="hiddenBtn" onClick={() => this.cancelClick()} style={{ display: this.state.displayCancel }}>Cancel</Button>
+                        <Button className="addBtn" onClick={() => this.addClick()} style={{backgroundColor:"green", display: this.state.displayTemp }}>Add</Button>
+                        <Button className="addBtn" disabled={this.state.disableBtn} onClick={() => this.editClick()} style={{backgroundColor:"#f2d230", cursor:this.state.disableBtn===true ? "text" : "pointer" ,display: this.state.displayTemp }}>Edit</Button>
+                        <Button className="addBtn" disabled={this.state.disableBtn} onClick={() => this.delClick()} style={{backgroundColor:"red", cursor:this.state.disableBtnDel===true ? "text" : "pointer", display: this.state.displayDel }}>Delete</Button>
+                        <Button className="hiddenBtn" onClick={() => this.saveClick({ code, nameProduct, packaging, product_desc, category, launch_date, status, price, stock, created_at, created_by, updated_at, updated_by })} style={{backgroundColor:"green", display: this.state.displaySubmit }}>Save</Button>
+                        <Button className="hiddenBtn" onClick={() => this.updateClick({ nameProduct, packaging, product_desc, category, launch_date, status, price, stock, updated_at, updated_by })} style={{backgroundColor:"blue", display: this.state.displayUpdate }}>Update</Button>
+                        <Button className="hiddenBtn" onClick={() => this.cancelClick()} style={{ backgroundColor:"red", display: this.state.displayCancel }}>Cancel</Button>
                     </div>
                     <div className="gotoReport">
                         <Icon onClick={()=>this.props.history.push("/report/product" )} className="fas fa-file-import"></Icon>
@@ -652,8 +655,8 @@ class Product extends Component {
                                 (this.state.productList.length >0)?
                                 ""
                                 :
-                                <div className="listProd" >
-                                    <span style={{margin:"auto"}}>Data empty</span>
+                                <div className="listProd" style={{textAlign:"center"}} >
+                                    <span style={{margin:"auto", textAlign:"center"}}>Data empty</span>
                                 </div>
                             }
 

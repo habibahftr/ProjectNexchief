@@ -32,9 +32,10 @@
 }
 .addButton{
     margin: auto;
-    margin-top: 6vh;
+    margin-top: 5vh;
     margin-right: 0vh;
-    width: 9%;
+    width: 8%;
+    cursor: pointer;
     
 }
 .addSales{
@@ -64,7 +65,7 @@
     margin-top: 1vh;
 }
 .searchSales2{
-    width: 250px;
+    width: 190px;
     height:25px;
     margin-top: 4vh;
     margin-left: 0;
@@ -154,6 +155,7 @@
     margin: auto;
     margin-top: 5vh;
     margin-left: 3vh;
+    margin-right: 1vh;
 }
 
 .labelPrint{
@@ -180,7 +182,7 @@ th{
 .optionSearch{
     height: 4.5vh;
     margin-top: 5vh;
-    margin-right: 2vh;
+    margin-right: 1vh;
 }
 
 .searchDate{
@@ -190,12 +192,19 @@ th{
 .searchDate1{
     height: 4vh;
     margin-top: 5vh;
-    margin-right: 2vh;
+    margin-right: 1vh;
 }
 
 .searchDate2{
     height: 4vh;
     margin-top: 5vh;
+ }
+
+ .fa-times-circle{
+    margin-top: 5vh;
+    margin-left: 3vh;
+    margin-right: -2vh;
+    color: white;
  }
 
 /* -------------------------PRINT PAGE------------------------ */
@@ -249,9 +258,11 @@ th{
     /* font-size: 10vh; */
     border-collapse:collapse ;
 }
-.fa-coins{
+.fa-file-invoice-dollar{
     color: white;
     font-size: 40px;
+    margin: auto;
+    margin-left: 4vh;
 }
 
 .labeladd{
