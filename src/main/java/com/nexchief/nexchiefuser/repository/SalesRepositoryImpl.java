@@ -134,10 +134,10 @@ public class SalesRepositoryImpl implements SalesRepository{
     }
 
     @Override
-    public List<Sales> filterByStatus(int page, int limit, String id, String status) {
+    public List<Sales> filterByStatus(int page, int limit, String id, String status, String dateFirst, String dateLast) {
         int numPages;
         numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM sales WHERE distributor='"+id+"' " +
-                        "AND status= '"+status+"'",
+                        "AND status= '"+status+"' AND date BETWEEN '"+dateFirst+"' AND '"+dateLast+"'",
                 (rs, rowNum) -> rs.getInt("count")).get(0);
 
         if(numPages >0){
@@ -149,10 +149,12 @@ public class SalesRepositoryImpl implements SalesRepository{
 
         List<Sales> salesList;
         salesList = jdbcTemplate.query("SELECT s.*, u.name FROM sales s, user u WHERE u.id=s.distributor AND " +
-                        "s.distributor=? AND s.status=? ORDER  BY s.date ASC LIMIT " + start + "," + limit + " ;",
+                        "s.distributor=? AND s.status=? AND s.date BETWEEN ? AND ? ORDER  BY s.date ASC LIMIT " + start + "," + limit + " ;",
                 preparedStatement -> {
                     preparedStatement.setString(1, id);
                     preparedStatement.setString(2, status);
+                    preparedStatement.setString(3, dateFirst);
+                    preparedStatement.setString(4, dateLast);
                 },
 
                 (rs, rowNum) ->
@@ -191,12 +193,15 @@ public class SalesRepositoryImpl implements SalesRepository{
     }
 
     @Override
-    public List<Sales> filterByStatusWithOutPaging(String id, String status) {
+    public List<Sales> filterByStatusWithOutPaging(String id, String status, String dateFirst, String dateLast) {
         List<Sales> salesList;
-        salesList = jdbcTemplate.query("SELECT s.*, u.name FROM sales s, user u WHERE u.id=s.distributor AND s.distributor=? AND s.status=? ORDER  BY s.date ASC",
+        salesList = jdbcTemplate.query("SELECT s.*, u.name FROM sales s, user u WHERE u.id=s.distributor AND s.distributor=? " +
+                        "AND s.status=? AND s.date BETWEEN ? AND ? ORDER  BY s.date ASC",
                 preparedStatement -> {
                     preparedStatement.setString(1, id);
                     preparedStatement.setString(2, status);
+                    preparedStatement.setString(3, dateFirst);
+                    preparedStatement.setString(4, dateLast);
                 },
 
                 (rs, rowNum) ->
@@ -490,9 +495,10 @@ public class SalesRepositoryImpl implements SalesRepository{
     }
 
     @Override
-    public int countSalesStatus(String id, String status) {
+    public int countSalesStatus(String id, String status, String dateFirst, String dateLast) {
         int countSalesStatus;
-        countSalesStatus= jdbcTemplate.queryForObject("SELECT COUNT(*) as count FROM sales WHERE distributor='"+id+"' AND status='"+status+"'", Integer.class);
+        countSalesStatus= jdbcTemplate.queryForObject("SELECT COUNT(*) as count FROM sales WHERE distributor='"+id+"' " +
+                "AND status='"+status+"' AND s.date BETWEEN '"+dateFirst+"' AND '"+dateLast+"' ", Integer.class);
         return countSalesStatus;
     }
 

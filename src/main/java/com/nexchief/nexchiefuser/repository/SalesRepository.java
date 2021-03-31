@@ -7,8 +7,8 @@ import java.util.List;
 public interface SalesRepository {
     List<Sales> findAll(int page, int limit, String id, String dateFirst, String dateLast);
     List<Sales> findAllWithOutPaging(String id, String dateFirst, String dateLast);
-    List<Sales> filterByStatus(int page, int limit, String id, String status);
-    List<Sales> filterByStatusWithOutPaging(String id, String status);
+    List<Sales> filterByStatus(int page, int limit, String id, String status, String dateFirst, String dateLast);
+    List<Sales> filterByStatusWithOutPaging(String id, String status,String dateFirst, String dateLast );
     List<Sales> filterByNameProduct(int page, int limit, String id, String nameProduct);
     List<Sales> filterByProductWoPagination(String id, String nameProduct);
     List<Sales> filterSearchAndToggle(int page, int limit, String id, String status, String nameProduct );
@@ -20,7 +20,7 @@ public interface SalesRepository {
     int countSalesProduct(String id, String nameProduct);
     int countFilterAndToggle(String id, String status, String nameProduct);
     int countSales(String distributor, String dateFirst, String dateLast);
-    int countSalesStatus(String id, String status);
+    int countSalesStatus(String id, String status, String dateFirst, String dateLast );
     int saveSales(Sales sales);
     void updateSales(Sales sales);
 

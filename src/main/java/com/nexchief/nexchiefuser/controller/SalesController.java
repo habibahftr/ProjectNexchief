@@ -75,8 +75,9 @@ public class SalesController {
 //    -----------------------------------------FILTER SALES BY STATUS(PAID/UNPAID)--------------------------------
     @GetMapping("/sales/filter/status/")
     public ResponseEntity<?> filterByStatusPaging (@RequestParam int page, @RequestParam int limit,
-                                                   @RequestParam String distributor, @RequestParam String status){
-        List<Sales> salesList= salesService.filterByStatus(page, limit, distributor,status);
+                                                   @RequestParam String distributor, @RequestParam String status,
+                                                   @RequestParam String dateFirst, @RequestParam String dateLast){
+        List<Sales> salesList= salesService.filterByStatus(page, limit, distributor,status, dateFirst, dateLast);
         if(salesList == null) {
             return new ResponseEntity<>(salesList, HttpStatus.NOT_FOUND);
         }else{
@@ -124,8 +125,9 @@ public class SalesController {
 
 //    ---------------------------FILTER SALES BY STATUS (W/O PAGINATION) FOR PRINT-------------------------------------
     @GetMapping("/sales/filter")
-    public ResponseEntity<?> filterByStatus (@RequestParam String distributor, @RequestParam String status){
-        List<Sales> salesList =  salesService.filterByStatusWithOutPaging(distributor, status);
+    public ResponseEntity<?> filterByStatus (@RequestParam String distributor, @RequestParam String status,
+                                             @RequestParam String dateFirst, @RequestParam String dateLast){
+        List<Sales> salesList =  salesService.filterByStatusWithOutPaging(distributor, status, dateFirst, dateLast);
         if(salesList==null){
             return new ResponseEntity<>(salesList, HttpStatus.NOT_FOUND);
         }else{
@@ -146,8 +148,9 @@ public class SalesController {
 
 //    ------------------------COUNT SALES FILTERED BY STATUS--------------------------------------------------------
     @GetMapping("/sales/status/count/")
-    public ResponseEntity<?> countSales(@RequestParam String distributor, @RequestParam String status) {
-        int salesCount= salesService.countSalesStatus(distributor, status);
+    public ResponseEntity<?> countSales(@RequestParam String distributor, @RequestParam String status,
+                                        @RequestParam String dateFirst, @RequestParam String dateLast) {
+        int salesCount= salesService.countSalesStatus(distributor, status, dateFirst, dateLast);
         return new ResponseEntity<>(salesCount, HttpStatus.OK);
     }
 

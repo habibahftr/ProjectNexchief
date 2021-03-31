@@ -33,14 +33,14 @@ public class SalesServiceImpl implements SalesService {
     }
 
     @Override
-    public List<Sales> filterByStatus(int page, int limit, String id, String status) {
-        List<Sales> salesList= salesRepository.filterByStatus(page, limit, id, status);
+    public List<Sales> filterByStatus(int page, int limit, String id, String status, String dateFirst, String dateLast) {
+        List<Sales> salesList= salesRepository.filterByStatus(page, limit, id, status, dateFirst, dateLast);
         return salesList;
     }
 
     @Override
-    public List<Sales> filterByStatusWithOutPaging(String id, String status) {
-        List<Sales> salesList = salesRepository.filterByStatusWithOutPaging(id, status);
+    public List<Sales> filterByStatusWithOutPaging(String id, String status, String dateFirst, String dateLast) {
+        List<Sales> salesList = salesRepository.filterByStatusWithOutPaging(id, status, dateFirst, dateLast);
         return salesList;
     }
 
@@ -69,8 +69,8 @@ public class SalesServiceImpl implements SalesService {
     }
 
     @Override
-    public int countSalesStatus(String id, String status) {
-        return salesRepository.countSalesStatus(id, status);
+    public int countSalesStatus(String id, String status, String dateFirst, String dateLast) {
+        return salesRepository.countSalesStatus(id, status, dateFirst, dateLast);
     }
 
     @Override
