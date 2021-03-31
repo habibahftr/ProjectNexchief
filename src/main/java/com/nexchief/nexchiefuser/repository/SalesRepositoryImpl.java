@@ -16,9 +16,10 @@ public class SalesRepositoryImpl implements SalesRepository{
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<Sales> findAll(int page, int limit, String id) {
+    public List<Sales> findAll(int page, int limit, String id, String dateFirst, String dateLast) {
         int numPages;
-        numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM sales WHERE distributor='"+id+"'",
+        numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM sales WHERE distributor='"+id+"' AND date " +
+                        "BETWEEN '"+dateFirst+"' AND '"+dateLast+"'",
                 (rs, rowNum) -> rs.getInt("count")).get(0);
 
         if(numPages >0){
@@ -29,8 +30,8 @@ public class SalesRepositoryImpl implements SalesRepository{
         int start = (page - 1) * limit;
 
         List<Sales> salesList;
-        salesList = jdbcTemplate.query("SELECT s.*, u.name FROM sales s, user u WHERE u.id=s.distributor AND s.distributor=? ORDER  BY s.date ASC LIMIT " + start + "," + limit + " ;",
-                preparedStatement -> preparedStatement.setString(1, id),
+        salesList = jdbcTemplate.query("SELECT s.*, u.name FROM sales s, user u WHERE u.id=s.distributor AND" +
+                        " s.distributor='"+id+"' AND s.date BETWEEN '"+dateFirst+"' AND '"+dateLast+"' ORDER  BY s.date ASC LIMIT " + start + "," + limit + " ;",
                 (rs, rowNum) ->
                         new Sales(
                                 rs.getString("idSales"),
@@ -234,10 +235,10 @@ public class SalesRepositoryImpl implements SalesRepository{
     }
 
     @Override
-    public List<Sales> findAllWithOutPaging(String id) {
+    public List<Sales> findAllWithOutPaging(String id, String dateFirst, String dateLast) {
         List<Sales> salesList;
-        salesList = jdbcTemplate.query("SELECT s.*, u.name FROM sales s, user u WHERE u.id=s.distributor AND s.distributor=? ORDER  BY s.date ASC " ,
-                preparedStatement -> preparedStatement.setString(1, id),
+        salesList = jdbcTemplate.query("SELECT s.*, u.name FROM sales s, user u WHERE u.id=s.distributor AND " +
+                        "s.distributor='"+id+"' AND s.date BETWEEN '"+dateFirst+"' AND '"+dateLast+"' ORDER  BY s.date ASC " ,
                 (rs, rowNum) ->
                         new Sales(
                                 rs.getString("idSales"),
@@ -417,9 +418,7 @@ public class SalesRepositoryImpl implements SalesRepository{
     @Override
     public List<Sales> filterByNameProduct(int page, int limit, String id, String nameProduct) {
         int numPages;
-//        numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM sales s JOIN salesdetail sd ON s.idSales=sd.idSales" +
-//                " JOIN product p ON sd.codeProduct=p.code WHERE p.nameProduct LIKE '%"+nameProduct+"%' OR s.customer LIKE '%"+nameProduct+"%' GROUP  BY s.idSales" ,
-//                (rs, rowNum) -> rs.getInt("count")).get(0);
+
         numPages=jdbcTemplate.queryForObject("SELECT COUNT(*) FROM sales WHERE idSales IN " +
                 "(SELECT sd.idSales FROM salesdetail sd " +
                 " JOIN product p ON sd.codeProduct=p.code " +
@@ -439,13 +438,13 @@ public class SalesRepositoryImpl implements SalesRepository{
                         "(SELECT sd.idSales FROM salesdetail sd " +
                         "JOIN product p ON sd.codeProduct=p.code " +
                         "JOIN sales sl ON sd.idSales=sl.idSales " +
-                        "WHERE sl.distributor =? AND " +
-                        "p.nameProduct LIKE ? OR sl.customer LIKE ? LIMIT " + start + "," + limit + " ;",
-                preparedStatement -> {
-                    preparedStatement.setString(1, id);
-                    preparedStatement.setString(2, "%"+nameProduct+"%");
-                    preparedStatement.setString(3, "%"+nameProduct+"%");
-                },
+                        "WHERE sl.distributor ='"+id+"' AND " +
+                        "p.nameProduct LIKE '%"+nameProduct+"%' OR sl.customer LIKE '%"+nameProduct+"%') LIMIT " + start + "," + limit + " ;",
+//                preparedStatement -> {
+//                    preparedStatement.setString(1, id);
+//                    preparedStatement.setString(2, "%"+nameProduct+"%");
+//                    preparedStatement.setString(3, "%"+nameProduct+"%");
+//                },
 
                 (rs, rowNum) ->
                         new Sales(
@@ -483,9 +482,10 @@ public class SalesRepositoryImpl implements SalesRepository{
     }
 
     @Override
-    public int countSales(String distributor) {
+    public int countSales(String distributor, String dateFirst, String dateLast) {
         int countSales;
-        countSales= jdbcTemplate.queryForObject("SELECT COUNT(*) as count FROM sales WHERE distributor='"+distributor+"'", Integer.class);
+        countSales= jdbcTemplate.queryForObject("SELECT COUNT(*) as count FROM sales WHERE distributor='"+distributor+"' " +
+                "AND date BETWEEN '"+dateFirst+"' AND '"+dateLast+"'" , Integer.class);
         return countSales;
     }
 

@@ -14,8 +14,8 @@ public class SalesServiceImpl implements SalesService {
     SalesRepository salesRepository;
 
     @Override
-    public List<Sales> findAll(int page, int limit, String id) {
-        List<Sales> salesList = salesRepository.findAll(page, limit, id);
+    public List<Sales> findAll(int page, int limit, String id, String dateFirst, String dateLast) {
+        List<Sales> salesList = salesRepository.findAll(page, limit, id, dateFirst, dateLast);
         return salesList;
     }
 
@@ -27,8 +27,8 @@ public class SalesServiceImpl implements SalesService {
     }
 
     @Override
-    public List<Sales> findAllWithOutPaging(String id) {
-        List<Sales> salesList = salesRepository.findAllWithOutPaging(id);
+    public List<Sales> findAllWithOutPaging(String id, String dateFirst, String dateLast) {
+        List<Sales> salesList = salesRepository.findAllWithOutPaging(id, dateFirst, dateLast);
         return salesList;
     }
 
@@ -89,8 +89,8 @@ public class SalesServiceImpl implements SalesService {
     }
 
     @Override
-    public int countSales(String distributor) {
-        return salesRepository.countSales(distributor);
+    public int countSales(String distributor, String dateFirst, String dateLast) {
+        return salesRepository.countSales(distributor, dateFirst, dateLast);
     }
 
     @Override

@@ -134,7 +134,7 @@ public class UserController {
             try{
                 User finduser = userService.findbyId(id);
                 if (finduser != null){
-                    if (Pattern.matches("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{6}$", user.getPassword())){
+                    if (Pattern.matches("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[aA-zZ]).{6}$", user.getPassword())){
                         user.setId(finduser.getId());
                         userService.update(user);
                         return new ResponseEntity<>(new CustomSuccessType("Update success!"), HttpStatus.CREATED);
