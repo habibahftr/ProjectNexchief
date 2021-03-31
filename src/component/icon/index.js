@@ -7,7 +7,7 @@ class Icon extends Component {
     }
     render() { 
         return ( 
-            <i className={this.props.className} onClick={this.props.onClick} style={this.props.style}></i>
+            <i className={this.props.className} disabled={this.props.disabled} onClick={this.props.onClick} style={this.props.style}></i>
          );
     }
 }

@@ -26,22 +26,25 @@ const salesReducer = (state=defaultState, action)=>{
                 salesList:action.payload.list
             }
         case "SALES_CLICK":
-            console.log(action.payload.sales);
+            console.log("sales click", action.payload.data);
+            console.log("edit", action.payload.edit);
+            let editTemp = action.payload.edit
             return{
                 ...state,
                 sales:{
-                    idSales: action.payload.sales.idSales,
-                    dateSales: action.payload.sales.dateSales,
-                    distributor: action.payload.sales.distributor,
-                    customer: action.payload.sales.customer,
-                    discount: action.payload.sales.discount,
-                    status: action.payload.sales.status,
-                    productList:action.payload.sales.productList,
-                    gross: action.payload.sales.gross,
-                    tax: action.payload.sales.tax,
-                    invoice: action.payload.sales.invoice,
+                    idSales: action.payload.data.idSales,
+                    dateSales: action.payload.data.dateSales,
+                    distributor: action.payload.data.distributor,
+                    customer: action.payload.data.customer,
+                    discount: action.payload.data.discount,
+                    status: action.payload.data.status,
+                    productList:action.payload.data.productList,
+                    gross: action.payload.data.gross,
+                    tax: action.payload.data.tax,
+                    invoice: action.payload.data.invoice,
                 },
-                act:1,
+                // act:1
+                act:action.payload.edit,
         }
         case "BACK_SALES":
             return{

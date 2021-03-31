@@ -60,7 +60,7 @@ class Password extends Component {
     changePass = (changePass) => {
         console.log("idChange", this.props.dataLoginUser.id);
         const {oldPass, newPass, newPass1} = changePass
-        if (newPass === "" || newPass1 === "") {
+        if (newPass === "" || newPass1 === ""|| oldPass==="") {
             Swal.fire('Insert all data!')
         }
         else if(oldPass !== this.state.truePass){

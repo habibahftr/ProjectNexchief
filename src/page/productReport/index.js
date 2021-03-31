@@ -22,18 +22,21 @@ class ProductReport extends Component {
             productList: [],
             productListPrint:[],
             print: false,
-            limit: 10,
+            limit: 5,
             count: 0,
             page: 1,
-            checkedA: true,
+            pageNow:1,
+            checkedA: false,
 
 
         }
     }
-
+// ----------------------------------------------------COMPONENT DID MOUNT----------------------------------------------------------
     componentDidMount() {
         this.getAPICount();
-        this.getActiveProduct(this.state.page, this.state.limit)
+        this.getAllProduct(this.state.page, this.state.limit);
+        this.getAllPrint();
+        // this.getActiveProduct(this.state.page, this.state.limit)
     }
 // ----------------------------------------------------HANDLE CHANGE-----------------------------------------------------
     handleChange = (event, value) => {
@@ -132,7 +135,7 @@ class ProductReport extends Component {
             .then(response => response.json())
             .then(json => {
                 this.setState({
-                    productListPrint: json
+                    productList: json
                 });
                 console.log("product", this.state.productList);
             })
@@ -144,11 +147,16 @@ class ProductReport extends Component {
     // ------------------------------------------------GET FILTER PRINT--------------------------------------------------------
     getFilterPrint=()=>{
         console.log("filter", this.state.productList);
-        this.getAllPrint()
-        let print= this.state.productList.filter(el=> el.status==="active");
+        console.log("CEEEEEKKKKK");
+        // this.getAllPrint()
+        console.log("ceek", this.state.productListPrint);
+        const productPrint = this.state.productListPrint
+        const print= productPrint.filter(el=> el.status==="ACTIVE");
+        console.log("print", print);
         this.setState({
             productListPrint: print
         })
+
     }
 
     // -----------------------------------------------GET ALL PRINT----------------------------------------------------------
@@ -164,10 +172,10 @@ class ProductReport extends Component {
             .then(response => response.json())
             .then(json => {
                 this.setState({
-                    productList: json
+                    productListPrint: json
                 });
                 this.props.productData({ list: json })
-                console.log("product", this.state.productList);
+                console.log("product", this.state.productListPrint);
             })
             .catch(() => {
                 alert("Failed fetching")
@@ -181,10 +189,10 @@ class ProductReport extends Component {
         })
         const minus = event.target.checked
         console.log(minus)
-        if (minus) {     
-            this.getFilterPrint();   
+        if (minus) {  
+            this.getFilterPrint();    
             this.getFilterCount();
-            this.getActiveProduct(this.state.page, this.state.limit)
+            this.getActiveProduct(this.state.pageNow, this.state.limit)
         } else {
             this.getAllPrint();
             this.getAPICount();
@@ -193,7 +201,7 @@ class ProductReport extends Component {
     };
 
 
-
+// ------------------------------------------------price format----------------------------------------------------------------
     priceFormat = price => {
         var bilangan = price;
 
@@ -215,6 +223,7 @@ class ProductReport extends Component {
             this.props.history.push("/")
         }
         const { checkedA } = this.state
+        console.log("render product report", this.state.productListPrint);
         return (
             <div className="prodReportPage">
                 <div className="headerProdReport">
@@ -223,15 +232,11 @@ class ProductReport extends Component {
                         <Label className="salesact">REPORT</Label>
                     </div>
                     <div className="detailHeader">
-                        <Button className="backReport" onClick={() => this.props.history.push("/report")}>Back to Report Page</Button>
+                        <Button className="backReport" onClick={() => this.props.history.push("/product")}>Back to Product Page</Button>
                     </div>
                 </div>
                 <div className="bodyProdReport">
                     <div className="container3">
-                        {/* <div className="seacrhProd1">
-                                <Input className="searchProdReport" ></Input>
-                                <Icon className="fas fa-search" style={{ color: "grey", marginLeft: "-5vh", fontSize: "15px", marginTop: "2vh" }}></Icon>
-                            </div> */}
                         <label className="toggleProd">
                             <Grid component="label" container alignItems="center" spacing={1}>
                                 <Grid item style={{ color: "white" }}>ALL</Grid>
@@ -251,12 +256,10 @@ class ProductReport extends Component {
                         </div>
                     </div>
                     <div className="container4">
-                        <ComponentToPrint ref={el => (this.componentRef = el)} print={this.state.print} id={this.props.dataLoginUser.id} productList={this.state.productListPrint} limit={this.state.limit} />
-
+                        <ComponentToPrint ref={el => (this.componentRef = el)} productListPrint={this.state.productListPrint} />
                     </div>
                     <div className="onPage">
                         <center>
-                            {/* <h1>INI REPORT </h1> */}
                             <table id="tableProdReport1" cellspasing="0" border="1 white">
                                 <thead>
                                     <tr className="tableProdReport2" >

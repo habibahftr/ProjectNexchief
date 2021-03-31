@@ -7,6 +7,7 @@ import Label from '../../component/label';
 import Swal from 'sweetalert2';
 import "./style.css"
 import product from '../product';
+import { isThisQuarter } from 'date-fns';
 
 class SalesDetail extends Component {
     constructor(props) {
@@ -27,19 +28,23 @@ class SalesDetail extends Component {
             invoice: 0,
             productData: [],
             productList: [],
+            updated_by: "",
             product: {
                 code: "",
                 nameProduct: "",
                 qty: "",
                 price: 0,
                 totalPrice: "",
-                submit: false
+                created_by: this.props.dataLoginUser.id,
+                updated_by: this.props.dataLoginUser.id,
+                // submit: false,
             },
             disableTable: true,
-            displaySave: "none",
             displayDel: "none",
-            displayEdit: "none",
-            displayCancel: "none",
+            dateFirst: "",
+            dateLast: "",
+            detail: false,
+
 
         }
     }
@@ -47,6 +52,8 @@ class SalesDetail extends Component {
     // ------------------------------------------------COMPONENT DID MOUNT----------------------------------------------------
     componentDidMount() {
         console.log("sales detail", this.props.salesClick);
+        console.log("act", this.props.act);
+        this.getDate()
         this.getAllProduct();
         if (this.props.act === 1) {
             this.setState({
@@ -61,9 +68,30 @@ class SalesDetail extends Component {
                 tax: this.props.salesClick.tax,
                 invoice: this.props.salesClick.invoice,
                 displayDel: "",
-                displayEdit: "",
+                disableInput: false,
+                disableTable: true,
+                detail: false,
             })
-        } else {
+        } else if (this.props.act === 2) {
+            this.setState({
+                idSales: this.props.salesClick.idSales,
+                dateSales: this.props.salesClick.dateSales,
+                distributor: this.props.dataLoginUser.name,
+                status: this.props.salesClick.status,
+                customer: this.props.salesClick.customer,
+                productList: this.props.salesClick.productList,
+                gross: this.props.salesClick.gross,
+                discount: this.props.salesClick.discount,
+                tax: this.props.salesClick.tax,
+                invoice: this.props.salesClick.invoice,
+                displayDel: "none",
+                disableInput: true,
+                disableTable: true,
+                displayAdd: "none",
+                detail: true
+            })
+        }
+        else {
             this.setState({
                 dateSales: "",
                 distributor: this.props.dataLoginUser.name,
@@ -76,9 +104,25 @@ class SalesDetail extends Component {
                 tax: 0,
                 invoice: 0,
                 disableInput: false,
+                disableTable: false,
+                detail: false,
             })
 
         }
+    }
+
+    getDate = () => {
+        let current_datetime = new Date()
+        let year = current_datetime.getFullYear();
+        let monthTwoDigit = ("0" + (current_datetime.getMonth() + 1)).slice(-2)
+        let dateTwoDigit = ("0" + current_datetime.getDate()).slice(-2)
+        let dateFirst = year + "-" + monthTwoDigit + "-01"
+        let dateLast = year + "-" + monthTwoDigit + "-" + dateTwoDigit
+        console.log("uji tanggal:", dateLast)
+        this.setState({
+            dateFirst: dateFirst,
+            dateLast: dateLast
+        })
     }
 
     // -------------------------------------------------SET VALUE-------------------------------------------------------
@@ -106,7 +150,6 @@ class SalesDetail extends Component {
             this.setState({
                 displayAdd: "none",
                 displayBtn: "",
-                disableTable: true,
                 displayDel: "none",
                 displayEdit: "none",
             })
@@ -153,129 +196,158 @@ class SalesDetail extends Component {
         })
     }
 
+    grossHandler = () => {
+        let grossTemp = 0;
+        for (let i = 0; i < this.state.productList.length; i++) {
+            grossTemp = grossTemp + this.state.productList[i].totalPrice
+        }
+        this.setState({
+            gross: grossTemp,
+        }, () => this.taxhandler())
+
+    }
+
+
     // -------------------------------------------SUBMIT CLICK-----------------------------------------------------------------
     submitClick = () => {
         let prodList = this.state.productList
         if (prodList[prodList.length - 1].code === "") {
             Swal.fire('Choose Product Code!')
-            // prodList.splice(i,1)
         }
-        else{
-            let temp = this.state.productList.map(el => ({ ...el, submit: true }))
+        else {
             this.setState({
-                productList: temp,
                 displayAdd: "",
                 displayBtn: "none",
                 displayEdit: "",
                 displayDel: "",
             })
-
-            let grossTemp = 0;
-            for (let i = 0; i < this.state.productList.length; i++) {
-                grossTemp = grossTemp + this.state.productList[i].totalPrice
-            }
-            this.setState({
-                gross: grossTemp,
-            }, () => this.taxhandler())
-            
         }
-        for (let i = 0; i < prodList.length; i++) {
-        }
-
-        console.log("gross", this.state.grosss);
     }
 
+
+    updateSales = () => {
+        const { dateSales, distributor, customer, discount, status, productList } = this.state
+        let objSales;
+        if (dateSales === null || customer === "" || status === "") {
+            Swal.fire('Insert All Data')
+        } else if(productList.length<1){
+            Swal.fire('Insert minimum 1 product!')
+        } 
+        else {
+            objSales = {
+                dateSales: dateSales,
+                distributor: this.props.dataLoginUser.id,
+                customer: customer,
+                discount: discount,
+                status: status,
+                productList: productList,
+            }
+            if (this.props.act === 1) {
+                fetch(`http://localhost:8080/nexchief/update/sales/` + this.state.idSales, {
+                    method: "put",
+                    headers: {
+                        "Content-Type": "application/json; ; charset=utf-8",
+                        "Access-Control-Allow-Headers": "Authorization, Content-Type",
+                        "Access-Control-Allow-Origin": "*"
+                    },
+                    body: JSON.stringify(objSales)
+                })
+                    .then((response) => {
+                        return response.json()
+                    })
+                    .then((json) => {
+                        if (typeof json.errorMessage !== 'undefined') {
+                            alert(json.errorMessage)
+                        } else if (typeof json.successMessage !== 'undefined') {
+                            this.setClear();
+                            this.props.backSales();
+                            this.props.history.push("/sales")
+                            Swal.fire('Saved!', '', 'success')
+                        }
+                    })
+                    .catch((e) => {
+                        alert(e);
+                    })
+
+            } else {
+                fetch(`http://localhost:8080/nexchief/sales/`, {
+                    method: "post",
+                    headers: {
+                        "Content-Type": "application/json; ; charset=utf-8",
+                        "Access-Control-Allow-Headers": "Authorization, Content-Type",
+                        "Access-Control-Allow-Origin": "*"
+                    },
+                    body: JSON.stringify(objSales)
+                })
+                    .then((response) => {
+                        return response.json()
+                    })
+                    .then((result) => {
+                        if (result.successMessage === "New Sales succesfully cretaed") {
+                            // alert(result.successMessage)
+                            this.setClear();
+                            this.props.backSales();
+                            this.props.history.push("/sales")
+                            Swal.fire('Saved!', '', 'success')
+                        } else {
+                            alert(result.errorMessage)
+                        }
+                    })
+                    .catch((e) => {
+                        alert(e);
+                    })
+            }
+        }
+    }
     // --------------------------------------------------------BACK TO SALES PAGE-------------------------------------------------
     backSales = () => {
+        let detailTemp = this.state.detail
+        if (detailTemp === true) {
+            this.props.backSales();
+            this.props.history.push("/sales")
+        } 
+        else if(this.state.displayAdd=== "none"){
+            Swal.fire('Finish or cancel your activity')
+        }else {
+            Swal.fire({
+                title: 'Do you want to save the changes?',
+                showDenyButton: true,
+                showCancelButton: true,
+                confirmButtonText: `Save`,
+                denyButtonText: `Don't save`,
+            }).then((result) => {
+                /* Read more about isConfirmed, isDenied below */
+                if (result.isConfirmed) {
+                    this.updateSales()
+                } else if (result.isDenied) {
+                    this.props.backSales();
+                    this.props.history.push("/sales")
+                    Swal.fire('Changes are not saved', '', 'info')
+                }
+            })
+        }
+    }
+
+    // -----------------------------------------------------Save click--------------------------------------------------------------
+    saveClick = () => {
+        if(this.state.displayAdd=== "none"){
+            Swal.fire('Finish or cancel your activity')
+        }else{
         Swal.fire({
             title: 'Do you want to save the changes?',
-            showDenyButton: true,
             showCancelButton: true,
             confirmButtonText: `Save`,
-            denyButtonText: `Don't save`,
         }).then((result) => {
             /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) {
-                const { dateSales, distributor, customer, discount, status, productList } = this.state
-                let objSales;
-                if (dateSales === null || customer === "" || status === "") {
-                    Swal.fire('Insert All Data')
-                } else {
-                    objSales = {
-                        dateSales: dateSales,
-                        distributor: this.props.dataLoginUser.id,
-                        customer: customer,
-                        discount: discount,
-                        status: status,
-                        productList: productList,
-                    }
-                    if (this.props.act === 1) {
-                        fetch(`http://localhost:8080/nexchief/update/sales/` + this.state.idSales, {
-                            method: "put",
-                            headers: {
-                                "Content-Type": "application/json; ; charset=utf-8",
-                                "Access-Control-Allow-Headers": "Authorization, Content-Type",
-                                "Access-Control-Allow-Origin": "*"
-                            },
-                            body: JSON.stringify(objSales)
-                        })
-                            .then((response) => {
-                                return response.json()
-                            })
-                            .then((json) => {
-                                if (typeof json.errorMessage !== 'undefined') {
-                                    alert(json.errorMessage)
-                                } else if (typeof json.successMessage !== 'undefined') {
-                                    this.setClear();
-                                    this.props.backSales();
-                                    this.props.history.push("/sales")
-                                    Swal.fire('Saved!', '', 'success')
-                                }
-                            })
-
-
-                    } else {
-                        fetch(`http://localhost:8080/nexchief/sales/`, {
-                            method: "post",
-                            headers: {
-                                "Content-Type": "application/json; ; charset=utf-8",
-                                "Access-Control-Allow-Headers": "Authorization, Content-Type",
-                                "Access-Control-Allow-Origin": "*"
-                            },
-                            body: JSON.stringify(objSales)
-                        })
-                            .then((response) => {
-                                return response.json()
-                            })
-                            .then((result) => {
-                                if (result.successMessage === "New Sales succesfully cretaed") {
-                                    alert(result.successMessage)
-                                    this.setClear();
-                                    this.props.backSales();
-                                    this.props.history.push("/sales")
-                                    Swal.fire('Saved!', '', 'success')
-                                } else {
-                                    alert(result.errorMessage)
-                                }
-                            })
-                            .catch((e) => {
-                                // alert(e);
-                            })
-                    }
-                }
-
-
-            } else if (result.isDenied) {
-                this.props.backSales();
-                this.props.history.push("/sales")
-                Swal.fire('Changes are not saved', '', 'info')
+                this.updateSales()
             }
         })
     }
-
+    }
     // ---------------------------------------GET ALL DATA PRODUCT-----------------------------------------------------
     getAllProduct = () => {
-        fetch(`http://localhost:8080/nexchief/products/` + this.props.dataLoginUser.id, {
+        fetch(`http://localhost:8080/nexchief/product/filter/active/?updated_by=` + this.props.dataLoginUser.id + `&status=active`, {
             method: "get",
             headers: {
                 "Content-Type": "application/json; ; charset=utf-8",
@@ -301,9 +373,16 @@ class SalesDetail extends Component {
         let temp = this.state.productList
         let product = this.state.productData.find(elm => elm.code === temp[idx].code);
         if (product !== undefined) {
-            if (product.stock < el.target.value) {
+            let stockTemp= product.stock
+            let stockTemp2 = parseInt(stockTemp)
+            let qtyTemp = el.target.value
+            let qtyTemp2 = parseInt(qtyTemp)
+            if (stockTemp2+qtyTemp2 < qtyTemp2) {
                 Swal.fire('lack of stock!')
-            } else {
+            } else if (qtyTemp2 < 1) {
+                Swal.fire('Quantity must be greater then 0')
+            }
+            else {
                 let priceTemp = temp[idx].price * el.target.value
                 temp[idx] = {
                     ...temp[idx],
@@ -313,11 +392,18 @@ class SalesDetail extends Component {
                 console.log("pricetemp", priceTemp);
                 this.setState({
                     productList: temp,
-                })
+                }, this.grossHandler())
             }
         } else {
             Swal.fire('Choose Product Code!')
         }
+    }
+
+    discountHandler=el=>{
+        this.setState({
+            discount: el.target.value
+        }, ()=> this.taxhandler())
+
     }
 
 
@@ -343,6 +429,7 @@ class SalesDetail extends Component {
 
     }
 
+    // ---------------------------------------------------DELETE CLICK--------------------------------------------------------------
     delClick = (idx) => {
         Swal.fire({
             title: 'Are you sure?',
@@ -360,7 +447,7 @@ class SalesDetail extends Component {
                 this.setState({
                     prodList: temp
                 })
-                this.submitClick()
+                this.grossHandler()
                 Swal.fire(
                     'Deleted!',
                     'Your file has been deleted.',
@@ -370,21 +457,47 @@ class SalesDetail extends Component {
         })
     }
 
-    editClick = () => {
-        this.setState({
-            displaySave: "",
-            displayCancel: ""
-        })
+    // -------------------------------------EDIT CLICK--------------------------------------------------
+    // editClick = (idx) => {
+    //     this.setState({
+    //         displaySave: "",
+    //         displayCancel: "",
+    //         displayDel: "none",
+    //         displayEdit: "none"
 
+    //     })
+
+    // }
+
+    // ----------------------------------------CANCEL CLICK-----------------------------------------------
+    cancelTbl = (idx) => {
+        this.setState({
+            displaySave: "none",
+            displayCancel: "none",
+            displayDel: "",
+            displayEdit: ""
+        })
     }
+
+    // saveTbl = (idx) => {
+    //     this.setState({
+    //         displaySave: "none",
+    //         displayCancel: "none",
+    //         displayDel: "",
+    //         displayEdit: ""
+    //     })
+    // }
 
     render() {
         const { dateSales, distributor, customer, discount, status, productList } = this.state
-        console.log("sales click", this.props.salesClick.productList[0]);
+        // console.log("sales click", this.props.salesClick.productList[0]);
+        console.log("tgl awal", this.state.dateFirst);
+        console.log("tgl akhir", this.state.dateLast);
         return (
             <div className="detailBody">
                 <div className="detailHeader">
-                    <Button className="backSales" onClick={() => this.backSales()}>Back to Sales Page</Button>
+                    <Button style={{ display: this.state.detail === true ? "none" : "" }} className="saveSales" onClick={() => this.saveClick()}>Save</Button>
+                    <Button className="backSales" onClick={() => this.backSales()}>Back</Button>
                 </div>
                 <div className="detailTop">
                     <div className="detailTop2">
@@ -406,11 +519,11 @@ class SalesDetail extends Component {
                             </div>
                         </div>
                         <div className="inputs">
-                            <Input disabled={this.state.disableInput} name="dateSales" onChange={this.setValue} value={this.state.dateSales} type="Date" className="dateSales"></Input><br />
+                            <Input min={this.state.dateFirst} max={this.state.dateLast} disabled={this.state.disableTable} name="dateSales" onChange={this.setValue} value={this.state.dateSales} type="Date" className="dateSales"></Input><br />
                             <Input disabled={true} name="distributor" onChange={this.setValue} value={this.state.distributor} type="text" className="inputDtl"></Input><br />
-                            <Input disabled={this.state.disableInput} name="customer" onChange={this.setValue} value={this.state.customer} type="text" className="inputDtl"></Input><br />
-                            <Input disabled={this.state.disableInput} name="discount" onChange={this.setValue} value={this.state.discount} type="number" className="inputDtl"></Input><br />
-                            <select name="status" onChange={this.setValue} value={this.state.status} className="inputDtl">
+                            <Input placeholder="name customer.." disabled={this.state.disableTable} name="customer" onChange={this.setValue} value={this.state.customer} type="text" className="inputDtl"></Input><br />
+                            <Input min={1} placeholder="discount.." name="discount" onChange={this.discountHandler} disabled={this.state.disableInput} value={this.state.discount} type="number" className="inputDtl"></Input><br />
+                            <select name="status" onChange={this.setValue} value={this.state.status} disabled={this.state.disableInput} className="inputDtl">
                                 <option value="unpaid">Unpaid</option>
                                 <option value="paid">Paid</option>
                             </select>
@@ -442,25 +555,22 @@ class SalesDetail extends Component {
                                             <tr key={index} className="detailList">
                                                 {/* <td><input disabled={this.state.disableTable} value={detail.code} onChange={this.setValue}></input></td> */}
                                                 <td>
-                                                    <select disabled={detail.submit ? true : false} name="code" onChange={(el) => { this.handleProd(el, index, "code") }} value={detail.code} defaultValue="Product Code">
+                                                    <select disabled={this.state.disableInput} name="code" onChange={(el) => { this.handleProd(el, index, "code") }} value={detail.code} defaultValue="Product Code">
                                                         <option defaultValue>Product Code</option>
                                                         {
                                                             this.state.productData.map((prod) => {
                                                                 return (
-                                                                    <option value={prod.code}>{prod.code} (stock: {prod.stock})</option>
+                                                                    <option value={prod.code}> {prod.code} (stock: {prod.stock}) </option>
                                                                 )
                                                             })
                                                         }
                                                     </select>
                                                 </td>
-                                                <td><input name="nameProduct" disabled={this.state.disableTable} value={detail.nameProduct}></input></td>
-                                                <td><input name="qty" disabled={detail.submit ? true : false} onChange={(el) => { this.handleQty(el, index, "qty") }} value={detail.qty}></input></td>
-                                                <td><input disabled={this.state.disableTable} value={detail.price}></input></td>
-                                                <td><input disabled={this.state.disableTable} value={detail.totalPrice}></input></td>
-                                                <td onClick={() => this.delClick(index)} style={{ display: this.state.displayDel, border: "none", color: "white", backgroundColor: "#333333" }}><Icon className="fas fa-trash-alt"></Icon></td>
-                                                <td style={{ display: this.state.displayEdit, border: "none", color: "white", backgroundColor: "#333333" }}><Icon className="far fa-edit"></Icon></td>
-                                                <td style={{ display: this.state.displaySave, border: "none", color: "white", backgroundColor: "#333333" }}><Icon className="fas fa-check-square"></Icon></td>
-                                                <td style={{ display: this.state.displayCancel, border: "none", color: "white", backgroundColor: "#333333" }}><Icon className="fas fa-window-close"></Icon></td>
+                                                <td><input name="nameProduct" disabled={true} value={detail.nameProduct}></input></td>
+                                                <td><input type="number" min="1" name="qty" disabled={this.state.disableInput} onChange={(el) => { this.handleQty(el, index, "qty") }} value={detail.qty}></input></td>
+                                                <td><input disabled={true} value={detail.price}></input></td>
+                                                <td><input disabled={true} value={detail.totalPrice}></input></td>
+                                                <td onClick={() => this.delClick(index)} style={{ display: this.state.displayDel, border: "none", borderColor: "#A9A9A9", color: "black", backgroundColor: "#A9A9A9" }}><Icon className="fas fa-trash-alt"></Icon></td>
                                             </tr>
                                         )
                                     })

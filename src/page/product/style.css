@@ -6,7 +6,8 @@
 .headerproduct {
     display: flex;
     flex-direction: row;
-    background-color: #464E51;
+    background-color: #455a64;
+    /* background-color: #464E51; */
     height: 10vh;
     /* border: solid; */
 }
@@ -14,18 +15,20 @@
     margin-right: 0;
     margin-top: 2vh;
     margin-left: 35%;
+    width: 50%;
 }
 .addBtn{
-   padding: 4px 3px;
+  padding: 4px 3px;
   font-size: 15px;
   text-align: center;
   cursor: pointer;
   outline: none;
   color: black;
+  font-weight: bold;
   background-color: #808080;
   border: none;
-  border-radius: 10px;
-  box-shadow: 0 9px #999;
+  border-radius: 6px;
+  box-shadow: 0 4px #999;
   margin-right: 5px;
 }
 .hiddenBtn{
@@ -35,14 +38,15 @@
     cursor: pointer;
     outline: none;
     color: black;
+    font-weight: bold;
     background-color: #808080;
     border: none;
-    border-radius: 10px;
-    box-shadow: 0 9px #999;
+    border-radius: 6px;
+    box-shadow: 0 4px #999;
     margin-right: 5px;
 }
 .addBtn:hover {
-    background-color: #D3D3D3
+    /* background-color: #D3D3D3 */
 }
 .addBtn:active {
     background-color: #D3D3D3;
@@ -50,7 +54,7 @@
     transform: translateY(4px);
   }
   .hiddenBtn:hover {
-    background-color: #D3D3D3
+    /* background-color: #D3D3D3 */
 }
 .hiddenBtn:active {
     background-color: #D3D3D3;
@@ -79,7 +83,7 @@
   .inputProduct{
     /* border: solid; */
     width: 70%;
-    height: 100%;
+    height: 90vh;
     background-color: #A9A9A9;
   }
 
@@ -129,18 +133,18 @@
     width: 90%;
     height: 4vh;
     margin-bottom: 2px;
-    margin-left: 5vh;
+    margin-left: 5vh;    
 
   }
   .search1{
       width: 70%;
-      margin-top: 1vh;
+      margin-top: 0vh;
       height: 3vh;
       margin-left: 3vh;
   }
   .paginationProd{
-      border: solid;
-      height: 6.7vh;
+    /* border: solid; */
+    height: 11vh;
   }
   .spanProd{
       margin-left: 6px;
@@ -150,3 +154,19 @@
   pointer-events: none;
   opacity: 0.7;
 }
+
+.gotoReport{
+    width: 20%;
+    color: white;
+    margin-top: 1.2vh;
+
+}
+.fa-file-import{
+    font-size: 35px;
+    color: white;
+}
+
+.fa-search:active {
+    box-shadow: 0 5px #666;
+    transform: translateY(2px);
+  }

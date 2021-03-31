@@ -5,25 +5,38 @@
 
 .bodyRegis{
     width: 100%;
-    height: 100%;
-    /* background-color: black; */
-    /* border-style: solid; */
-    /* padding: 90px; */
+    height: 100vh;
+    display: flex;
+    flex-direction: row;
+    background-color: #37474f;
     background-repeat: no-repeat;
+    /* background-size: cover; */
+    background-image: url("Creativity\ Customizable\ Isometric\ Illustrations\ _\ Amico\ Style.png"); 
+    background-position: 105%;
+    /* overflow: hidden; */
+    /* padding-top: 4%;  */
+    
+}
+
+/* .regisImg{
+    width: 50%;
+    margin: auto;
     background-size: cover;
-    background-image: url("background_regis.jpg");
-    background-position: 10%;
-    /* padding-top: 50px; */
-    overflow: hidden;
-    padding-top: 4%;
-    /* padding-bottom: 1%; */
-    /* padding-bottom: 7px; */
+    background-repeat: no-repeat;
+    background-image: url("Creativity\ Customizable\ Isometric\ Illustrations\ _\ Amico\ Style.png");
+} */
+
+.containerRegis1{
+    width: 50%;
+    margin: auto;
+    margin-left: unset;
+    margin-top: 8vh;
 }
 
 .containerRegis{
     margin:auto;
-    width: 400px;
-    height: 580px;
+    width: 390px;
+    height: 565px;
     /* margin-top: 30px; */
     border-style: solid;
     border-color: darkblue;
@@ -81,4 +94,6 @@
 .backLogin:hover{
     text-decoration: underline;
 }
+
+
 

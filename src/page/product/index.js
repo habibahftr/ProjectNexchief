@@ -14,17 +14,20 @@ class Product extends Component {
             displaySubmit: "none",
             displayCancel: "none",
             displayUpdate: "none",
-            displayTemp: "flexbox",
+            displayTemp: "",
+            displayDel:"",
             disableInput: true,
             disableCode: true,
             disableProd: false,
             disableBtn: true,
+            disableBtnDel: true,
             search: "",
             searchIcon: true,
-            limit: 3,
+            limit: 6,
             count: 0,
             page: 1,
             pageNow:1,
+            disableSearch:false,
             // -----------------------INI STATE PRODUCT-------------------------------
             productList: [],
             product: {},
@@ -57,6 +60,16 @@ class Product extends Component {
     setValue = el => {
         this.setState({
             [el.target.name]: el.target.value
+        })
+    }
+
+    setValueSearch=el=>{
+        if(el.target.value===""){
+            this.getAPICount();
+            this.getPaging(this.state.page, this.state.limit)
+        }
+        this.setState({
+            search: el.target.value
         })
     }
 
@@ -94,6 +107,7 @@ class Product extends Component {
         console.log("uji tanggal:", formatted_date)
         this.setState({
             displayTemp: "none",
+            displayDel:"none",
             displaySubmit: "",
             displayCancel: "",
             displayUpdate: "none",
@@ -113,6 +127,7 @@ class Product extends Component {
             status: "",
             price: "",
             stock: "",
+            disableSearch:true,
 
         })
         console.log("coba: ", this.state.created_at);
@@ -125,12 +140,14 @@ class Product extends Component {
         console.log("addclick");
         this.setState({
             displayTemp: "none",
+            displayDel:"none",
             displayUpdate: "",
             displayCancel: "",
             displaySubmit: "none",
             disableInput: false,
             disableCode: true,
             disableProd: true,
+            disableSearch:true,
         })
     }
 
@@ -186,6 +203,7 @@ class Product extends Component {
                         this.setClear();
                         this.setState({
                             displayTemp: "",
+                            displayDel:"",
                             displayUpdate: "none",
                             displayCancel: "none",
                             displaySubmit: "none",
@@ -193,6 +211,8 @@ class Product extends Component {
                             disableCode: true,
                             disableProd: false,
                             disableBtn: true,
+                            disableBtnDel:true,
+                            disableSearch:false,
                         })
                         // this.getAllProduct();
                         this.getPaging(this.state.page, this.state.limit)
@@ -208,6 +228,7 @@ class Product extends Component {
         console.log("addclick");
         this.setState({
             displayTemp: "",
+            displayDel:"",
             displayUpdate: "none",
             displayCancel: "none",
             displaySubmit: "none",
@@ -215,6 +236,8 @@ class Product extends Component {
             disableCode: true,
             disableProd: false,
             disableBtn: true,
+            disableBtnDel:true,
+            disableSearch:false,
         })
         this.setClear();
     }
@@ -289,6 +312,7 @@ class Product extends Component {
                         })
                         this.setState({
                             displayTemp: "",
+                            displayDel:"",
                             displayUpdate: "none",
                             displayCancel: "none",
                             displaySubmit: "none",
@@ -296,9 +320,13 @@ class Product extends Component {
                             disableCode: true,
                             disableProd: false,
                             disableBtn: true,
+                            disableBtnDel:true,
+                            disableSearch:false,
                         })
+
                         this.setClear();
                         // this.getAllProduct();
+                        this.getAPICount()
                         this.getPaging(this.state.page, this.state.limit)
                     } else {
                         Swal.fire({
@@ -331,12 +359,12 @@ class Product extends Component {
                 if (result.successMessage !== "undefined") {
                     Swal.fire({
                         title: 'Are you sure?',
-                        text: "You won't be able to revert this!",
+                        text: "you want to change the product status to inactive?",
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#3085d6',
                         cancelButtonColor: '#d33',
-                        confirmButtonText: 'Yes, delete it!'
+                        confirmButtonText: 'Yes!'
                     }).then((result) => {
                         if (result.isConfirmed) {
                             Swal.fire(
@@ -348,6 +376,7 @@ class Product extends Component {
                             this.getPaging(this.state.page, this.state.limit)
                             this.setState({
                                 disableBtn: true,
+                                disableBtnDel:true,
                             })
                         }
                     })
@@ -416,12 +445,25 @@ class Product extends Component {
                     updated_at: json.updated_at,
                     updated_by: json.updated_by,
 
-                });
+                }, ()=> this.statusHandler());
 
             })
             .catch(() => {
                 alert("Failed fetching")
             })
+    }
+
+    statusHandler=()=>{
+        let statusTemp = this.state.status
+        if(statusTemp==="INACTIVE"){
+            this.setState({
+                displayDel: "none"
+            })
+         }else{
+             this.setState({
+                 displayDel: ""
+             })
+         }
     }
 
     //---------------------------------------------------GET COUNT UNTUK MENGETAHUI JUMLAH DATA-----------------------------------------------
@@ -498,13 +540,11 @@ class Product extends Component {
     searchClick = () => {
         console.log("src");
         const searchIconTemp = this.state.searchIcon
-        if (searchIconTemp === true) {
             if (this.state.search !== "") {
                 this.getAPICountSearch();
                 this.searchName(this.state.pageNow, this.state.limit)
                 this.setState({
                     page: 1,
-                    searchIcon: false,
                 });
             } else {
                 Swal.fire({
@@ -512,15 +552,14 @@ class Product extends Component {
                     icon: 'warning'
                 })
             }
-        } else {
-            this.setState({
-                search: "",
-                searchIcon: true,
-            })
-            this.getAPICount();
-            this.getPaging(this.state.page, this.state.limit)
-        }
+    }
 
+    closeClick=()=>{
+        this.setState({
+            search: "",
+        })
+        this.getAPICount();
+        this.getPaging(this.state.page, this.state.limit)
     }
 
     //------------------------------------------------------INI PAGINATION---------------------------------------------------------------------
@@ -555,37 +594,45 @@ class Product extends Component {
             })
     };
 
+    backHome=()=>{
+        if(this.state.displayTemp==="none"){
+            Swal.fire('Finish or cancel your activity')
+        }else{
+            this.props.history.push("/home")
+        }
+    }
+
 
     //============================================================R E N D E R===============================================================
     render() {
-        // console.log("ini page : ", this.state.page);
-        // console.log("INI CREATED AT : ", this.state.created_at);
-        // console.log("code", this.state.code);
-        // console.log("productname", this.state.nameProduct);
-        // console.log("productlist: ", this.state.productList);
-        // console.log("count", this.state.count);
         const { code, nameProduct, packaging, product_desc, category, launch_date, status, price, stock, created_at, created_by, updated_at, updated_by } = this.state
         if (this.props.checkLogin === false) {
             this.props.history.push("/")
         }
+        console.log(this.state.search);
         return (
             <div className="productPage">
                 <div className="headerproduct">
-                    <Icon onClick={() => this.props.history.push("/home")} className="fas fa-home" style={{ color: "white", display: 'inline-block', marginTop: "2vh", marginRight: "20%", marginLeft: "5%", fontSize: "40px", cursor: "pointer" }}></Icon>
+                    <Icon onClick={() =>this.backHome() } className="fas fa-home" style={{ color: "white", display: 'inline-block', marginTop: "2vh", marginRight: "20%", marginLeft: "5%", fontSize: "40px", cursor: "pointer" }}></Icon>
                     <div className="buttonProduct">
                         <Button className="addBtn" onClick={() => this.addClick()} style={{ display: this.state.displayTemp }}>Add</Button>
-                        <Button className="addBtn" disabled={this.state.disableBtn} onClick={() => this.editClick()} style={{ display: this.state.displayTemp }}>Edit</Button>
-                        <Button className="addBtn" disabled={this.state.disableBtn} onClick={() => this.delClick()} style={{ display: this.state.displayTemp }}>Delete</Button>
+                        <Button className="addBtn" disabled={this.state.disableBtn} onClick={() => this.editClick()} style={{ cursor:this.state.disableBtn===true ? "text" : "pointer" ,display: this.state.displayTemp }}>Edit</Button>
+                        <Button className="addBtn" disabled={this.state.disableBtn} onClick={() => this.delClick()} style={{ cursor:this.state.disableBtnDel===true ? "text" : "pointer", display: this.state.displayDel }}>Delete</Button>
                         <Button className="hiddenBtn" onClick={() => this.saveClick({ code, nameProduct, packaging, product_desc, category, launch_date, status, price, stock, created_at, created_by, updated_at, updated_by })} style={{ display: this.state.displaySubmit }}>Save</Button>
                         <Button className="hiddenBtn" onClick={() => this.updateClick({ nameProduct, packaging, product_desc, category, launch_date, status, price, stock, updated_at, updated_by })} style={{ display: this.state.displayUpdate }}>Update</Button>
                         <Button className="hiddenBtn" onClick={() => this.cancelClick()} style={{ display: this.state.displayCancel }}>Cancel</Button>
                     </div>
+                    <div className="gotoReport">
+                        <Icon onClick={()=>this.props.history.push("/report/product" )} className="fas fa-file-import"></Icon>
+                        <div>Go To Report</div>
+                    </div>
                 </div>
                 <div className="bodyProduct">
                     <div className="tableProduct">
-                        <div className="searchProduct">
-                            <Input className="search1" name="search" onChange={this.setValue} value={this.state.search} placeholder="product name.."></Input>
-                            <Icon className={this.state.searchIcon === true ? "fas fa-search" : "fas fa-window-close"} onChange={this.setValue} onClick={() => this.searchClick()} style={{ cursor: "pointer", marginLeft: "2vh", fontSize: "20px", marginTop: "2vh" }}></Icon>
+                        <div disabled={this.state.disableSearch}  className="searchProduct">
+                            <Input className="search1" name="search" onChange={this.setValueSearch} value={this.state.search} placeholder="product name.."></Input>
+                            <Icon  className="far fa-window-close" onClick={() => this.closeClick()} style={{marginLeft:"-25px", marginTop:"2px"}}></Icon>
+                            <Icon  className="fas fa-search" onChange={this.setValue} onClick={() => this.searchClick()} style={{ cursor: "pointer", marginLeft: "2vh", border:"solid", padding: "1.5px", fontSize: "16px", marginTop: "1.5vh" }}></Icon>
 
                         </div>
                         <div className="listProduct">
@@ -600,6 +647,14 @@ class Product extends Component {
                                         </div>
                                     )
                                 })
+                            }
+                            {
+                                (this.state.productList.length >0)?
+                                ""
+                                :
+                                <div className="listProd" >
+                                    <span style={{margin:"auto"}}>Data empty</span>
+                                </div>
                             }
 
                         </div>
@@ -623,6 +678,7 @@ class Product extends Component {
                             <div className="labelProd" style={{ height: "3.5vh", paddingTop: "2vh" }}>Created By</div>
                             <div className="labelProd" style={{ height: "3.5vh", paddingTop: "2vh" }}>Updated At</div>
                             <div className="labelProd" style={{ height: "3.5vh", paddingTop: "2vh" }}>Updated By</div>
+                            <div  className="labelProd" style={{ height: "1.8vh", paddingTop: "2vh" }}></div>
 
                         </div>
                         <div className="inputProduct">

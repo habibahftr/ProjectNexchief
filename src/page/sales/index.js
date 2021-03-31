@@ -9,6 +9,8 @@ import { connect } from 'react-redux';
 import Switch from '@material-ui/core/Switch';
 import Swal from 'sweetalert2';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import ComponentToPrint from './componentToPrint'
+import ReactToPrint from 'react-to-print';
 
 class Sales extends Component {
     constructor(props) {
@@ -16,10 +18,11 @@ class Sales extends Component {
         this.state = {
             sales: [],
             salesClick: {},
-            limit: 7,
+            salesPrint: [],
+            limit: 10,
             count: 0,
             page: 1,
-            pageNow:1,
+            pageNow: 1,
             checkedPaid: false,
             checkedUnpaid: false,
             status: "paid",
@@ -27,12 +30,21 @@ class Sales extends Component {
             actUnpaid: 0,
             search: "",
             searchIcon: true,
+            disableToggle: false,
+            optionPrint: "all",
+            dateFirst: "",
+            dateLast: "",
+            optionSearch: "",
+            displaySearch: "none",
+            displaySearch2: "none",
+            date1: "",
+            date2: ""
+
         }
     }
 
     componentDidMount() {
-        this.getCountSales();
-        this.getAllSales(this.state.page, this.state.limit)
+        this.getDate();
     }
 
     setValue = el => {
@@ -41,129 +53,213 @@ class Sales extends Component {
         })
     }
 
+    setValueSearch=el=>{
+        if(el.target.value===""){
+            this.getDate();
+        }
+        this.setState({
+            search: el.target.value
+        })
+    }
+
+    setOptionSearch = el => {
+        this.setState({
+            optionSearch: el.target.value,
+        }, () => this.displaySeacrhHandler())
+    }
+
+    displaySeacrhHandler = () => {
+        let temp = this.state.optionSearch
+        if (temp === "Product Name") {
+            this.setState({
+                displaySearch: "",
+                displaySearch2: "none",
+            })
+        }
+        else if (temp === "Date") {
+            this.setState({
+                displaySearch: "none",
+                displaySearch2: "",
+            })
+        }
+        else {
+            this.setState({
+                displaySearch: "none",
+                displaySearch2: "none",
+            })
+            this.getDate()
+        }
+    }
+    // --------------------------------------------GET DATE ---------------------------------------------------------
+    getDate = () => {
+        let current_datetime = new Date()
+        let year = current_datetime.getFullYear();
+        let monthTwoDigit = ("0" + (current_datetime.getMonth() + 1)).slice(-2)
+        let dateTwoDigit = ("0" + current_datetime.getDate()).slice(-2)
+        let dateFirst = year + "-" + monthTwoDigit + "-01"
+        let dateLast = year + "-" + monthTwoDigit + "-" + dateTwoDigit
+        console.log("uji tanggal:", dateFirst)
+        this.setState({
+            dateFirst: dateFirst,
+            dateLast: dateLast
+        }, () => this.getCountSales())
+    }
+
     // ------------------------------------------SEARCH CLICK--------------------------------------------------------
-    searchClick=()=>{
-        const iconTemp= this.state.searchIcon
-        const searchTemp= this.state.search
-        if(iconTemp === true){
-            if(searchTemp !== ""){
-                this.getCountProd();
-                this.getAllSalesProd(this.state.pageNow, this.state.limit, searchTemp)
+    searchClick = () => {
+        console.log("2", this.state.date1);
+        console.log("3", this.state.date2);
+        console.log("object", this.state.optionPrint);
+        console.log("rr", this.state.search);
+        const datetemp1 = this.state.date1
+        const datetemp2 = this.state.date2
+        const iconTemp = this.state.searchIcon
+        const searchTemp = this.state.search
+        const optionTemp = this.state.optionPrint
+        const optionSearchTemp = this.state.optionSearch
+        if (optionSearchTemp === "Product Name") {
+            if (searchTemp !== "") {
+                if (optionTemp === "paid") {
+                    this.getCountFilter("paid", searchTemp)
+                    this.getAllFilter(this.state.pageNow, this.state.limit, "paid", searchTemp)
+                    this.getAllSearchFilter("paid", searchTemp)
+                } else if (optionTemp === "unpaid") {
+                    this.getCountFilter("unpaid", searchTemp)
+                    this.getAllFilter(this.state.pageNow, this.state.limit, "unpaid", searchTemp)
+                    this.getAllSearchFilter("unpaid", searchTemp)
+                } else if (optionTemp === "all") {
+                    console.log("object heiiiiiii");
+                    this.getCountProd(searchTemp);
+                    this.getAllSalesProd(this.state.pageNow, this.state.limit, searchTemp)
+                    this.getAllPrint();
+                } else {
+                    Swal.fire({
+                        title: 'choose the option filter',
+                        icon: 'warning'
+                    })
+                }
                 this.setState({
                     searchIcon: false
                 })
-            }else{
+            }
+        }
+        else if (optionSearchTemp === "Date") {
+            if (datetemp1 !== "" && datetemp2 !== "") {
+                this.setState({
+                    dateFirst: datetemp1,
+                    dateLast: datetemp2
+                }, () => this.getCountSales())
+            }
+            else {
                 Swal.fire({
-                    title: 'Input product name for searching!',
+                    title: 'Insert Enter start date and end date',
                     icon: 'warning'
                 })
             }
-        }else{
-            this.setState({
-                search: "",
-                searchIcon: true,
-            })
-            this.getCountSales();
-            this.getAllSales(this.state.page, this.state.limit)
         }
-
-    }
-    paidController = () => {
-        let tempUn = this.state.actUnpaid
-        if (tempUn === 0) {
+        else if(optionSearchTemp !== "Date" || optionSearchTemp !== "Product Name"){
             this.setState({
-                status: "paid",
-                actPaid: 1,
-            }, this.getCountStatus("paid"),
-                this.getAllSalesStatus(this.state.page, this.state.limit,"paid"))
-            console.log("paid", this.state.status);
-        } else if (tempUn === 1) {
-            this.setState({
-                sales: [],
-                actPaid: 1,
+                date1:"",
+                date:"",
             })
-        }
-    }
-
-    paidFalse = () => {
-        let tempUn = this.state.actUnpaid
-        if (tempUn === 1) {
-            this.setState({
-                actPaid: 0,
-                status: "unpaid"
-            }, this.getCountStatus("unpaid"),
-                this.getAllSalesStatus(this.state.page, this.state.limit,"unpaid"))
-        } else {
-            this.setState({
-                actPaid: 0,
-                actUnpaid:0,
-            })
-            this.getCountSales();
-            this.getAllSales(this.state.page, this.state.limit)
+            if (optionTemp === "paid") {
+                this.getCountStatus("paid")
+                this.getAllSalesStatus(this.state.pageNow, this.state.limit, "paid")
+                this.getSalesStatusPrint("paid")
+            } else if (optionTemp === "unpaid") {
+                this.getCountStatus("unpaid")
+                this.getAllSalesStatus(this.state.pageNow, this.state.limit, "unpaid")
+                this.getSalesStatusPrint("unpaid")
+            } else if (optionTemp === "all") {
+                this.getCountSales();
+                this.getAllSales(this.state.pageNow, this.state.limit)
+                this.getAllPrint();
+            }
+            else {
+                Swal.fire({
+                    title: 'Input product name or option filter for searching!',
+                    icon: 'warning'
+                })
+            }
         }
     }
 
-    unpaidController = () => {
-        console.log("object", this.state.actPaid);
-        let temp = this.state.actPaid
-        if (temp === 0) {
-            this.setState({
-                status: "unpaid",
-                actUnpaid: 1,
-            }, this.getCountStatus("unpaid"),
-                this.getAllSalesStatus(this.state.page, this.state.limit,"unpaid"))
-        } else if (temp === 1) {
-            this.setState({
-                sales: [],
-                actUnpaid: 1,
-            })
-        }
-    }
-
-    unpaidFalse = () => {
-        console.log("object", this.state.actPaid);
-        let temp = this.state.actPaid
-        if (temp === 1) {
-            this.setState({
-                actUnpaid: 0,
-                status: "paid"
-            }, this.getCountStatus("paid"),
-                this.getAllSalesStatus(this.state.page, this.state.limit,"paid"))
-        } else {
-            this.setState({
-                actUnpaid: 0,
-                actPaid:0
-            })
-            this.getCountSales();
-            this.getAllSales(this.state.page, this.state.limit)
-        }
-    }
-    handleChangeStatus = (event) => {
+    closeClick = () => {
         this.setState({
-            checkedPaid: event.target.checked,
+            search: "",
+            optionPrint: "all"
         })
-        const paid = event.target.checked
-        if (paid) {
-            this.paidController()
-        } else {
-            this.paidFalse()
-        }
+        this.getCountSales();
+        this.getAllSales(this.state.page, this.state.limit)
     }
 
-    handleChangeStatus2 = (event) => {
-        this.setState({
-            checkedUnpaid: event.target.checked,
+    // -----------------------------------------GET SALES STATUS PRINT---------------------------------------------------------------S
+    getSalesStatusPrint = (status) => {
+        fetch(`http://localhost:8080/nexchief/sales/filter?distributor=` + this.props.dataLoginUser.id + `&status=` + status, {
+            method: "get",
+            headers: {
+                "Content-Type": "application/json; ; charset=utf-8",
+                "Access-Control-Allow-Headers": "Authorization, Content-Type",
+                "Access-Control-Allow-Origin": "*"
+            }
         })
-        const unpaid = event.target.checked
-        if (unpaid) {
-            this.unpaidController()
+            .then(response => response.json())
+            .then(json => {
+                this.setState({
+                    salesPrint: json,
+                });
+                console.log("ini data sales print", this.state.salesPrint);
+            })
+            .catch(() => {
+                alert("Failed fetching")
+            })
 
-        } else {
-            this.unpaidFalse();
-
-        }
     }
-    // -----------------------------------------------DETAIL CLICK-----------------------------------------------------
+
+    // --------------------------------------------GET ALL SEARCH AND FILTER-------------------------------------------------
+    getAllSearchFilter = (status, search) => {
+        fetch(`http://localhost:8080/nexchief/sales/search/filter/print/?distributor=` + this.props.dataLoginUser.id + `&status=` + status + `&nameProduct=` + search, {
+            method: "get",
+            headers: {
+                "Content-Type": "application/json; ; charset=utf-8",
+                "Access-Control-Allow-Headers": "Authorization, Content-Type",
+                "Access-Control-Allow-Origin": "*"
+            }
+        })
+            .then(response => response.json())
+            .then(json => {
+                this.setState({
+                    salesPrint: json,
+                });
+                console.log("ini data sales print", this.state.salesPrint);
+            })
+            .catch(() => {
+                alert("Failed fetching")
+            })
+
+    }
+
+    // -----------------------------------------------EDIT CLICK-----------------------------------------------------
+    editClick = (idSales) => {
+        fetch(`http://localhost:8080/nexchief/sales/` + idSales, {
+            method: "get",
+            headers: {
+                "Content-Type": "application/json; ; charset=utf-8",
+                "Access-Control-Allow-Headers": "Authorization, Content-Type",
+                "Access-Control-Allow-Origin": "*"
+            }
+        })
+            .then(response => response.json())
+            .then(json => {
+                this.props.salesClick(json, 1)
+                this.props.history.push("/sales/detail")
+            })
+            .catch(() => {
+                alert("Failed fetching")
+            })
+    }
+
+    // -----------------------------------------DETAIL CLICK-----------------------------------------------------
     detailClick = (idSales) => {
         fetch(`http://localhost:8080/nexchief/sales/` + idSales, {
             method: "get",
@@ -175,7 +271,7 @@ class Sales extends Component {
         })
             .then(response => response.json())
             .then(json => {
-                this.props.salesClick({ sales: json })
+                this.props.salesClick(json, 2)
                 this.props.history.push("/sales/detail")
             })
             .catch(() => {
@@ -183,17 +279,64 @@ class Sales extends Component {
             })
     }
 
+    // -----------------------------------------HANDLE CHANGE----------------------------------------------------------
     handleChange = (event, value) => {
+        console.log("actpaid", this.state.optionPrint);
+        console.log("actUnpaid", this.state.actUnpaid);
         this.setState({
             page: value,
         })
-        this.getCountSales();
-        this.getAllSales(value, this.state.limit);
+        let searchTemp = this.state.search
+        let optionTemp = this.state.optionPrint
+        if (searchTemp === "" && optionTemp === "all") {
+            this.getCountSales();
+            this.getAllSales(value, this.state.limit);
+        }
+        else if (searchTemp === "" && optionTemp === "paid") {
+            this.getCountStatus("paid");
+            this.getAllSalesStatus(value, this.state.limit, "paid")
+        } else if (searchTemp === "" && optionTemp === "unpaid") {
+            this.getCountStatus("unpaid");
+            this.getAllSalesStatus(value, this.state.limit, "unpaid")
+        } else if (searchTemp !== "" && optionTemp === "all") {
+            this.getCountProd(searchTemp)
+            this.getAllSalesProd(value, this.state.limit, searchTemp)
+        } else if (searchTemp !== "" && optionTemp === "paid") {
+            this.getCountFilter("paid", searchTemp)
+            this.getAllFilter(value, this.state.limit, "paid", searchTemp)
+        } else if (searchTemp !== "" && optionTemp === "unpaid") {
+            this.getCountFilter("unpaid", searchTemp)
+            this.getAllFilter(value, this.state.limit, "unpaid", searchTemp)
+        }
     }
 
     // ---------------------------------------GET COUNT ALL DATA--------------------------------------------
     getCountSales = () => {
-        fetch(`http://localhost:8080/nexchief/sales/count/?distributor=` + this.props.dataLoginUser.id, {
+        fetch(`http://localhost:8080/nexchief/sales/count/?distributor=` + this.props.dataLoginUser.id + `&dateFirst=` + this.state.dateFirst + `&dateLast=` + this.state.dateLast, {
+            method: "get",
+            headers: {
+                "Content-Type": "application/json; ; charset=utf-8",
+                "Access-Control-Allow-Headers": "Authorization, Content-Type",
+                "Access-Control-Allow-Origin": "*"
+            }
+        })
+            .then(response => response.json())
+            .then(json => {
+                let limitPage = json / this.state.limit
+                this.setState({
+                    count: Math.ceil(limitPage)
+                }, () => this.getAllSales(this.state.page, this.state.limit))
+                console.log("INI RESPON COUNT Sales ", json)
+            })
+            .catch(() => {
+                alert("Failed fetching")
+            })
+
+    }
+
+    // ----------------------------------------GET COUNT SEARCH AND FILTER BY TOGGLE----------------------
+    getCountFilter = (status, search) => {
+        fetch(`http://localhost:8080/nexchief/sales/filter/toggle/?distributor=` + this.props.dataLoginUser.id + `&status=` + status + `&nameProduct=` + search, {
             method: "get",
             headers: {
                 "Content-Type": "application/json; ; charset=utf-8",
@@ -212,12 +355,11 @@ class Sales extends Component {
             .catch(() => {
                 alert("Failed fetching")
             })
-
     }
 
     // ----------------------------------------GET COUNT ALL STATUS----------------------------------------
     getCountStatus = (status) => {
-       
+
         fetch(`http://localhost:8080/nexchief/sales/status/count/?distributor=` + this.props.dataLoginUser.id + `&status=` + status, {
             method: "get",
             headers: {
@@ -241,8 +383,8 @@ class Sales extends Component {
     }
 
     // ----------------------------------------GET COUNT ALL PRODUCT-----------------------------------------------
-    getCountProd=(search)=>{
-        fetch(`http://localhost:8080/nexchief/sales/product/count/?distributor=`+this.props.dataLoginUser.id+`&nameProduct=`+search, {
+    getCountProd = (search) => {
+        fetch(`http://localhost:8080/nexchief/sales/product/count/?distributor=` + this.props.dataLoginUser.id + `&nameProduct=` + search, {
             method: "get",
             headers: {
                 "Content-Type": "application/json; ; charset=utf-8",
@@ -259,14 +401,14 @@ class Sales extends Component {
                 console.log("INI RESPON COUNT Sales ", json)
             })
             .catch(() => {
-                alert("Failed fetching")
+                alert("Failed fetching 7")
             })
     }
 
 
     // ----------------------------------------GET ALL DATA---------------------------------------------
     getAllSales = (value, limit) => {
-        fetch(`http://localhost:8080/nexchief/sales/paging/?page=` + value + `&limit=` + limit + `&id=` + this.props.dataLoginUser.id, {
+        fetch(`http://localhost:8080/nexchief/sales/paging/?page=` + value + `&limit=` + limit + `&id=` + this.props.dataLoginUser.id + `&dateFirst=` + this.state.dateFirst + `&dateLast=` + this.state.dateLast, {
             method: "get",
             headers: {
                 "Content-Type": "application/json; ; charset=utf-8",
@@ -278,7 +420,7 @@ class Sales extends Component {
             .then(json => {
                 this.setState({
                     sales: json,
-                });
+                }, () => this.getAllPrint());
                 this.props.salesData({ list: json })
                 console.log("ini data sales", this.state.sales);
             })
@@ -312,10 +454,10 @@ class Sales extends Component {
             })
     }
 
-    // ----------------------------------------GET ALL PRODUCT-----------------------------------------------
-    getAllSalesProd=(value, limit, search)=>{
-        console.log("stsussssss", search);
-        fetch(`http://localhost:8080/nexchief/sales/filter/prod/?page=`+value+`&limit=`+limit+`&distributor=`+this.props.dataLoginUser.id+`&nameProduct=`+search, {
+    // -----------------------------------------GET ALL SEARCH AND FILTER BY TOGGLE----------------------------------
+    getAllFilter = (value, limit, status, seacrh) => {
+        console.log("stsussssss", status);
+        fetch(`http://localhost:8080/nexchief/sales/filter/search/?page=` + value + `&limit=` + limit + `&distributor=` + this.props.dataLoginUser.id + `&status=` + status + `&nameProduct=` + seacrh, {
             method: "get",
             headers: {
                 "Content-Type": "application/json; ; charset=utf-8",
@@ -334,26 +476,85 @@ class Sales extends Component {
             .catch(() => {
                 alert("Failed fetching")
             })
+    }
 
+    // ----------------------------------------GET ALL PRODUCT-----------------------------------------------
+    getAllSalesProd = (value, limit, search) => {
+        console.log("stsussssss", search);
+        fetch(`http://localhost:8080/nexchief/sales/filter/prod/?page=` + value + `&limit=` + limit + `&distributor=` + this.props.dataLoginUser.id + `&nameProduct=` + search, {
+            method: "get",
+            headers: {
+                "Content-Type": "application/json; ; charset=utf-8",
+                "Access-Control-Allow-Headers": "Authorization, Content-Type",
+                "Access-Control-Allow-Origin": "*"
+            }
+        })
+            .then(response => response.json())
+            .then(json => {
+                this.setState({
+                    sales: json,
+                });
+                // this.props.salesData({ list: json })
+                console.log("ini data sales", this.state.sales);
+            })
+            .catch((e) => {
+                alert(e)
+            })
+
+    }
+
+    // ----------------------------------------GET ALL PRINT--------------------------------------------------
+    getAllPrint = () => {
+        fetch(`http://localhost:8080/nexchief/sales/all/` + this.props.dataLoginUser.id + `?dateFirst=` + this.state.dateFirst + `&dateLast=` + this.state.dateLast, {
+            method: "get",
+            headers: {
+                "Content-Type": "application/json; ; charset=utf-8",
+                "Access-Control-Allow-Headers": "Authorization, Content-Type",
+                "Access-Control-Allow-Origin": "*"
+            }
+        })
+            .then(response => response.json())
+            .then(json => {
+                this.setState({
+                    salesPrint: json,
+                });
+                console.log("ini data sales", this.state.salesPrint);
+            })
+            .catch(() => {
+                alert("Failed fetching 1")
+            })
+
+    }
+
+    priceFormat = price => {
+        var bilangan = price;
+
+        var number_string = '' + bilangan + '',
+            sisa = number_string.length % 3,
+            rupiah = number_string.substr(0, sisa),
+            ribuan = number_string.substr(sisa).match(/\d{3}/g);
+
+        if (ribuan) {
+            var separator = sisa ? '.' : '';
+            rupiah += separator + ribuan.join('.');
+        }
+        return rupiah;
     }
 
     render() {
         if (this.props.checkLogin === false) {
             this.props.history.push("/")
         }
-        console.log("cek1",this.state.checkedPaid );
-        console.log("cek2",this.state.checkedUnpaid );
-        console.log("cek3",this.state.status ); 
-        console.log("cek4",this.state.status ); 
-            // actPaid: 0,
-            // actUnpaid: 0,
         const { checkedPaid, checkedUnpaid } = this.state
-        console.log("sales props", this.props.salesList);
-        console.log("sales click", this.props.salesClick);
+        console.log("option", this.state.search);
+        console.log("sales click", this.state.sales);
+        console.log("optionSearch", this.state.optionSearch);
         return (
             <div className="salesPage">
                 <div className="headerSales">
-                    <Icon onClick={() => this.props.history.push("/home")} className="fas fa-home" style={{ color: "white", display: 'inline-block', marginTop: "2vh", fontSize: "40px", cursor: "pointer" }}></Icon>
+                    <Icon onClick={() => this.props.history.push("/home")} className="fas fa-home" 
+                            style={{ color: "white", display: 'inline-block', marginTop: "2vh", fontSize: "40px", cursor: "pointer" }}>
+                    </Icon>
                     <div className="titleSalesPage">
                         <Label className="monthly">MONTHLY</Label>
                         <Label className="salesact">SALES ACTIVITY</Label>
@@ -361,40 +562,51 @@ class Sales extends Component {
                 </div>
                 <div className="bodySales">
                     <div className="container1">
-                        <div className="seacrhSales1">
-                            <Input className="searchSales2" name="search" onChange={this.setValue} value={this.state.search} placeholder="seacrh by name product.."></Input>
-                            <Icon className={this.state.searchIcon === true ? "fas fa-search" : "fas fa-window-close"} onClick={() => this.searchClick()} style={{ color: "black", fontSize: "17px", border:"solid", padding:"2px", height:"17px", backgroundColor:"white" }}></Icon>
-                            {/* <label className="searchBtnSales">Search</label> */}
-                        </div>
-                        <div className="toggleSales">
-                            <div>
-                                <FormControlLabel
-                                control={<Switch checked={checkedPaid} color="primary" className="toogle" onChange={this.handleChangeStatus} name="checkedPaid" />}
-                                label="PAID"
-                                />
+                        <div className="optionStatus">
+                            <select className="optionSearch" name="optionSearch" onChange={this.setOptionSearch} value={this.state.optionSearch} defaultValue="Select Option Search" >
+                                <option defaultValue>Select Option Search</option>
+                                <option value="Product Name">Product Name</option>
+                                <option value="Date">Date</option>
+                            </select>
+                            <div className="seacrhSales1" style={{ display: this.state.displaySearch }}>
+                                <Input className="searchSales2" name="search" onChange={this.setValueSearch} value={this.state.search} placeholder="seacrh by name product.."></Input>
+                                <Icon className="far fa-window-close" onClick={() => this.closeClick()} style={{ marginLeft: "-50px", marginTop: "35px" }}></Icon>
                             </div>
-                            <div>
-                            <FormControlLabel
-                                control={<Switch checked={checkedUnpaid} color="primary" className="toogle" onChange={this.handleChangeStatus2} name="checkedUnpaid" />}
-                                label="UNPAID"
-                                />
-                                {/* <Grid component="label" container alignItems="center" spacing={1}>
-                                    <Grid item>
-                                        <Switch checked={checkedUnpaid} color="primary" className="toogle" onChange={this.handleChangeStatus2} name="checkedUnpaid" />
-                                    </Grid>
-                                    <Grid item>UNPAID</Grid>
-                                </Grid> */}
+                            <div className="searchDate" style={{ display: this.state.displaySearch2 }}>
+                                <input className="searchDate1" name="date1" type="date" value={this.state.date1} onChange={this.setValue}></input>
+                                <span style={{ color: "white", marginRight: "2vh", marginTop: "6vh" }}> to </span>
+                                <input type="date" name="date2" className="searchDate2" value={this.state.date2} onChange={this.setValue}></input>
                             </div>
+                            <select className="optionStatus2" name="optionPrint" onChange={this.setValue} value={this.state.optionPrint} defaultValue="Select Option Filter" >
+                                <option value="all">All</option>
+                                <option value="paid">Status : Paid</option>
+                                <option value="unpaid">Status : Unpaid</option>
+                            </select>
+                            <Icon className="fas fa-search" onClick={() => this.searchClick()} 
+                                style={{ color: "black", marginLeft: "2vh", marginTop: "5vh", fontSize: "19px", border: "solid", padding: "2px", height: "23px", backgroundColor: "white", }}>
+                            </Icon>
                         </div>
                         <div className="addButton">
+                            {/* <Icon className="fas fa-coins" onClick={() => this.props.history.push("/sales/detail")}></Icon>
+                            <div className="labeladd">Add new Sales</div> */}
                             <Button className="addSales" onClick={() => this.props.history.push("/sales/detail")}>Add</Button>
                         </div>
+                        <div className="printSales">
+                            <ReactToPrint
+                                trigger={() => <Icon className="fas fa-file-pdf" style={{ color: "white", margin: "auto", fontSize: "40px", marginTop: "3vh" }}></Icon>}
+                                content={() => this.componentRef}
+                            ></ReactToPrint>
+                            <div className="labelPrint">Print Report</div>
+                        </div>
+                    </div>
+                    <div className="container6">
+                        <ComponentToPrint ref={el => (this.componentRef = el)} salesPrint={this.state.salesPrint} />
                     </div>
                     <div className="container2">
                         <table id="tableSales1" cellspasing="0" border="1 white">
                             <thead>
-                                <tr className="tableSales2" >
-                                    <th className="tDate">Date</th>
+                                <tr className="tableSales2" style={{ textAlign: "center" }} >
+                                    <th className="tText">Date</th>
                                     <th className="tText">Customer</th>
                                     <th className="tText">Gross Amount (Rp)</th>
                                     <th className="tText">Discount (Rp)</th>
@@ -411,12 +623,13 @@ class Sales extends Component {
                                             <tr key={index} className="salesList">
                                                 <td>{sales.dateSales}</td>
                                                 <td>{sales.customer}</td>
-                                                <td>{sales.gross}</td>
-                                                <td>{sales.discount}</td>
-                                                <td>{sales.tax}</td>
-                                                <td>{sales.invoice}</td>
+                                                <td>{this.priceFormat(sales.gross)}</td>
+                                                <td>{this.priceFormat(sales.discount)}</td>
+                                                <td>{this.priceFormat(sales.tax)}</td>
+                                                <td>{this.priceFormat(sales.invoice)}</td>
                                                 <td>{sales.status}</td>
-                                                <td><button style={{ cursor: "pointer" }} onClick={() => this.detailClick(sales.idSales)}>Detail</button></td>
+                                                <td><button style={{ cursor: "pointer" }} onClick={() => this.detailClick(sales.idSales)}>Detail</button>
+                                                    <button style={{ cursor: "pointer" }} onClick={() => this.editClick(sales.idSales)}>Edit</button></td>
                                             </tr>
 
                                         )
@@ -448,7 +661,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => {
     return {
         salesData: (data) => dispatch({ type: "GETALL_SALES", payload: data }),
-        salesClick: (data) => dispatch({ type: "SALES_CLICK", payload: data }),
+        salesClick: (data, edit) => dispatch({ type: "SALES_CLICK", payload: { data, edit } }),
     }
 }
 

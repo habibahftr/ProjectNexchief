@@ -44,16 +44,33 @@ class Home extends Component {
                     <div className="headerHome">
                         <a className="changePass" onClick={() => this.props.history.push("/changepass")} >Change Password?</a>
                         <div className="welcome">
-                            <div>WELCOME</div>
-                            <div>{this.props.dataLoginUser.name}</div>
+                            <div className="spanHome">WELCOME</div>
+                            <div className="spanHome">{this.props.dataLoginUser.name}</div>
                         </div>
                         <div className="logout">
-                            <Icon onClick={()=> this.logoutBtn()} className="fas fa-sign-out-alt" style={{ color: "#B22222", display: 'inline-block', fontSize: "40px", cursor: "pointer" }}></Icon>
-                            <div>Logout</div>
+                            <Icon onClick={()=> this.logoutBtn()} className="fas fa-sign-out-alt" style={{ color: "#B22222", marginBottom:"0" ,display: 'inline-block', fontSize: "40px", cursor: "pointer" }}></Icon>
+                            <div style={{marginTop:"0"}}>Logout</div>
                         </div>
                     </div>
                     <div className="containerHome">
-                        <div className="menuicon" >
+                        <div className="menuBaru">
+                            <div className="labelMenu" onClick={() => this.props.history.push("/product")}>
+                                <div className="nameLabel">PRODUCTS</div>
+                                <Icon className="fa fa-archive" style={{ margin: "auto", color: "white", display: 'inline-block', fontSize: "90px" }}></Icon><br/>
+                            </div>
+                            <div className="labelMenu" onClick={() => this.props.history.push("/sales")}>
+                                <div className="nameLabel">SALES</div>
+                                <Icon className="fas fa-dollar-sign" style={{ margin:"auto", color: "white", display: 'inline-block', fontSize: "90px" }}></Icon><br/>
+                            </div>
+                            <div className="labelMenu" onClick={() => this.props.history.push("/dashboard")}>
+                                <div className="nameLabel">DASHBOARD</div>
+                                <Icon className="fas fa-tachometer-alt" style={{ margin: "auto", color: "white", display: 'inline-block', fontSize: "90px" }}></Icon><br/>
+                            </div>
+
+                        </div>
+                        <div className="gambarBaru">
+                        </div>
+                        {/* <div className="menuicon" >
                             <div className="producticon" onClick={() => this.props.history.push("/product")}>
                                 <Icon className="fa fa-archive" style={{ color: "white", display: 'inline-block', fontSize: "100px", border:"solid", cursor: "pointer", padding:"6px" }}></Icon><br/>
                                 <div className="product" style={{ color: "white", display: 'inline-block', fontSize: "20px" }} >PRODUCTS</div>
@@ -68,11 +85,11 @@ class Home extends Component {
                                 <Icon className="far fa-file-alt" style={{ color: "white", display: 'inline-block', fontSize: "100px", cursor: "pointer", border:"solid", padding:"5px" }}></Icon><br/>
                                 <div className="report" style={{ color: "white", display: 'inline-block', fontSize: "20px" }} >REPORTS</div>
                             </div>
-                            <div className="dashboardicon">
+                            <div className="dashboardicon" onClick={() => this.props.history.push("/dashboard")}>
                                 <Icon className="fas fa-tachometer-alt" style={{ color: "white", display: 'inline-block', fontSize: "100px", cursor: "pointer", border:"solid", padding:"6px" }}></Icon><br/>
                                 <div className="dashboard" style={{ color: "white", display: 'inline-block', fontSize: "20px" }}>DASHBOARD</div>
                             </div>
-                        </div>
+                        </div> */}
 
                     </div>
                 </div>

@@ -10,6 +10,8 @@ import SalesDetail from '../../page/salesDetail';
 import Report from '../../page/report';
 import ProductReport from '../../page/productReport';
 import SalesReport from '../../page/salesReport';
+import Dashboard from '../../page/dashboard';
+import login from '../../page/login';
 
 class Body extends Component {
     constructor(props) {
@@ -79,6 +81,15 @@ class Body extends Component {
                         return <SalesReport history={history}/>
                     }
                 }></Route>
+                <Route exact path="/dashboard" component={
+                    ()=>{
+                        let history = useHistory()
+                        return <Dashboard history={history}/>
+                    }
+                }></Route>
+                <Route>
+                    pppppppppppp
+                </Route>
                
 
             </Switch>

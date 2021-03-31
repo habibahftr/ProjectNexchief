@@ -28,6 +28,7 @@ class ComponentToPrint extends Component {
 
 
     render() {
+        console.log("buat di print", this.props.productListPrint);
         return (
             <center>
                 <h1>INI REPORT </h1>
@@ -47,7 +48,7 @@ class ComponentToPrint extends Component {
                     </thead>
                     <tbody className="tbodySales">
                         {
-                            this.props.productList.map((prod, index) => {
+                            this.props.productListPrint.map((prod, index) => {
                                 return (
                                     <tr key={index}>
                                         <td>{prod.code}</td>

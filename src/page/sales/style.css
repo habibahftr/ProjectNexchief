@@ -1,6 +1,6 @@
 .bodySales{
     /* border: solid; */
-    background-color: #333333;
+    background-color: #32393c;
     width: 100%;
     height: 100%;
 }
@@ -8,7 +8,7 @@
     width: 100%;
     height: 12vh;
     /* border:solid; */
-    background-color: black;
+    background-color: #856299;
     display: flex;
     flex-direction: row;
 }
@@ -28,19 +28,24 @@
     flex-direction: row;
     width: 100%;
     height:auto;
+    padding-top:0 ;
 }
 .addButton{
-    /* padding: 20px; */
-    margin-top: 25px;
+    margin: auto;
+    margin-top: 6vh;
+    margin-right: 0vh;
+    width: 9%;
+    
 }
 .addSales{
-    margin-left: 150px;
-    background-color:#5C97BF ;
+    background-color: #5C97BF;
     color: black;
-    box-shadow: 0 6px #1F3A93;
+    box-shadow: 0 6px #1f3a93;
     border-radius: 10px;
     padding: 4px;
     width: 50px;
+    margin: auto;
+    cursor: pointer;
 }
 .addSales:hover {
     background-color: #D3D3D3
@@ -51,20 +56,22 @@
     transform: translateY(4px);
   }
 .seacrhSales1{
-    width: 40%;
-    margin-left: 7%;
+    /* width: 40%; */
+    /* margin-right: 10vh; */
     display: flex;
     flex-direction: row;
     /* margin-right: 0; */
+    margin-top: 1vh;
 }
 .searchSales2{
     width: 250px;
-    height:22px;
-    margin-top: 5vh;
-    margin-right: 2%
+    height:25px;
+    margin-top: 4vh;
+    margin-left: 0;
+    margin-right: 3vh
 }
 .container2{
-    height: 70vh;
+    height: 67.5vh;
     width: 100%;
     margin: auto;
     text-align: center;
@@ -75,6 +82,7 @@
     margin: auto;
     padding: 2px;
     width: 90%;
+    border-collapse: collapse;
 }
 .tbodySales{
     padding: 3px;
@@ -131,3 +139,123 @@
     margin-top: 5vh;
     cursor: pointer;
 }
+
+.optionStatus{
+    width: 50%;
+    margin: auto;
+    /* margin-left: 10vh; */
+    display: flex;
+    flex-direction: row;
+
+
+}
+.optionStatus2{
+    height: 4.5vh;
+    margin: auto;
+    margin-top: 5vh;
+    margin-left: 3vh;
+}
+
+.labelPrint{
+    color: white;
+    margin-left: -5vh;
+}
+.printSales{
+    width: 15%;
+    margin: auto;
+    margin-left: vh;
+    margin-right: 0vh;
+    margin-top: 2vh;
+    cursor:pointer;
+}
+
+th{
+    text-align: center;
+}
+
+.tableSales2{
+    border-collapse: collapse;
+}
+
+.optionSearch{
+    height: 4.5vh;
+    margin-top: 5vh;
+    margin-right: 2vh;
+}
+
+.searchDate{
+    display: flex;
+}
+
+.searchDate1{
+    height: 4vh;
+    margin-top: 5vh;
+    margin-right: 2vh;
+}
+
+.searchDate2{
+    height: 4vh;
+    margin-top: 5vh;
+ }
+
+/* -------------------------PRINT PAGE------------------------ */
+.headerPrint{
+    width: 100%;
+    height: 15%;
+    display: flex;
+    flex-direction: row;
+}
+
+.logoNex{
+    color: #32393c;
+    font-size: 40px;
+
+}
+
+.logoChief{
+    color: #020426;
+    font-size: 40px;
+}
+
+.NClogo{
+    margin: auto;
+    width: 17%;
+    text-align: center;
+    margin-left: 2%;
+}
+
+.logoPrint{
+    margin-left: 10px;
+    margin: auto;
+    /* border: solid; */
+    /* background-color: #32393c; */
+    height:50px;
+    margin-left: 3vh;
+}
+
+.headerPrint2{
+    width: 75%;
+    margin: auto;
+    text-align: center;
+}
+
+.tdPrint{
+    padding: 2px 5px 2px 5px;
+    /* font-size: 10vh; */
+    margin:0
+}
+
+#tablePrint{
+    /* font-size: 10vh; */
+    border-collapse:collapse ;
+}
+.fa-coins{
+    color: white;
+    font-size: 40px;
+}
+
+.labeladd{
+    color: white;
+}
+
+

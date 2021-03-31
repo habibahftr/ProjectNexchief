@@ -96,18 +96,6 @@ class Login extends Component {
 
     }
 
-    // componentDidMount() {
-    //     fetch("http://localhost:8080/nexchief/users/")
-    //         .then(response => response.json())
-    //         .then(json => {
-    //             this.setState({
-    //                 users: json
-    //             })
-    //         })
-    //         .catch(() => {
-    //             alert("failed fetching data!")
-    //         })
-    // }
 
     render() {
         const { username, password } = this.state;
@@ -118,6 +106,9 @@ class Login extends Component {
         }
         return (
             <div className="bodyLogin">
+                <div className="backgroundLogin">
+
+                </div>
                 <div className="containerLogin">
                     <Label className="labelNex">Nex</Label>
                     <Label className="labelChief">Chief</Label>
