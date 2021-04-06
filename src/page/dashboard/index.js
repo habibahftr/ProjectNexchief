@@ -190,7 +190,7 @@ class Dashboard extends Component {
                     <Icon onClick={() => this.props.history.push("/home")} className="fas fa-home" style={{ color: "white", display: 'inline-block', marginTop: "4vh", fontSize: "40px", cursor: "pointer" }}></Icon>
                     <h1 className="dashboardLbl">DASHBOARD</h1>
                     <div className="logoutDashboard">
-                        <Icon onClick={() => this.logoutBtn()} className="fas fa-sign-out-alt" style={{ color: "#B22222", display: 'inline-block', fontSize: "40px", cursor: "pointer" }}></Icon>
+                        <Icon onClick={() => this.logoutBtn()} className="fas fa-sign-out-alt" style={{ color: "white", display: 'inline-block', fontSize: "31px", cursor: "pointer" }}></Icon>
                         <div>Logout</div>
                     </div>
                 </div>

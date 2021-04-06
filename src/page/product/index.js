@@ -23,7 +23,7 @@ class Product extends Component {
             disableBtnDel: true,
             search: "",
             searchIcon: true,
-            limit: 6,
+            limit: 5,
             count: 0,
             page: 1,
             pageNow:1,
@@ -605,6 +605,18 @@ class Product extends Component {
         }
     }
 
+    printClick=()=>{
+        if(this.state.displayTemp==="none"){
+            Swal.fire({
+                text: 'Finish or cancel your activity',
+                icon: 'warning'
+            })
+        }else{
+            this.props.history.push("/report/product" )
+        }
+        
+    }
+
 
     //============================================================R E N D E R===============================================================
     render() {
@@ -625,8 +637,8 @@ class Product extends Component {
                         <Button className="hiddenBtn" onClick={() => this.updateClick({ nameProduct, packaging, product_desc, category, launch_date, status, price, stock, updated_at, updated_by })} style={{backgroundColor:"blue", display: this.state.displayUpdate }}>Update</Button>
                         <Button className="hiddenBtn" onClick={() => this.cancelClick()} style={{ backgroundColor:"red", display: this.state.displayCancel }}>Cancel</Button>
                     </div>
-                    <div className="gotoReport">
-                        <Icon onClick={()=>this.props.history.push("/report/product" )} className="fas fa-file-import"></Icon>
+                    <div className="gotoReport" style={{cursor:"pointer"}}>
+                        <Icon onClick={()=>this.printClick()} className="fas fa-file-import" ></Icon>
                         <div>Go To Report</div>
                     </div>
                 </div>

@@ -47,8 +47,8 @@ class Home extends Component {
                             <div className="spanHome">WELCOME</div>
                             <div className="spanHome">{this.props.dataLoginUser.name}</div>
                         </div>
-                        <div className="logout">
-                            <Icon onClick={()=> this.logoutBtn()} className="fas fa-sign-out-alt" style={{ color: "white", marginBottom:"0" ,display: 'inline-block', fontSize: "40px", cursor: "pointer" }}></Icon>
+                        <div className="logout"  onClick={()=> this.logoutBtn()}>
+                            <Icon className="fas fa-sign-out-alt" style={{ color: "white", marginBottom:"0" ,display: 'inline-block', fontSize: "31px", cursor: "pointer" }}></Icon>
                             <div style={{marginTop:"0"}}>Logout</div>
                         </div>
                     </div>
@@ -70,27 +70,6 @@ class Home extends Component {
                         </div>
                         <div className="gambarBaru">
                         </div>
-                        {/* <div className="menuicon" >
-                            <div className="producticon" onClick={() => this.props.history.push("/product")}>
-                                <Icon className="fa fa-archive" style={{ color: "white", display: 'inline-block', fontSize: "100px", border:"solid", cursor: "pointer", padding:"6px" }}></Icon><br/>
-                                <div className="product" style={{ color: "white", display: 'inline-block', fontSize: "20px" }} >PRODUCTS</div>
-                            </div>
-                            <div className="salesicon" onClick={() => this.props.history.push("/sales")}>
-                                <Icon className="fas fa-dollar-sign" style={{ color: "white", display: 'inline-block', fontSize: "100px", cursor: "pointer", border:"solid", padding:"6px" }}></Icon><br/>
-                                <div className="sales" style={{ color: "white", display: 'inline-block', fontSize: "20px" }}>SALES</div>
-                            </div>
-                        </div>
-                        <div className="menuicon" >
-                            <div className="reporticon" onClick={() => this.props.history.push("/report")}>
-                                <Icon className="far fa-file-alt" style={{ color: "white", display: 'inline-block', fontSize: "100px", cursor: "pointer", border:"solid", padding:"5px" }}></Icon><br/>
-                                <div className="report" style={{ color: "white", display: 'inline-block', fontSize: "20px" }} >REPORTS</div>
-                            </div>
-                            <div className="dashboardicon" onClick={() => this.props.history.push("/dashboard")}>
-                                <Icon className="fas fa-tachometer-alt" style={{ color: "white", display: 'inline-block', fontSize: "100px", cursor: "pointer", border:"solid", padding:"6px" }}></Icon><br/>
-                                <div className="dashboard" style={{ color: "white", display: 'inline-block', fontSize: "20px" }}>DASHBOARD</div>
-                            </div>
-                        </div> */}
-
                     </div>
                 </div>
         );

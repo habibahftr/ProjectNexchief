@@ -5,15 +5,18 @@
 
 .headerProdReport{
     width: 100%;
-    height: 15vh;
+    height: 12vh;
     /* border:solid; */
-    background-color: black;
+    background-color: #856299;
     display: flex;
     flex-direction: row;
 }
 
+.tbodyProd{
+    font-size: smaller
+}
 .titleProductReport{
-    margin-top: 30px;
+    margin-top: 20px;
     margin-left: 20%;
     width: 50%;
     text-align: center;
@@ -29,7 +32,7 @@
 .bodyProdReport{
     background-color: #333333;
     width: 100%;
-    height: 82vh;
+    height: 88vh;
     margin: auto;
 }
 
@@ -58,37 +61,47 @@
 
 #tableProdReport1{
     margin: auto;
-    text-align: center;
+    padding: 2px;
     width: 90%;
     border-collapse: collapse;
     
 }
 
-.backReport{
-    margin-top: 4%;
-    margin-left: 80%;
-    background-color: #FF0800;
-    border: #FF0800;
+.backProduct{
+    width: 13vh;
+    height: 7vh;
+    background-color: red;
     color: white;
-    box-shadow: 0 6px #800000;
+    font-size: large;
     border-radius: 10px;
-    padding: 4px;
+}
+
+.backToProduct{
+    margin-top: 2vh;
+    margin-left: 20vh;
 }
 
 .custom-toggle.react-toggle--checked .react-toggle-track {
     background-color: #ab199f;
   }
 
+  #tableProdPrint{
+    border-collapse:collapse ;
+    margin-bottom: 25vh;
+  }
+
   .paginationReportProd{
     background-color: #ddd;
     display: inline-block;
     padding: 0;
-    margin: 0;
-    margin-left: 1.3%;
+    margin: auto;
+    /* margin-left: 1.3%; */
     margin-bottom: 13px;
     position: fixed;
+    text-align: center;
     bottom: 0;
-    width: 96.4%;
+    width: 30%;
+    margin-left: 30%;
     justify-content: space-between;
     color: black;
     display: flex;

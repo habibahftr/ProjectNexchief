@@ -13,10 +13,14 @@
 }
 
 .logoutDashboard{
-    width: 15%;
+    width: 6%;
+    height: 8vh;
+    text-align: center;
     margin-top: 3vh;
-    color: #B22222;
-    margin-right: 5vh;
+    background-color: #B22222;
+    margin-right: 10vh;
+    border: solid;
+    color: white
 
 }
 

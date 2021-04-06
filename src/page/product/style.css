@@ -98,9 +98,9 @@
       height: 7vh;
   }
   .listProduct{
-      border: solid;
+      /* border: solid; */
       height: 70vh;
-      overflow-y: scroll;
+      /* overflow-y: scroll; */
       background-color:#A9A9A9;
      
   }
@@ -109,7 +109,7 @@
 
   }
   .listProd{
-      height: 14vh;
+      height: 13vh;
       padding-left: 3vh;
       border: solid;
       cursor: pointer;

@@ -87,6 +87,7 @@
 }
 .tbodySales{
     padding: 3px;
+    font-size: smaller;
 }
 .monthly{
     color: aquamarine;
@@ -257,6 +258,7 @@ th{
 #tablePrint{
     /* font-size: 10vh; */
     border-collapse:collapse ;
+    margin-bottom: 25vh;
 }
 .fa-file-invoice-dollar{
     color: white;

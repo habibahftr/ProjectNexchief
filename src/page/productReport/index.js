@@ -22,7 +22,7 @@ class ProductReport extends Component {
             productList: [],
             productListPrint:[],
             print: false,
-            limit: 5,
+            limit: 15,
             count: 0,
             page: 1,
             pageNow:1,
@@ -231,8 +231,8 @@ class ProductReport extends Component {
                         <Label className="monthly">PRODUCT</Label>
                         <Label className="salesact">REPORT</Label>
                     </div>
-                    <div className="detailHeader">
-                        <Button className="backReport" onClick={() => this.props.history.push("/product")}>Back to Product Page</Button>
+                    <div className="backToProduct">
+                        <Button className="backProduct" onClick={() => this.props.history.push("/product")}>Back</Button>
                     </div>
                 </div>
                 <div className="bodyProdReport">
@@ -249,7 +249,7 @@ class ProductReport extends Component {
 
                         <div className="printProdReport">
                             <ReactToPrint
-                                trigger={() => <Icon className="fas fa-file-pdf" style={{ color: "grey", marginLeft: "-5vh", fontSize: "30px", marginTop: "2vh" }}></Icon>}
+                                trigger={() => <Icon className="fas fa-file-pdf" style={{ color: "white", marginLeft: "-5vh", fontSize: "30px", marginTop: "2vh" }}></Icon>}
                                 content={() => this.componentRef}
                             ></ReactToPrint>
                             <div>Print Report</div>
@@ -263,7 +263,7 @@ class ProductReport extends Component {
                             <table id="tableProdReport1" cellspasing="0" border="1 white">
                                 <thead>
                                     <tr className="tableProdReport2" >
-                                        <th className="tDate">Code</th>
+                                        <th className="tText">Code</th>
                                         <th className="tText">Name</th>
                                         <th className="tText">Packaging</th>
                                         <th className="tText">Description</th>
@@ -274,12 +274,12 @@ class ProductReport extends Component {
                                         <th className="tText">Price(Rp.)</th>
                                     </tr>
                                 </thead>
-                                <tbody className="tbodySales">
+                                <tbody className="tbodyProd">
                                     {
                                         this.state.productList.map((prod, index) => {
                                             return (
                                                 <tr key={index}>
-                                                    <td>{prod.code}</td>
+                                                    <td>{prod.code.substring(0,15)}</td>
                                                     <td>{prod.nameProduct}</td>
                                                     <td>{prod.packaging}</td>
                                                     <td>{prod.product_desc}</td>
