@@ -10,9 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -45,7 +45,7 @@ public class ProductController {
 
     @GetMapping("/product/search/")
     public ResponseEntity<?> searchProduct(@RequestParam int page, @RequestParam int limit, @RequestParam String id, @RequestParam String nameProduct) {
-        List<Product> productList = productService.findByName(page, limit, id, nameProduct);
+        Map<String,Object> productList = productService.findByName(page, limit, id, nameProduct);
         if (productList == null) {
             return new ResponseEntity<>(productList, HttpStatus.NOT_FOUND);
         }
@@ -54,7 +54,7 @@ public class ProductController {
 
     @GetMapping("/product/filter/")
     public ResponseEntity<?> filterProduct (@RequestParam int page, @RequestParam int limit, @RequestParam String id, @RequestParam String status){
-        List<Product> productList = productService.filterProductByStatus(page, limit, id, status);
+        Map<String,Object> productList = productService.filterProductByStatus(page, limit, id, status);
         if (productList == null) {
             return new ResponseEntity<>(productList, HttpStatus.NOT_FOUND);
         }
@@ -63,7 +63,7 @@ public class ProductController {
 
     @GetMapping("/product/paging/")
     public ResponseEntity<?>getProductForPagin(@RequestParam int page, @RequestParam int limit ,@RequestParam String id){
-        List<Product> productList = productService.findProductForPaging(page,limit, id);
+        Map<String,Object> productList = productService.findProductForPaging(page,limit, id);
         return new ResponseEntity<>(productList, HttpStatus.OK);
     }
 
@@ -83,29 +83,6 @@ public class ProductController {
         }
         return new ResponseEntity<>(productFind, HttpStatus.OK);
     }
-
-
-
-    @GetMapping("/product/count/{id}")
-    public ResponseEntity<?> countProduct(@PathVariable("id") String id) {
-        int productCount = productService.countProduct(id);
-        return new ResponseEntity<>(productCount, HttpStatus.OK);
-    }
-
-    @GetMapping("/search/count/")
-    public ResponseEntity<?> countProductSearch(@RequestParam String updated_by, @RequestParam String nameProduct) {
-        int productCount = productService.countProductName(updated_by, nameProduct);
-        return new ResponseEntity<>(productCount, HttpStatus.OK);
-    }
-
-
-
-    @GetMapping("/filter/count/")
-    public ResponseEntity<?> countProductStatus(@RequestParam String updated_by, @RequestParam String status) {
-        int productCount = productService.countProductStatus(updated_by, status);
-        return new ResponseEntity<>(productCount, HttpStatus.OK);
-    }
-
 
     @PostMapping("/product/")
     public ResponseEntity<?> createProduct(@RequestBody Product product) {
@@ -173,10 +150,4 @@ public class ProductController {
                     HttpStatus.NO_CONTENT);
         }
     }
-
-
-
-
-
-
 }

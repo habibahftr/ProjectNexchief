@@ -22,11 +22,12 @@ public class Product {
     public Product() {
     }
 
-    public Product(String code, String nameProduct, int price, int stock, int qty, int totalPrice) {
+    public Product(String code, String nameProduct, int price, int stock, String status, int qty, int totalPrice) {
         this.code = code;
         this.nameProduct = nameProduct;
         this.price = price;
         this.stock = stock;
+        this.status= status;
         this.qty = qty;
         this.totalPrice= totalPrice;
     }

@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository("ProductRepository")
 public class ProductRepositoryImpl implements ProductRepository{
@@ -103,17 +105,19 @@ public class ProductRepositoryImpl implements ProductRepository{
         return productList;
     }
 
-    public List<Product> findProductForPaging(int page, int limit, String id) {
+    @Override
+    public Map<String,Object> findProductForPaging(int page, int limit, String id) {
         int numPages;
-        numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM product",
+        Map<String ,Object> map = new HashMap<>();
+        numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM product WHERE updated_by = '"+id+"'",
                 (rs, rowNum) -> rs.getInt("count")).get(0);
-
+        map.put("count",numPages);
         if(numPages >0){
             if (page > numPages) page = numPages;
         }
         if (page < 1) page = 1;
         int start = (page - 1) * limit;
-        List<Product> productList = jdbcTemplate.query("SELECT p.code, p.nameProduct, p.packaging, p.product_desc," +
+        map.put("productList" , jdbcTemplate.query("SELECT p.code, p.nameProduct, p.packaging, p.product_desc," +
                         "p.category, p.launch_date, p.status, p.price, p.stock, p.created_at,u.name, p.updated_at, " +
                         "u.name FROM product p, user u WHERE u.id = p.updated_by AND p.updated_by=? ORDER BY p.nameProduct LIMIT " + start + "," + limit + ";",
                 preparedStatement -> preparedStatement.setString(1, id),
@@ -133,15 +137,17 @@ public class ProductRepositoryImpl implements ProductRepository{
                                 rs.getDate("updated_at"),
                                 rs.getString("name")
                         )
-        );
-        return productList;
+        ));
+        return map;
     }
 
     @Override
-    public List<Product> findByName(int page, int limit, String id, String nameProduct) {
+    public Map<String, Object> findByName(int page, int limit, String id, String nameProduct) {
         int numPages;
-        numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM product WHERE nameProduct LIKE '%"+nameProduct+"%'",
+        Map<String ,Object> map = new HashMap<>();
+        numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM product WHERE updated_by='"+id+"' AND nameProduct LIKE '%"+nameProduct+"%'",
                 (rs, rowNum) -> rs.getInt("count")).get(0);
+        map.put("count",numPages);
         if(numPages >0){
             if (page > numPages)
                 page = numPages;
@@ -150,7 +156,7 @@ public class ProductRepositoryImpl implements ProductRepository{
         int start = (page - 1) * limit;
         List<Product> productList;
         try{
-            productList = this.jdbcTemplate.query("SELECT p.code, p.nameProduct, p.packaging, p.product_desc, " +
+            map.put("productList" ,this.jdbcTemplate.query("SELECT p.code, p.nameProduct, p.packaging, p.product_desc, " +
                             "p.category, p.launch_date, p.status, p.price, p.stock, p.created_at,u.name, p.updated_at, " +
                             "u.name FROM product p, user u WHERE u.id = p.updated_by AND p.updated_by=? AND p.nameProduct like ? LIMIT " + start + "," + limit + ";",
                     preparedStatement -> {
@@ -174,29 +180,31 @@ public class ProductRepositoryImpl implements ProductRepository{
                                     rs.getDate("updated_at"),
                                     rs.getString("name")
                             )
-            );
+            ));
         }catch (Exception e){
             System.out.println(e);
             productList=null;
         }
-        return productList;
+        return map;
     }
 
     @Override
-    public List<Product> filterByStatus(int page, int limit, String id, String status) {
+    public Map<String, Object> filterByStatus(int page, int limit, String id, String status) {
         int numPages;
-        numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM product WHERE status='"+status+"'",
+        Map<String ,Object> map = new HashMap<>();
+        numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM product WHERE updated_by='"+id+"' AND status='"+status+"'",
                 (rs, rowNum) -> rs.getInt("count")).get(0);
 
         if(numPages >0){
             if (page > numPages)
                 page = numPages;
         }
+        map.put("count", numPages);
         if (page < 1) page = 1;
         int start = (page - 1) * limit;
         List<Product> productList;
         try{
-            productList = this.jdbcTemplate.query("SELECT p.*,u.name FROM product p, user u " +
+            map.put("productList", this.jdbcTemplate.query("SELECT p.*,u.name FROM product p, user u " +
                             "WHERE u.id = p.updated_by AND p.updated_by=? AND p.status=? LIMIT " + start + "," + limit + ";",
                     preparedStatement -> {
                         preparedStatement.setString(1, id);
@@ -219,12 +227,12 @@ public class ProductRepositoryImpl implements ProductRepository{
                                     rs.getDate("updated_at"),
                                     rs.getString("name")
                             )
-            );
+            ));
         }catch (Exception e){
             System.out.println(e);
             productList=null;
         }
-        return productList;
+        return map;
     }
 
 
@@ -328,31 +336,4 @@ public class ProductRepositoryImpl implements ProductRepository{
         );
     }
 
-    //    @Override
-//    public int deleteByCode(String code) {
-//        return jdbcTemplate.update(
-//                "DELETE FROM product WHERE code=?", code
-//        );
-//    }
-
-    @Override
-    public int countProduct(String updated_by) {
-        int countProduct;
-        countProduct = jdbcTemplate.queryForObject("SELECT COUNT(*) as count FROM product WHERE updated_by = '"+updated_by+"'  " , Integer.class);
-        return countProduct;
-    }
-
-    @Override
-    public int countProductName(String updated_by, String productName) {
-        int countProductName;
-        countProductName=jdbcTemplate.queryForObject("SELECT COUNT(*) as count FROM product WHERE updated_by = '"+updated_by+"' AND nameProduct LIKE '%"+productName+"%'", Integer.class);
-        return countProductName;
-    }
-
-    @Override
-    public int countProductStatus(String updated_by, String status) {
-        int countProductStatus;
-        countProductStatus=jdbcTemplate.queryForObject("SELECT COUNT(*) as count FROM product WHERE updated_by = '"+updated_by+"' AND status= '"+status+"'", Integer.class);
-        return countProductStatus;
-    }
 }

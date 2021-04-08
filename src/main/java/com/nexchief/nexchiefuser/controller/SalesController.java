@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -41,7 +42,7 @@ public class SalesController {
     @GetMapping("/sales/paging/")
     public ResponseEntity<?> getSalesForPagin(@RequestParam int page, @RequestParam int limit , @RequestParam String id,
                                               @RequestParam String dateFirst, @RequestParam String dateLast){
-        List<Sales> salesList = salesService.findAll(page,limit, id, dateFirst, dateLast);
+        Map<String, Object> salesList = salesService.findAll(page,limit, id, dateFirst, dateLast);
         return new ResponseEntity<>(salesList, HttpStatus.OK);
     }
 
@@ -102,7 +103,7 @@ public class SalesController {
     public ResponseEntity<?> filterByNameproductPagingAndSearch (@RequestParam int page, @RequestParam int limit,
                                                                  @RequestParam String distributor,@RequestParam String status,
                                                                  @RequestParam String nameProduct){
-        List<Sales> salesList = salesService.filterSearchAndToggle(page, limit, distributor, status, nameProduct);
+        List<Sales> salesList = salesService.filterSearchAndStatus(page, limit, distributor, status, nameProduct);
         if (salesList == null){
             return new ResponseEntity<>(salesList, HttpStatus.NOT_FOUND);
         }else{
@@ -115,7 +116,7 @@ public class SalesController {
     @GetMapping("/sales/search/filter/print/")
     public ResponseEntity<?> filterByNameproductAndFilterStatus (@RequestParam String distributor,@RequestParam String status,
                                                                  @RequestParam String nameProduct){
-        List<Sales> salesList = salesService.filterSearchToggle(distributor, status, nameProduct);
+        List<Sales> salesList = salesService.filterSearchStatus(distributor, status, nameProduct);
         if (salesList == null){
             return new ResponseEntity<>(salesList, HttpStatus.NOT_FOUND);
         }else{
@@ -186,7 +187,7 @@ public class SalesController {
     @GetMapping("/sales/filter/toggle/")
     public ResponseEntity<?> countSalesFilterAndToggle (@RequestParam String distributor, @RequestParam String status,
                                                         @RequestParam String nameProduct){
-        int salesProdCount = salesService.countFilterAndToggle(distributor, status, nameProduct);
+        int salesProdCount = salesService.countFilterAndStatus(distributor, status, nameProduct);
         return new ResponseEntity<>(salesProdCount, HttpStatus.OK);
     }
 
@@ -232,68 +233,6 @@ public class SalesController {
         }
     }
     //  ------------------------------------------------UPDATE SALES----------------------------------------------------
-//    @PutMapping("/update/sales/{idSales}")
-//    public ResponseEntity<?> updateSales(@PathVariable ("idSales") String idSales, @RequestBody Sales sales){
-//        Sales findSales = salesService.findById(idSales);
-//        List<Product> productList = sales.getProductList();
-//        for (int i = 0; i < productList.size(); i++) {
-//            Product product = productService.findByCode(sales.getProductList().get(i).getCode());
-//            for (int j = 0; j < productList.size(); j++) {
-//                if (i != j) {
-//                    if (productList.get(j).getCode().equals(product.getCode())) {
-//                        return new ResponseEntity<>(new CustomErrorType("Unable to create . A Product with code " +
-//                                product.getCode() + " already exist"), HttpStatus.CONFLICT);
-//                    }
-//                }
-//            }
-//            int qtyFind = productList.get(i).getQty();
-//            int qty = product.getStock() + findSales.getProductList().get(i).getQty();
-////
-////            if (findSales.getProductList().get(i) != (sales.getProductList().get(i))) {
-////                if ((product.getStock() + findSales.getProductList().get(i).getQty()) < sales.getProductList().get(i).getQty()) {
-////                    return new ResponseEntity<>(new CustomErrorType("Unable to create. A product with code" +
-////                            " " + sales.getProductList().get(i).getCode() + " Over in Qty1"), HttpStatus.CONFLICT);
-////                }
-////            } else {
-////                if (product.getStock() < sales.getProductList().get(i).getQty()) {
-////                    return new ResponseEntity<>(new CustomErrorType("Unable to create. A product with code" +
-////                            " " + sales.getProductList().get(i).getCode() + " Over in Qty2"), HttpStatus.CONFLICT);
-////                }
-////
-////                }
-////            }
-//        }
-//        if(findSales== null){
-//            return new ResponseEntity<>(new CustomErrorType("Sales with id "+sales.getIdSales()+" not found"),
-//                    HttpStatus.NOT_FOUND);
-//        }else{
-//            if(sales.getProductList().isEmpty()){
-//                return new ResponseEntity<>(new CustomErrorType("Insert Product!"),
-//                        HttpStatus.BAD_REQUEST);
-//            }else{
-//                sales.setIdSales(findSales.getIdSales());
-//                salesService.updateSales(sales);
-//                for (int i = 0; i < productList.size(); i++) {
-//                    Product product = productService.findByCode(sales.getProductList().get(i).getCode());
-//                    for (int j = 0; j < productList.size(); j++){
-//                        if (i == j){
-//                            if (productList.get(j).getCode().equals(product.getCode())){
-//                                if(product.getStock()<=0){
-//                                    product.setStatus("INACTIVE");
-//                                    productService.update(product);
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//                return new ResponseEntity<>(new CustomSuccessType("Update success!"), HttpStatus.CREATED);
-//            }
-//        }
-//
-//    }
-//}
-
-
     @PutMapping("/update/sales/{idSales}")
     public ResponseEntity<?> updateSales(@PathVariable ("idSales") String idSales, @RequestBody Sales sales){
         Sales findSales = salesService.findById(idSales);
@@ -308,24 +247,6 @@ public class SalesController {
                     }
                 }
             }
-
-//            for(int k=0; k < findSales.getProductList().size(); k++) {
-//                if (sales.getProductList().get(i).getCode().equalsIgnoreCase(findSales.getProductList().get(k).getCode())) {
-//                    if ((product.getStock() + findSales.getProductList().get(i).getQty()) < sales.getProductList().get(k).getQty()) {
-//                        return new ResponseEntity<>(new CustomErrorType("Unable to create. A product with code" +
-//                                " " + sales.getProductList().get(i).getCode() + " Over in Qty1"), HttpStatus.CONFLICT);
-//                    }
-//                    break;
-//                } else {
-//                    if (product.getStock() < sales.getProductList().get(i).getQty()  ) {
-//                        return new ResponseEntity<>(new CustomErrorType("Unable to create. A product with code" +
-//                                " " + sales.getProductList().get(i).getCode() + " Over in Qty2"), HttpStatus.CONFLICT);
-//                    }
-//                    break;
-//                }
-//
-//            }
-
         }
         if(findSales== null){
             return new ResponseEntity<>(new CustomErrorType("Sales with id "+sales.getIdSales()+" not found"),

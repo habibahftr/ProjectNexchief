@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service("ProductService")
@@ -33,12 +34,12 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public List<Product> findByName(int page, int limit, String id, String nameProduct) {
+    public Map<String,Object> findByName(int page, int limit, String id, String nameProduct) {
         return productRepository.findByName(page, limit, id, nameProduct);
     }
 
     @Override
-    public List<Product> filterProductByStatus(int page, int limit, String id, String status) {
+    public Map<String,Object> filterProductByStatus(int page, int limit, String id, String status) {
         return productRepository.filterByStatus(page, limit, id, status);
     }
 
@@ -51,23 +52,6 @@ public class ProductServiceImpl implements ProductService{
 //    public boolean isNameProductExist(Product product) {
 //        return productRepository.findByName(product.getNameProduct()).size()!=0;
 //    }
-
-    @Override
-    public int countProduct(String updated_by) {
-        return productRepository.countProduct(updated_by);
-    }
-
-    @Override
-    public int countProductName(String updated_by, String nameProduct) {
-        return productRepository.countProductName(updated_by, nameProduct);
-    }
-
-    @Override
-    public int countProductStatus(String updated_by, String status) {
-        return productRepository.countProductStatus(updated_by, status);
-    }
-
-
 
     @Override
     public void saveProduct(Product product) {
@@ -119,7 +103,7 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public List<Product> findProductForPaging(int page, int limit, String id) {
+    public Map<String,Object> findProductForPaging(int page, int limit, String id) {
         return productRepository.findProductForPaging(page, limit, id);
     }
 }

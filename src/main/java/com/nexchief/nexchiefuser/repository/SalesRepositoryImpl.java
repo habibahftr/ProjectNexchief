@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Repository("salesRepository")
@@ -16,12 +18,13 @@ public class SalesRepositoryImpl implements SalesRepository{
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<Sales> findAll(int page, int limit, String id, String dateFirst, String dateLast) {
+    public Map<String, Object> findAll(int page, int limit, String id, String dateFirst, String dateLast) {
         int numPages;
+        Map<String ,Object> map = new HashMap<>();
         numPages = jdbcTemplate.query("SELECT COUNT(*) as count FROM sales WHERE distributor='"+id+"' AND date " +
                         "BETWEEN '"+dateFirst+"' AND '"+dateLast+"'",
                 (rs, rowNum) -> rs.getInt("count")).get(0);
-
+        map.put("count",numPages);
         if(numPages >0){
             if (page > numPages)
                 page = numPages;
@@ -44,7 +47,6 @@ public class SalesRepositoryImpl implements SalesRepository{
                                 0,
                                 0,
                                 0
-//                                0
                         ));
         for (Sales sales:salesList){
             sales.setProductList(jdbcTemplate.query("SELECT p.*, sd.qty, p.price*sd.qty as totalPrice FROM salesdetail sd," +
@@ -56,6 +58,7 @@ public class SalesRepositoryImpl implements SalesRepository{
                                 rs.getString("nameProduct"),
                                 rs.getInt("price"),
                                 rs.getInt("stock"),
+                                rs.getString("status"),
                                 rs.getInt("qty"),
                                 rs.getInt("totalPrice")
 
@@ -64,11 +67,12 @@ public class SalesRepositoryImpl implements SalesRepository{
             sales.setTax();
             sales.setInvoice();
         }
-        return salesList;
+        map.put("salesList", salesList);
+        return map;
     }
 
     @Override
-    public List<Sales> filterSearchAndToggle(int page, int limit, String id, String status, String nameProduct) {
+    public List<Sales> filterSearchAndStatus(int page, int limit, String id, String status, String nameProduct) {
         int numPages;
         numPages = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM sales WHERE idSales IN "+
         "(SELECT sd.idSales FROM salesdetail sd "+
@@ -90,7 +94,7 @@ public class SalesRepositoryImpl implements SalesRepository{
                         "JOIN product p ON sd.codeProduct=p.code " +
                         "JOIN sales sl ON sd.idSales=sl.idSales " +
                         "WHERE sl.distributor = ? AND " +
-                        "p.nameProduct LIKE ? OR sl.customer LIKE ?) AND status = ? LIMIT " + start + "," + limit + " ;",
+                        "p.nameProduct LIKE ? OR sl.customer LIKE ?) AND status = ? ORDER  BY date DESC LIMIT " + start + "," + limit + " ;",
                 preparedStatement -> {
                     preparedStatement.setString(1, id);
                     preparedStatement.setString(2, "%"+nameProduct+"%");
@@ -122,6 +126,7 @@ public class SalesRepositoryImpl implements SalesRepository{
                                     rs.getString("nameProduct"),
                                     rs.getInt("price"),
                                     rs.getInt("stock"),
+                                    rs.getString("status"),
                                     rs.getInt("qty"),
                                     rs.getInt("totalPrice")
 
@@ -181,6 +186,7 @@ public class SalesRepositoryImpl implements SalesRepository{
                                     rs.getString("nameProduct"),
                                     rs.getInt("price"),
                                     rs.getInt("stock"),
+                                    rs.getString("status"),
                                     rs.getInt("qty"),
                                     rs.getInt("totalPrice")
 
@@ -216,7 +222,6 @@ public class SalesRepositoryImpl implements SalesRepository{
                                 0,
                                 0,
                                 0
-//                                0
                         ));
         for (Sales sales:salesList){
             sales.setProductList(jdbcTemplate.query("SELECT p.*, sd.qty, p.price*sd.qty as totalPrice FROM salesdetail sd," +
@@ -228,6 +233,7 @@ public class SalesRepositoryImpl implements SalesRepository{
                                     rs.getString("nameProduct"),
                                     rs.getInt("price"),
                                     rs.getInt("stock"),
+                                    rs.getString("status"),
                                     rs.getInt("qty"),
                                     rs.getInt("totalPrice")
 
@@ -268,6 +274,7 @@ public class SalesRepositoryImpl implements SalesRepository{
                                     rs.getString("nameProduct"),
                                     rs.getInt("price"),
                                     rs.getInt("stock"),
+                                    rs.getString("status"),
                                     rs.getInt("qty"),
                                     rs.getInt("totalPrice")
 
@@ -309,6 +316,7 @@ public class SalesRepositoryImpl implements SalesRepository{
                                 rs.getString("nameProduct"),
                                 rs.getInt("priceProduct"),
                                 rs.getInt("stock"),
+                                rs.getString("status"),
                                 rs.getInt("qty"),
                                 rs.getInt("totalPrice")
                         )
@@ -327,7 +335,7 @@ public class SalesRepositoryImpl implements SalesRepository{
                         "JOIN product p ON sd.codeProduct=p.code " +
                         "JOIN sales sl ON sd.idSales=sl.idSales " +
                         "WHERE sl.distributor =? AND " +
-                        "p.nameProduct LIKE ? OR sl.customer LIKE ? ORDER  BY s.date ASC ",
+                        "p.nameProduct LIKE ? OR sl.customer LIKE ?) ORDER  BY date DESC ",
                 preparedStatement -> {
                     preparedStatement.setString(1, id);
                     preparedStatement.setString(2, "%"+nameProduct+"%");
@@ -358,6 +366,7 @@ public class SalesRepositoryImpl implements SalesRepository{
                                     rs.getString("nameProduct"),
                                     rs.getInt("price"),
                                     rs.getInt("stock"),
+                                    rs.getString("status"),
                                     rs.getInt("qty"),
                                     rs.getInt("totalPrice")
 
@@ -370,14 +379,14 @@ public class SalesRepositoryImpl implements SalesRepository{
     }
 
     @Override
-    public List<Sales> filterSearchToggle(String id, String status, String nameProduct) {
+    public List<Sales> filterSearchStatus(String id, String status, String nameProduct) {
         List<Sales> salesList;
         salesList = jdbcTemplate.query("SELECT * FROM sales WHERE idSales IN " +
                         "(SELECT sd.idSales FROM salesdetail sd "+
                         "JOIN product p ON sd.codeProduct=p.code " +
                         "JOIN sales sl ON sd.idSales=sl.idSales " +
                         "WHERE sl.distributor = ? AND " +
-                        "p.nameProduct LIKE ? OR sl.customer LIKE ?) AND status = ?",
+                        "p.nameProduct LIKE ? OR sl.customer LIKE ?) AND status = ? ORDER  BY date DESC ",
                 preparedStatement -> {
                     preparedStatement.setString(1, id);
                     preparedStatement.setString(2, "%"+nameProduct+"%");
@@ -409,6 +418,7 @@ public class SalesRepositoryImpl implements SalesRepository{
                                     rs.getString("nameProduct"),
                                     rs.getInt("price"),
                                     rs.getInt("stock"),
+                                    rs.getString("status"),
                                     rs.getInt("qty"),
                                     rs.getInt("totalPrice")
 
@@ -429,7 +439,7 @@ public class SalesRepositoryImpl implements SalesRepository{
                 " JOIN product p ON sd.codeProduct=p.code " +
                 " JOIN sales sl ON sd.idSales=sl.idSales " +
                 " WHERE sl.distributor = '"+id+"' AND " +
-                " p.nameProduct LIKE '%"+nameProduct+"%' OR sl.customer LIKE '%"+nameProduct+"%')",
+                " p.nameProduct LIKE '%"+nameProduct+"%' OR sl.customer LIKE '%"+nameProduct+"%')" ,
                 Integer.class);
 
         if(numPages >0){
@@ -444,7 +454,7 @@ public class SalesRepositoryImpl implements SalesRepository{
                         "JOIN product p ON sd.codeProduct=p.code " +
                         "JOIN sales sl ON sd.idSales=sl.idSales " +
                         "WHERE sl.distributor ='"+id+"' AND " +
-                        "p.nameProduct LIKE '%"+nameProduct+"%' OR sl.customer LIKE '%"+nameProduct+"%') LIMIT " + start + "," + limit + " ;",
+                        "p.nameProduct LIKE '%"+nameProduct+"%' OR sl.customer LIKE '%"+nameProduct+"%') ORDER  BY date DESC LIMIT " + start + "," + limit + " ;",
 //                preparedStatement -> {
 //                    preparedStatement.setString(1, id);
 //                    preparedStatement.setString(2, "%"+nameProduct+"%");
@@ -475,6 +485,7 @@ public class SalesRepositoryImpl implements SalesRepository{
                                     rs.getString("nameProduct"),
                                     rs.getInt("price"),
                                     rs.getInt("stock"),
+                                    rs.getString("status"),
                                     rs.getInt("qty"),
                                     rs.getInt("totalPrice")
 
@@ -498,7 +509,7 @@ public class SalesRepositoryImpl implements SalesRepository{
     public int countSalesStatus(String id, String status, String dateFirst, String dateLast) {
         int countSalesStatus;
         countSalesStatus= jdbcTemplate.queryForObject("SELECT COUNT(*) as count FROM sales WHERE distributor='"+id+"' " +
-                "AND status='"+status+"' AND s.date BETWEEN '"+dateFirst+"' AND '"+dateLast+"' ", Integer.class);
+                "AND status='"+status+"' AND date BETWEEN '"+dateFirst+"' AND '"+dateLast+"' ", Integer.class);
         return countSalesStatus;
     }
 
@@ -539,14 +550,15 @@ public class SalesRepositoryImpl implements SalesRepository{
     }
 
     @Override
-    public int countFilterAndToggle(String id, String status, String nameProduct) {
+    public int countFilterAndStatus
+            (String id, String status, String nameProduct) {
         int countfilter;
         countfilter= jdbcTemplate.queryForObject("SELECT COUNT(*) FROM sales WHERE idSales IN "+
                 "(SELECT sd.idSales FROM salesdetail sd "+
                 "JOIN product p ON sd.codeProduct=p.code "+
                 "JOIN sales sl ON sd.idSales=sl.idSales "+
                 "WHERE sl.distributor = '"+id+"' AND "+
-                "p.nameProduct LIKE '%"+nameProduct+"%' OR sl.customer LIKE '%"+nameProduct+"%') AND status ='"+status+"'", Integer.class);
+                "p.nameProduct LIKE '%"+nameProduct+"%' OR sl.customer LIKE '%"+nameProduct+"%') AND status ='"+status+"' ", Integer.class);
         return countfilter;
     }
 
@@ -599,5 +611,16 @@ public class SalesRepositoryImpl implements SalesRepository{
 
     }
 
-
+//    @Override
+//    public Map<String, Object> filterWithMap(int page, int limit, String id, String productName) {
+//        Map<String, Object> map = new HashMap<>();
+//        map.put("qty", jdbcTemplate.queryForObject("SELECT COUNT(*) FROM sales WHERE idSales IN " +
+//                        "(SELECT sd.idSales FROM salesdetail sd " +
+//                        " JOIN product p ON sd.codeProduct=p.code " +
+//                        " JOIN sales sl ON sd.idSales=sl.idSales " +
+//                        " WHERE sl.distributor = '"+id+"' AND " +
+//                        " p.nameProduct LIKE '%"+productName+"%' OR sl.customer LIKE '%"+productName+"%')" ,
+//                Integer.class));
+//        int numPages = jdbcTemplate.query("SELECT COUNT(*) AS count FROM ")
+//    }
 }

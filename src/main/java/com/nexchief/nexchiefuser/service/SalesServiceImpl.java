@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service("salesService")
 public class SalesServiceImpl implements SalesService {
@@ -14,8 +15,8 @@ public class SalesServiceImpl implements SalesService {
     SalesRepository salesRepository;
 
     @Override
-    public List<Sales> findAll(int page, int limit, String id, String dateFirst, String dateLast) {
-        List<Sales> salesList = salesRepository.findAll(page, limit, id, dateFirst, dateLast);
+    public Map<String, Object> findAll(int page, int limit, String id, String dateFirst, String dateLast) {
+        Map<String, Object> salesList = salesRepository.findAll(page, limit, id, dateFirst, dateLast);
         return salesList;
     }
 
@@ -51,14 +52,14 @@ public class SalesServiceImpl implements SalesService {
     }
 
     @Override
-    public List<Sales> filterSearchAndToggle(int page, int limit, String id, String status, String nameProduct) {
-        List<Sales> salesList = salesRepository.filterSearchAndToggle(page, limit, id, status, nameProduct);
+    public List<Sales> filterSearchAndStatus(int page, int limit, String id, String status, String nameProduct) {
+        List<Sales> salesList = salesRepository.filterSearchAndStatus(page, limit, id, status, nameProduct);
         return salesList;
     }
 
     @Override
-    public List<Sales> filterSearchToggle(String id, String status, String nameProduct) {
-        List<Sales> salesList = salesRepository.filterSearchToggle(id, status, nameProduct);
+    public List<Sales> filterSearchStatus(String id, String status, String nameProduct) {
+        List<Sales> salesList = salesRepository.filterSearchStatus(id, status, nameProduct);
         return salesList;
     }
 
@@ -99,8 +100,8 @@ public class SalesServiceImpl implements SalesService {
     }
 
     @Override
-    public int countFilterAndToggle(String id, String status, String nameProduct) {
-        return salesRepository.countFilterAndToggle(id, status, nameProduct);
+    public int countFilterAndStatus(String id, String status, String nameProduct) {
+        return salesRepository.countFilterAndStatus(id, status, nameProduct);
     }
 
     @Override
