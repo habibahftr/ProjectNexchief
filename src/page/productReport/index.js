@@ -22,7 +22,7 @@ class ProductReport extends Component {
             productList: [],
             productListPrint:[],
             print: false,
-            limit: 15,
+            limit: 10,
             count: 0,
             page: 1,
             pageNow:1,
@@ -33,10 +33,8 @@ class ProductReport extends Component {
     }
 // ----------------------------------------------------COMPONENT DID MOUNT----------------------------------------------------------
     componentDidMount() {
-        this.getAPICount();
         this.getAllProduct(this.state.page, this.state.limit);
         this.getAllPrint();
-        // this.getActiveProduct(this.state.page, this.state.limit)
     }
 // ----------------------------------------------------HANDLE CHANGE-----------------------------------------------------
     handleChange = (event, value) => {
@@ -44,60 +42,13 @@ class ProductReport extends Component {
             page: value
         })
         if (this.state.checkedA === false) {
-            this.getAPICount();
             this.getAllProduct(value, this.state.limit);
         } else {
-            this.getFilterCount();
             this.getActiveProduct(value, this.state.limit)
         }
 
     }
 
-    // ---------------------------------------------------GET COUNT ALL-----------------------------------------------
-    getAPICount = () => {
-        fetch(`http://localhost:8080/nexchief/product/count/` + this.props.dataLoginUser.id, {
-            method: "get",
-            headers: {
-                "Content-Type": "application/json; ; charset=utf-8",
-                "Access-Control-Allow-Headers": "Authorization, Content-Type",
-                "Access-Control-Allow-Origin": "*"
-            }
-        })
-            .then(response => response.json())
-            .then(json => {
-                let limitPage = json / this.state.limit
-                this.setState({
-                    count: Math.ceil(limitPage)
-                })
-                console.log("INI RESPON COUNT ", json)
-            })
-            .catch(() => {
-                alert("Failed fetching")
-            })
-    }
-// ------------------------------------------------------GET FILTER ACTIVE COUNT-------------------------------------------------------------
-    getFilterCount = () => {
-        fetch(`http://localhost:8080/nexchief/filter/count/?updated_by=` + this.props.dataLoginUser.id + `&status=ACTIVE`, {
-            method: "get",
-            headers: {
-                "Content-Type": "application/json; ; charset=utf-8",
-                "Access-Control-Allow-Headers": "Authorization, Content-Type",
-                "Access-Control-Allow-Origin": "*"
-            }
-        })
-            .then(response => response.json())
-            .then(json => {
-                let limitPage = json / this.state.limit
-                this.setState({
-                    count: Math.ceil(limitPage)
-                })
-                console.log("INI RESPON COUNT ", json)
-            })
-            .catch(() => {
-                alert("Failed fetching")
-
-            })
-    }
 
     // -----------------------------------------GET PRODUCT ACTIVE----------------------------------------------------------------------------------------------------
     getActiveProduct = (value, limit) => {
@@ -111,8 +62,10 @@ class ProductReport extends Component {
         })
             .then(response => response.json())
             .then(json => {
+                let limitPage = json.count / this.state.limit
                 this.setState({
-                    productList: json
+                    productList: json.productList,
+                    count: Math.ceil(limitPage)
                 });
                 console.log("product", this.state.productList);
             })
@@ -122,7 +75,7 @@ class ProductReport extends Component {
 
     }
 
-    // ---------------------------------------------GET ALL PAGING-------------------------------------------------------------------------------
+    // ---------------------------------------------GET ALL WITH PAGINATION-------------------------------------------------------------------------------
     getAllProduct = (value, limit) => {
         fetch(`http://localhost:8080/nexchief/product/paging/?page=` + value + "&limit=" + limit + "&id=" + this.props.dataLoginUser.id, {
             method: "get",
@@ -134,8 +87,10 @@ class ProductReport extends Component {
         })
             .then(response => response.json())
             .then(json => {
+                let limitPage = json.count / this.state.limit
                 this.setState({
-                    productList: json
+                    productList: json.productList,
+                    count: Math.ceil(limitPage)
                 });
                 console.log("product", this.state.productList);
             })
@@ -146,9 +101,6 @@ class ProductReport extends Component {
 
     // ------------------------------------------------GET FILTER PRINT--------------------------------------------------------
     getFilterPrint=()=>{
-        console.log("filter", this.state.productList);
-        console.log("CEEEEEKKKKK");
-        // this.getAllPrint()
         console.log("ceek", this.state.productListPrint);
         const productPrint = this.state.productListPrint
         const print= productPrint.filter(el=> el.status==="ACTIVE");
@@ -191,11 +143,9 @@ class ProductReport extends Component {
         console.log(minus)
         if (minus) {  
             this.getFilterPrint();    
-            this.getFilterCount();
             this.getActiveProduct(this.state.pageNow, this.state.limit)
         } else {
             this.getAllPrint();
-            this.getAPICount();
             this.getAllProduct(this.state.page, this.state.limit);
         }
     };

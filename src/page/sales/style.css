@@ -1,6 +1,7 @@
 .bodySales{
     /* border: solid; */
-    background-color: #32393c;
+    /* background-color: #32393c; */
+    background-image: linear-gradient(to bottom, #856299, #5d5d89, #415471, #354756, #32393c);
     width: 100%;
     height: 100%;
 }
@@ -202,10 +203,15 @@ th{
  }
 
  .fa-times-circle{
-    margin-top: 5vh;
-    margin-left: 3vh;
+    margin-top: 6vh;
+    height: 3vh;
+    margin-left: 1vh;
     margin-right: -2vh;
     color: white;
+ }
+
+ .buttonSales{
+     margin-left: 2vh;
  }
 
 /* -------------------------PRINT PAGE------------------------ */

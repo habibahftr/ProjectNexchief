@@ -11,6 +11,8 @@ import Swal from 'sweetalert2';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import ComponentToPrint from './componentToPrint'
 import ReactToPrint from 'react-to-print';
+import { withStyles } from '@material-ui/core';
+import { green, purple } from '@material-ui/core/colors';
 
 class Sales extends Component {
     constructor(props) {
@@ -44,7 +46,7 @@ class Sales extends Component {
     }
 
     componentDidMount() {
-        this.getDate();
+        this.getDateHandler();
     }
 
     setValue = el => {
@@ -55,7 +57,7 @@ class Sales extends Component {
 
     setValueSearch=el=>{
         if(el.target.value===""){
-            this.getDate();
+            this.getDateHandler();
         }
         this.setState({
             search: el.target.value
@@ -74,7 +76,7 @@ class Sales extends Component {
             this.setState({
                 displaySearch: "",
                 displaySearch2: "none",
-            })
+            },()=> this.getDateHandler())
         }
         else if (temp === "Date") {
             this.setState({
@@ -87,11 +89,11 @@ class Sales extends Component {
                 displaySearch: "none",
                 displaySearch2: "none",
             })
-            this.getDate()
+            this.getDateHandler()
         }
     }
     // --------------------------------------------GET DATE ---------------------------------------------------------
-    getDate = () => {
+    getDateHandler = () => {
         let current_datetime = new Date()
         let year = current_datetime.getFullYear();
         let monthTwoDigit = ("0" + (current_datetime.getMonth() + 1)).slice(-2)
@@ -101,12 +103,16 @@ class Sales extends Component {
         console.log("uji tanggal:", dateFirst)
         this.setState({
             dateFirst: dateFirst,
-            dateLast: dateLast
-        }, () => this.getCountSales())
+            dateLast: dateLast,
+            page: 1,
+        }, () => this.getAllSales(this.state.page, this.state.limit))
     }
 
     // ------------------------------------------SEARCH CLICK--------------------------------------------------------
     searchClick = () => {
+        this.setState({
+            page:1
+        })
         const datetemp1 = this.state.date1
         const datetemp2 = this.state.date2
         const iconTemp = this.state.searchIcon
@@ -127,7 +133,7 @@ class Sales extends Component {
                     console.log("object heiiiiiii");
                     this.getCountProd(searchTemp);
                     this.getAllSalesProd(this.state.pageNow, this.state.limit, searchTemp)
-                    this.getAllPrint();
+                    this.getAllPrintProduct(searchTemp);
                 } else {
                     Swal.fire({
                         title: 'choose the option filter',
@@ -183,13 +189,16 @@ class Sales extends Component {
         }
     }
 
+
+// -----------------------------------------CLOSE CLICK--------------------------------------------------------------------------------
     closeClick = () => {
         this.setState({
             search: "",
-            optionPrint: "all"
-        })
+            optionPrint: "all",
+            page: 1
+        }, ()=> this.getAllSales(this.state.page, this.state.limit))
         this.getCountSales();
-        this.getAllSales(this.state.page, this.state.limit)
+        
     }
 
     // -----------------------------------------GET SALES STATUS PRINT---------------------------------------------------------------S
@@ -303,7 +312,7 @@ class Sales extends Component {
             }
         }
         if (searchTemp === "" && optionTemp === "all") {
-            this.getCountSales();
+            // this.getCountSales();
             this.getAllSales(value, this.state.limit);
         }
         else if (searchTemp === "" && optionTemp === "paid") {
@@ -348,7 +357,7 @@ class Sales extends Component {
 
     }
 
-    // ----------------------------------------GET COUNT SEARCH AND FILTER BY TOGGLE----------------------
+    // ----------------------------------------GET COUNT SEARCH AND FILTER BY Status----------------------
     getCountFilter = (status, search) => {
         fetch(`http://localhost:8080/nexchief/sales/filter/toggle/?distributor=` + this.props.dataLoginUser.id + `&status=` + status + `&nameProduct=` + search, {
             method: "get",
@@ -374,7 +383,8 @@ class Sales extends Component {
     // ----------------------------------------GET COUNT ALL STATUS----------------------------------------
     getCountStatus = (status) => {
 
-        fetch(`http://localhost:8080/nexchief/sales/status/count/?distributor=` + this.props.dataLoginUser.id + `&status=` + status+`&dateFirst=`+this.state.dateFirst+`&dateLast=`+this.state.dateLast, {
+        fetch(`http://localhost:8080/nexchief/sales/status/count/?distributor=` + this.props.dataLoginUser.id + `&status=` + 
+        status+`&dateFirst=`+this.state.dateFirst+`&dateLast=`+this.state.dateLast, {
             method: "get",
             headers: {
                 "Content-Type": "application/json; ; charset=utf-8",
@@ -432,8 +442,10 @@ class Sales extends Component {
         })
             .then(response => response.json())
             .then(json => {
+                let limitPage = json.count/this.state.limit
                 this.setState({
-                    sales: json,
+                    sales: json.salesList,
+                    count: Math.ceil(limitPage)
                 }, () => this.getAllPrint());
                 this.props.salesData({ list: json })
                 console.log("ini data sales", this.state.sales);
@@ -468,10 +480,11 @@ class Sales extends Component {
             })
     }
 
-    // -----------------------------------------GET ALL SEARCH AND FILTER BY TOGGLE----------------------------------
+    // -----------------------------------------GET ALL SEARCH AND FILTER BY Status----------------------------------
     getAllFilter = (value, limit, status, seacrh) => {
         console.log("stsussssss", status);
-        fetch(`http://localhost:8080/nexchief/sales/filter/search/?page=` + value + `&limit=` + limit + `&distributor=` + this.props.dataLoginUser.id + `&status=` + status + `&nameProduct=` + seacrh, {
+        fetch(`http://localhost:8080/nexchief/sales/filter/search/?page=` + value + `&limit=` + limit + `&distributor=` + this.props.dataLoginUser.id +
+         `&status=` + status + `&nameProduct=` + seacrh, {
             method: "get",
             headers: {
                 "Content-Type": "application/json; ; charset=utf-8",
@@ -495,7 +508,8 @@ class Sales extends Component {
     // ----------------------------------------GET ALL PRODUCT-----------------------------------------------
     getAllSalesProd = (value, limit, search) => {
         console.log("stsussssss", search);
-        fetch(`http://localhost:8080/nexchief/sales/filter/prod/?page=` + value + `&limit=` + limit + `&distributor=` + this.props.dataLoginUser.id + `&nameProduct=` + search, {
+        fetch(`http://localhost:8080/nexchief/sales/filter/prod/?page=` + value + `&limit=` + limit + `&distributor=` + this.props.dataLoginUser.id +
+         `&nameProduct=` + search, {
             method: "get",
             headers: {
                 "Content-Type": "application/json; ; charset=utf-8",
@@ -508,7 +522,6 @@ class Sales extends Component {
                 this.setState({
                     sales: json,
                 });
-                // this.props.salesData({ list: json })
                 console.log("ini data sales", this.state.sales);
             })
             .catch((e) => {
@@ -519,7 +532,8 @@ class Sales extends Component {
 
     // ----------------------------------------GET ALL PRINT--------------------------------------------------
     getAllPrint = () => {
-        fetch(`http://localhost:8080/nexchief/sales/all/` + this.props.dataLoginUser.id + `?dateFirst=` + this.state.dateFirst + `&dateLast=` + this.state.dateLast, {
+        fetch(`http://localhost:8080/nexchief/sales/all/` + this.props.dataLoginUser.id + `?dateFirst=` + this.state.dateFirst +
+         `&dateLast=` + this.state.dateLast, {
             method: "get",
             headers: {
                 "Content-Type": "application/json; ; charset=utf-8",
@@ -540,6 +554,30 @@ class Sales extends Component {
 
     }
 
+    // ------------------------------------------------GET ALL SALES FILTER BY NAME PRODUCT(PRINT)-----------------
+    getAllPrintProduct = (search) => {
+        fetch(`http://localhost:8080/nexchief/sales/filter/print/?distributor=`+this.props.dataLoginUser.id+`&nameproduct=`+search, {
+            method: "get",
+            headers: {
+                "Content-Type": "application/json; ; charset=utf-8",
+                "Access-Control-Allow-Headers": "Authorization, Content-Type",
+                "Access-Control-Allow-Origin": "*"
+            }
+        })
+            .then(response => response.json())
+            .then(json => {
+                this.setState({
+                    salesPrint: json,
+                });
+                console.log("ini data sales", this.state.salesPrint);
+            })
+            .catch(() => {
+                alert("Failed fetching 1")
+            })
+
+    }
+
+
     priceFormat = price => {
         var bilangan = price;
 
@@ -557,7 +595,8 @@ class Sales extends Component {
 
     closeDate=()=>{
         this.setState({
-            optionSearch:"Select Option Search"
+            optionSearch:"Select Option Search",
+            optionPrint: "all"
         },()=>  this.displaySearchHandler())
     }
 
@@ -591,7 +630,7 @@ class Sales extends Component {
                             <div className="seacrhSales1" style={{ display: this.state.displaySearch }}>
                                 <Input className="searchSales2" name="search" onChange={this.setValueSearch} value={this.state.search} placeholder="seacrh by name product.."></Input>
                                 <Icon className="far fa-window-close" onClick={() => this.closeClick()} style={{ marginLeft: "-50px", marginTop: "35px" }}></Icon>
-                                <Icon className="far fa-times-circle" onClick={()=>this.closeDate()}></Icon>
+                                {/* <Icon className="far fa-times-circle" onClick={()=>this.closeDate()}></Icon> */}
                             </div>
                             <div className="searchDate" style={{ display: this.state.displaySearch2 }}>
                                 <input className="searchDate1" name="dateFirst" type="date" value={this.state.dateFirst} onChange={this.setValue}></input>
@@ -611,7 +650,6 @@ class Sales extends Component {
                         <div className="addButton" onClick={() => this.props.history.push("/sales/detail")}>
                             <Icon className="fas fa-file-invoice-dollar" ></Icon>
                             <div className="labeladd">Add new Sales</div>
-                            {/* <Button className="addSales" onClick={() => this.props.history.push("/sales/detail")}>Add</Button> */}
                         </div>
                         <div className="printSales">
                             <ReactToPrint
@@ -651,7 +689,7 @@ class Sales extends Component {
                                                 <td>{this.priceFormat(sales.invoice)}</td>
                                                 <td>{sales.status}</td>
                                                 <td><button style={{ cursor: "pointer" }} onClick={() => this.detailClick(sales.idSales)}>Detail</button>
-                                                    <button style={{ cursor: "pointer" }} onClick={() => this.editClick(sales.idSales)}>Edit</button></td>
+                                                    <button className="buttonSales" style={{ cursor: "pointer", display:(sales.status==="UNPAID" ? "" : "none") }} onClick={() => this.editClick(sales.idSales)}>Edit</button></td>
                                             </tr>
 
                                         )
@@ -670,7 +708,7 @@ class Sales extends Component {
                             </tbody>
                         </table>
                         <div className="paginationSales">
-                            <Pagination style={{ background: 'white', marginTop: '0' }} page={this.state.page} onChange={this.handleChange} count={this.state.count} />
+                            <Pagination color="secondary"  style={{ background: 'white', marginTop: '0' }} page={this.state.page} onChange={this.handleChange} count={this.state.count} />
                         </div>
 
                     </div>

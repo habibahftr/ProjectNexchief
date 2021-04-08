@@ -28,10 +28,11 @@ class SalesDetail extends Component {
             tax: 0,
             invoice: 0,
             productData: [],
+            productActive:[],
             productList: [],
             qtyProduct: [],
             updated_by: "",
-            indexEdit:"",
+            indexEdit: "",
             product: {
                 code: "",
                 nameProduct: "",
@@ -68,7 +69,6 @@ class SalesDetail extends Component {
                 status: this.props.salesClick.status,
                 customer: this.props.salesClick.customer,
                 productList: this.props.salesClick.productList,
-                // qtyProduct: this.props.salesClick.productList,
                 gross: this.props.salesClick.gross,
                 discount: this.props.salesClick.discount,
                 tax: this.props.salesClick.tax,
@@ -282,79 +282,119 @@ class SalesDetail extends Component {
         let qtyTemp = this.state.qtyProduct
         console.log(qtyTemp);
         if (this.state.edit === true) {
-            let index= this.state.indexEdit
-            for (let i = 0; i < disabledTemp.length; i++) {
-                disabledTemp.splice(i, 1, true)
-                this.setState({
-                    disabled: disabledTemp
-                })
-            }
-                for (let j = 0; j < qtyTemp.length; j++) {
-                    if (prodList[index].code === qtyTemp[j].code) {
+            let index = this.state.indexEdit
+            let arrayEdit = prodList.filter(el => el.code === prodList[index].code)
+            console.log("array edit", arrayEdit.length);
+            if (arrayEdit.length === 1) {
+                if (prodList[index].code !== "" && prodList[index].qty !== "") {
+                    for (let i = 0; i < disabledTemp.length; i++) {
+                        disabledTemp.splice(i, 1, true)
+                        this.setState({
+                            disabled: disabledTemp
+                        })
+                    }
+                    let productEdit = qtyTemp.find(el => el.code === prodList[index].code)
+                    if (productEdit !== undefined) {
                         let stockTemp = parseInt(prodList[index].stock)
-                        let qtycek = parseInt(qtyTemp[j].qty)
-                        let plus = parseInt(stockTemp+qtycek)
+                        let qtycek = parseInt(productEdit.qty)
+                        let plus = parseInt(stockTemp + qtycek)
                         console.log("PLUS", plus);
-                        if(plus < prodList[index].qty){
+                        if (plus < prodList[index].qty) {
                             Swal.fire({
-                                text:"lack of stock!",
-                                icon:"warning"
+                                text: "lack of stock!",
+                                icon: "warning"
                             })
                             prodList[index].qty = plus
                             this.setState({
                                 productList: prodList,
-                                index:""
+                                index: ""
+                            })
+
+                        }
+                    }
+                    else if (productEdit === undefined) {
+                        let temp = this.state.productData.find(elm => elm.code === prodList[index].code);
+                        console.log("kesitu", temp.stock);
+                        console.log("masuk sini", prodList[index].stock);
+                        if (temp.stock < prodList[index].qty) {
+                            console.log("lalalla", prodList[index].stock);
+                            Swal.fire({
+                                text: "lack of stock!",
+                                icon: "warning"
+                            })
+                            prodList[index].qty = temp.stock
+                            this.setState({
+                                productList: prodList,
+                                index: ""
                             })
                         }
                     }
+                    this.setState({
+                        edit: false,
+                        displayAdd: "",
+                        displayBtn: "none",
+                        displayEdit: "",
+                        displayDel: "",
+                    })
+
+                } else {
+                    Swal.fire({
+                        text: "Insert product code and product quantity!",
+                        icon: "warning"
+                    })
                 }
-            this.setState({
-                edit: false,
-                displayAdd: "",
-                displayBtn: "none",
-                displayEdit: "",
-                displayDel: "",
-            })
-
-        }
-
-        else if (prodList[prodList.length - 1].code === "") {
-            Swal.fire('Choose Product Code!')
-        }
-
-
-        else {
-            for (let i = 0; i < disabledTemp.length; i++) {
-                disabledTemp.splice(i, 1, true)
-                this.setState({
-                    disabled: disabledTemp
+            }else{
+                Swal.fire({
+                    text: "Product with code "+prodList[index].code+" already exist!",
+                    icon: "warning"
                 })
             }
-            // for (let i = 0; i < prodList.length; i++) {
-                for (let j = 0; j < data.length; j++) {
-                    if (prodList[prodList.length-1].code === data[j].code) {
-                        let stockTemp = parseInt(data[j].stock)
-                        console.log("object", stockTemp);
-                        if(stockTemp < prodList[prodList.length-1].qty){
-                            Swal.fire({
-                                text:"lack of stock!",
-                                icon:"warning"
-                            })
-                            prodList[prodList.length-1].qty = stockTemp
-                            this.setState({
-                                productList: prodList
-                            })
-                        }
-                    }
+        }
+        else {
+            let arrayEdit = prodList.filter(el => el.code === prodList[prodList.length - 1].code)
+            console.log("array edit", arrayEdit.length);
+            if(arrayEdit.length===1){
+            if (prodList[prodList.length - 1].code !== "" && prodList[prodList.length - 1].qty !== "") {
+                for (let i = 0; i < disabledTemp.length; i++) {
+                    disabledTemp.splice(i, 1, true)
+                    this.setState({
+                        disabled: disabledTemp
+                    })
                 }
-            // }
-            this.setState({
-                displayAdd: "",
-                displayBtn: "none",
-                displayEdit: "",
-                displayDel: "",
+                let temp = this.state.productData.find(elm => elm.code === prodList[prodList.length - 1].code);
+                console.log("kesitu", temp.stock);
+                console.log("masuk sini", prodList[prodList.length - 1].stock);
+                if (temp.stock < prodList[prodList.length - 1].qty) {
+                    Swal.fire({
+                        text: "lack of stock!",
+                        icon: "warning"
+                    })
+                    prodList[prodList.length - 1].qty = temp.stock
+                    this.setState({
+                        productList: prodList,
+                        index: ""
+                    })
+                }
+                this.setState({
+                    displayAdd: "",
+                    displayBtn: "none",
+                    displayEdit: "",
+                    displayDel: "",
+                })
+            } else {
+                console.log("kesini");
+                Swal.fire({
+                    text: "Insert product code and product quantity!",
+                    icon: "warning"
+                })
+            }
+        }else{
+            Swal.fire({
+                text: "Product with code "+prodList[prodList.length-1].code+" already exist!",
+                icon: "warning"
             })
         }
+    }
     }
 
 
@@ -506,7 +546,8 @@ class SalesDetail extends Component {
     }
     // ---------------------------------------GET ALL DATA PRODUCT-----------------------------------------------------
     getAllProduct = () => {
-        fetch(`http://localhost:8080/nexchief/product/filter/active/?updated_by=` + this.props.dataLoginUser.id + `&status=active`, {
+        // fetch(`http://localhost:8080/nexchief/product/filter/active/?updated_by=` + this.props.dataLoginUser.id + `&status=active`, {
+        fetch(`http://localhost:8080/nexchief/products/` + this.props.dataLoginUser.id, {
             method: "get",
             headers: {
                 "Content-Type": "application/json; ; charset=utf-8",
@@ -519,7 +560,6 @@ class SalesDetail extends Component {
                 this.setState({
                     productData: json
                 });
-                // this.props.productData({ list: json })
                 console.log("product", this.state.productData);
             })
             .catch(() => {
@@ -581,7 +621,8 @@ class SalesDetail extends Component {
                 ...temp[idx],
                 [key]: el.target.value,
                 nameProduct: product.nameProduct,
-                price: product.price
+                price: product.price,
+                status: product.status
 
             }
             this.setState({
@@ -645,7 +686,7 @@ class SalesDetail extends Component {
                 disabled: temp,
                 codeTarget: tempProd.code,
                 qty: tempProd.qty,
-                indexEdit:idx
+                indexEdit: idx
 
             })
         }
@@ -670,7 +711,7 @@ class SalesDetail extends Component {
     render() {
         const { dateSales, distributor, customer, discount, status, productList } = this.state
         console.log("qty", this.state.qtyProduct);
-        console.log("tgl akhir", this.state.dateLast);
+        console.log("prodList", this.state.productList);
         console.log("edit", this.state.edit);
         return (
             <div className="detailBody">
@@ -724,22 +765,21 @@ class SalesDetail extends Component {
                                     <th className="tText">Quantity</th>
                                     <th className="tText">Price (Rp)</th>
                                     <th className="tText">Sub Total (Rp)</th>
-                                    {/* <th className="tText" style={{ border: "none", backgroundColor:"#333333" }}></th> */}
                                 </tr>
                             </thead>
                             <tbody className="tbodyDetail">
                                 {
                                     this.state.productList.map((detail, index) => {
+                                        console.log(this.state.productList[index].code);
                                         return (
                                             <tr key={index} className="detailList" >
-                                                {/* <td><input disabled={this.state.disableTable} value={detail.code} onChange={this.setValue}></input></td> */}
                                                 <td>
                                                     <select disabled={this.state.disabled[index]} name="code" onChange={(el) => { this.handleProd(el, index, "code") }} value={detail.code}>
                                                         <option defaultValue>Product Code</option>
                                                         {
                                                             this.state.productData.map((prod) => {
                                                                 return (
-                                                                    <option value={prod.code}> {prod.code.substring(0,5)} - {prod.nameProduct} (stock: {prod.stock}) </option>
+                                                                    <option style={{display:prod.status==="INACTIVE" ? "none":""}} value={prod.code}> {prod.code.substring(0, 5)} - {prod.nameProduct} (stock: {prod.stock}) </option>
                                                                 )
                                                             })
                                                         }
@@ -749,8 +789,8 @@ class SalesDetail extends Component {
                                                 <td><input type="number" min="1" name="qty" disabled={this.state.disabled[index]} onChange={(el) => { this.handleQty(el, index, "qty") }} value={detail.qty}></input></td>
                                                 <td><input disabled={true} value={this.priceFormat(detail.price)}></input></td>
                                                 <td><input disabled={true} value={this.priceFormat(detail.totalPrice)}></input></td>
-                                                <td onClick={() => this.delClick(index)} style={{ display: this.state.displayDel, border: "none", borderColor: "#A9A9A9", color: "black", backgroundColor: "#A9A9A9" }}><Icon className="fas fa-trash-alt"></Icon></td>
-                                                <td onClick={() => this.editClick(index)} style={{ display: this.state.displayDel, border: "none", borderColor: "#A9A9A9", color: "black", backgroundColor: "#A9A9A9" }}><Icon className="fas fa-edit"></Icon></td>
+                                                <td  onClick={() => this.delClick(index)} style={{ display: this.state.displayDel, border: "none", borderColor: "#A9A9A9", color: "black", backgroundColor: "#A9A9A9" }}><Icon className="fas fa-trash-alt"></Icon></td>
+                                                <td onClick={() => this.editClick(index)} style={{ display:(this.state.displayDel==="" && detail.status==="ACTIVE" ? "" : "none"), border: "none", borderColor: "#A9A9A9", color: "black", backgroundColor: "#A9A9A9" }}><Icon className="fas fa-edit"></Icon></td>
 
                                             </tr>
                                         )
@@ -758,23 +798,23 @@ class SalesDetail extends Component {
                                 }
                                 <tr>
                                     <td colSpan="3"></td>
-                                    <th style={{ backgroundColor: "#DCDCDC", color: "black" }}>Gross</th>
-                                    <th style={{ backgroundColor: "#DCDCDC", color: "black" }}>{this.priceFormat(this.state.gross)}</th>
+                                    <th style={{ backgroundColor: 'white', color: "black" }}>Gross</th>
+                                    <th style={{ backgroundColor: 'white', color: "black" }}>{this.priceFormat(this.state.gross)}</th>
                                 </tr>
                                 <tr>
                                     <td colSpan="3"></td>
-                                    <th style={{ backgroundColor: "#DCDCDC", color: "black" }}>Discount</th>
-                                    <th style={{ backgroundColor: "#DCDCDC", color: "black" }}>{this.priceFormat(this.state.discount)}</th>
+                                    <th style={{ backgroundColor: 'white', color: "black" }}>Discount</th>
+                                    <th style={{ backgroundColor: 'white', color: "black" }}>{this.priceFormat(this.state.discount)}</th>
                                 </tr>
                                 <tr>
                                     <td colSpan="3"></td>
-                                    <th style={{ backgroundColor: "#DCDCDC", color: "black" }}>Tax (10%)</th>
-                                    <th style={{ backgroundColor: "#DCDCDC", color: "black" }}>{this.priceFormat(this.state.tax)}</th>
+                                    <th style={{ backgroundColor: 'white', color: "black" }}>Tax (10%)</th>
+                                    <th style={{ backgroundColor: 'white', color: "black" }}>{this.priceFormat(this.state.tax)}</th>
                                 </tr>
                                 <tr>
                                     <td colSpan="3"></td>
-                                    <th style={{ backgroundColor: "#DCDCDC", color: "black" }}>Total</th>
-                                    <th style={{ backgroundColor: "#DCDCDC", color: "black" }}>{this.priceFormat(this.state.invoice)}</th>
+                                    <th style={{ backgroundColor: 'white', color: "black" }}>Total</th>
+                                    <th style={{ backgroundColor: 'white', color: "black" }}>{this.priceFormat(this.state.invoice)}</th>
                                 </tr>
 
 
