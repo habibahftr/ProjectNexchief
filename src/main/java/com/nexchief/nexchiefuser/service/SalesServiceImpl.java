@@ -34,8 +34,8 @@ public class SalesServiceImpl implements SalesService {
     }
 
     @Override
-    public List<Sales> filterByStatus(int page, int limit, String id, String status, String dateFirst, String dateLast) {
-        List<Sales> salesList= salesRepository.filterByStatus(page, limit, id, status, dateFirst, dateLast);
+    public Map<String, Object> filterByStatus(int page, int limit, String id, String status, String dateFirst, String dateLast) {
+        Map<String, Object> salesList= salesRepository.filterByStatus(page, limit, id, status, dateFirst, dateLast);
         return salesList;
     }
 
@@ -46,14 +46,14 @@ public class SalesServiceImpl implements SalesService {
     }
 
     @Override
-    public List<Sales> filterByProduct(int page, int limit, String id, String nameProduct) {
-        List<Sales> salesList = salesRepository.filterByNameProduct(page, limit, id, nameProduct);
+    public Map<String, Object> filterByProduct(int page, int limit, String id, String nameProduct) {
+        Map<String, Object> salesList = salesRepository.filterByNameProduct(page, limit, id, nameProduct);
         return salesList;
     }
 
     @Override
-    public List<Sales> filterSearchAndStatus(int page, int limit, String id, String status, String nameProduct) {
-        List<Sales> salesList = salesRepository.filterSearchAndStatus(page, limit, id, status, nameProduct);
+    public Map<String, Object> filterSearchAndStatus(int page, int limit, String id, String status, String nameProduct) {
+        Map<String, Object> salesList = salesRepository.filterSearchAndStatus(page, limit, id, status, nameProduct);
         return salesList;
     }
 
@@ -89,20 +89,6 @@ public class SalesServiceImpl implements SalesService {
         return salesRepository.countSalesMonth(id, dateFirst, dateLast);
     }
 
-    @Override
-    public int countSales(String distributor, String dateFirst, String dateLast) {
-        return salesRepository.countSales(distributor, dateFirst, dateLast);
-    }
-
-    @Override
-    public int countSalesProd(String id, String nameproduct) {
-        return salesRepository.countSalesProduct(id, nameproduct);
-    }
-
-    @Override
-    public int countFilterAndStatus(String id, String status, String nameProduct) {
-        return salesRepository.countFilterAndStatus(id, status, nameProduct);
-    }
 
     @Override
     public void saveSales(Sales sales) {

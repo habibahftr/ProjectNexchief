@@ -56,29 +56,13 @@ public class SalesController {
         return new ResponseEntity<>(sales, HttpStatus.OK);
     }
 
-//    ---------------------------------------COUNT SALES BY DISTRIBUTOR-----------------------------------------
-    @GetMapping("/sales/count/")
-    public ResponseEntity<?> countSales(@RequestParam String distributor, @RequestParam String dateFirst, @RequestParam String dateLast){
-        int salesCount = salesService.countSales(distributor, dateFirst, dateLast);
-        return new ResponseEntity<>(salesCount, HttpStatus.OK);
-    }
-    // kontroller gabungan.
-    // contoller(@Reqpsrsm Map<String, Object> pams)
-    // endpont?nama=?&umur=? ..dst
-    // ={
-    //      nama: "sdfsdf"
-    //      umur : "asdasd"
-    //
-    // Containkey("key yang dicari")
-    // nama map dot get. map.get("key yang ingin diambil nilainya")
-
 
 //    -----------------------------------------FILTER SALES BY STATUS(PAID/UNPAID)--------------------------------
     @GetMapping("/sales/filter/status/")
     public ResponseEntity<?> filterByStatusPaging (@RequestParam int page, @RequestParam int limit,
                                                    @RequestParam String distributor, @RequestParam String status,
                                                    @RequestParam String dateFirst, @RequestParam String dateLast){
-        List<Sales> salesList= salesService.filterByStatus(page, limit, distributor,status, dateFirst, dateLast);
+        Map<String, Object> salesList= salesService.filterByStatus(page, limit, distributor,status, dateFirst, dateLast);
         if(salesList == null) {
             return new ResponseEntity<>(salesList, HttpStatus.NOT_FOUND);
         }else{
@@ -90,7 +74,7 @@ public class SalesController {
     @GetMapping("/sales/filter/prod/")
     public ResponseEntity<?> filterByNameproductPaging (@RequestParam int page, @RequestParam int limit,
                                                         @RequestParam String distributor, @RequestParam String nameProduct){
-        List<Sales> salesList = salesService.filterByProduct(page, limit, distributor, nameProduct);
+        Map<String, Object> salesList = salesService.filterByProduct(page, limit, distributor, nameProduct);
         if (salesList == null){
             return new ResponseEntity<>(salesList, HttpStatus.NOT_FOUND);
         }else{
@@ -103,7 +87,7 @@ public class SalesController {
     public ResponseEntity<?> filterByNameproductPagingAndSearch (@RequestParam int page, @RequestParam int limit,
                                                                  @RequestParam String distributor,@RequestParam String status,
                                                                  @RequestParam String nameProduct){
-        List<Sales> salesList = salesService.filterSearchAndStatus(page, limit, distributor, status, nameProduct);
+        Map<String, Object> salesList = salesService.filterSearchAndStatus(page, limit, distributor, status, nameProduct);
         if (salesList == null){
             return new ResponseEntity<>(salesList, HttpStatus.NOT_FOUND);
         }else{
@@ -155,12 +139,6 @@ public class SalesController {
         return new ResponseEntity<>(salesCount, HttpStatus.OK);
     }
 
-//    -----------------------COUNT SALES FILTERED BY PRODUCT NAME/ CUSTOMER NAME----------------------------------------
-    @GetMapping("/sales/product/count/")
-    public ResponseEntity<?> countProduct (@RequestParam String distributor, @RequestParam String nameProduct){
-        int salesProdCount = salesService.countSalesProd(distributor, nameProduct);
-        return new ResponseEntity<>(salesProdCount, HttpStatus.OK);
-    }
 
 //    ------------------------COUNT SALES TODAY-------------------------------------------------------------------------
     @GetMapping("/sales/today/count/")
@@ -180,14 +158,6 @@ public class SalesController {
     @GetMapping("/sales/status/month/count/")
     public ResponseEntity<?> countSalesUnpaidMonth (@RequestParam String distributor, @RequestParam String dateFirst, @RequestParam String dateLast, @RequestParam String status){
         int salesProdCount = salesService.countSalesUnpaidMonth(distributor, dateFirst, dateLast, status);
-        return new ResponseEntity<>(salesProdCount, HttpStatus.OK);
-    }
-
-//    --------------------------------------COUNT SALES FILTERED BY STATUS AND PRODUCT NAME----------------------------
-    @GetMapping("/sales/filter/toggle/")
-    public ResponseEntity<?> countSalesFilterAndToggle (@RequestParam String distributor, @RequestParam String status,
-                                                        @RequestParam String nameProduct){
-        int salesProdCount = salesService.countFilterAndStatus(distributor, status, nameProduct);
         return new ResponseEntity<>(salesProdCount, HttpStatus.OK);
     }
 
