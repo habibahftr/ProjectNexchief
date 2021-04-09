@@ -20,7 +20,7 @@ class Dashboard extends Component {
 
     componentDidMount() {
         this.getToday()
-        this.getFilterCount()
+        this.getActiveProduct()
         this.getSalesToday()
         this.getDate()
     }
@@ -136,8 +136,9 @@ class Dashboard extends Component {
 
 
     }
-    getFilterCount = () => {
-        fetch(`http://localhost:8080/nexchief/filter/count/?updated_by=` + this.props.dataLoginUser.id + `&status=ACTIVE`, {
+
+    getActiveProduct = () => {
+        fetch(`http://localhost:8080/nexchief/product/filter/?page=1&limit=1&id=` + this.props.dataLoginUser.id + `&status=ACTIVE`, {
             method: "get",
             headers: {
                 "Content-Type": "application/json; ; charset=utf-8",
@@ -147,16 +148,15 @@ class Dashboard extends Component {
         })
             .then(response => response.json())
             .then(json => {
-                // let limitPage = json / this.state.limit
                 this.setState({
-                    countProdAct: json
-                })
-                console.log("INI RESPON COUNT ", json)
+                    countProdAct: json.count
+                });
+                console.log("product", this.state.productList);
             })
             .catch(() => {
                 alert("Failed fetching")
-
             })
+
     }
 
     logoutBtn=()=>{

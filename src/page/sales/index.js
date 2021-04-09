@@ -1,18 +1,62 @@
-import React, { Component, useDebugValue } from 'react';
-import Button from '../../component/button';
+import React, { Component} from 'react';
 import Icon from '../../component/icon';
 import Input from "../../component/input"
 import Label from '../../component/label';
 import Pagination from '@material-ui/lab/Pagination';
 import "./style.css"
 import { connect } from 'react-redux';
-import Switch from '@material-ui/core/Switch';
 import Swal from 'sweetalert2';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import ComponentToPrint from './componentToPrint'
 import ReactToPrint from 'react-to-print';
-import { withStyles } from '@material-ui/core';
-import { green, purple } from '@material-ui/core/colors';
+import { withStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import MuiDialogTitle from '@material-ui/core/DialogTitle';
+import MuiDialogContent from '@material-ui/core/DialogContent';
+import MuiDialogActions from '@material-ui/core/DialogActions';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import Typography from '@material-ui/core/Typography';
+import { TrendingUpRounded } from '@material-ui/icons';
+const styles = (theme) => ({
+    root: {
+      margin: 0,
+      padding: theme.spacing(2),
+    },
+    closeButton: {
+      position: 'absolute',
+      right: theme.spacing(1),
+      top: theme.spacing(1),
+      color: theme.palette.grey[500],
+    },
+  });
+  
+  const DialogTitle = withStyles(styles)((props) => {
+    const { children, classes, onClose, ...other } = props;
+    return (
+      <MuiDialogTitle disableTypography className={classes.root} {...other}>
+        <Typography variant="h6">{children}</Typography>
+        {onClose ? (
+          <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
+            <CloseIcon />
+          </IconButton>
+        ) : null}
+      </MuiDialogTitle>
+    );
+  });
+  
+  const DialogContent = withStyles((theme) => ({
+    root: {
+      padding: theme.spacing(2),
+    },
+  }))(MuiDialogContent);
+  
+  const DialogActions = withStyles((theme) => ({
+    root: {
+      margin: 0,
+      padding: theme.spacing(1),
+    },
+  }))(MuiDialogActions);
 
 class Sales extends Component {
     constructor(props) {
@@ -21,12 +65,11 @@ class Sales extends Component {
             sales: [],
             salesClick: {},
             salesPrint: [],
+            productList:[],
             limit: 10,
             count: 0,
             page: 1,
             pageNow: 1,
-            checkedPaid: false,
-            checkedUnpaid: false,
             status: "paid",
             actPaid: 0,
             actUnpaid: 0,
@@ -40,7 +83,8 @@ class Sales extends Component {
             displaySearch: "none",
             displaySearch2: "none",
             date1: "",
-            date2: ""
+            date2: "",
+            open:false
 
         }
     }
@@ -113,25 +157,19 @@ class Sales extends Component {
         this.setState({
             page:1
         })
-        const datetemp1 = this.state.date1
-        const datetemp2 = this.state.date2
-        const iconTemp = this.state.searchIcon
         const searchTemp = this.state.search
         const optionTemp = this.state.optionPrint
         const optionSearchTemp = this.state.optionSearch
         if (optionSearchTemp === "Product Name") {
             if (searchTemp !== "") {
                 if (optionTemp === "paid") {
-                    this.getCountFilter("paid", searchTemp)
                     this.getAllFilter(this.state.pageNow, this.state.limit, "paid", searchTemp)
                     this.getAllSearchFilter("paid", searchTemp)
                 } else if (optionTemp === "unpaid") {
-                    this.getCountFilter("unpaid", searchTemp)
                     this.getAllFilter(this.state.pageNow, this.state.limit, "unpaid", searchTemp)
                     this.getAllSearchFilter("unpaid", searchTemp)
                 } else if (optionTemp === "all") {
                     console.log("object heiiiiiii");
-                    this.getCountProd(searchTemp);
                     this.getAllSalesProd(this.state.pageNow, this.state.limit, searchTemp)
                     this.getAllPrintProduct(searchTemp);
                 } else {
@@ -147,15 +185,12 @@ class Sales extends Component {
         }
         else if (optionSearchTemp === "Date") {
             if (optionTemp === "paid") {
-                this.getCountStatus("paid")
                 this.getAllSalesStatus(this.state.pageNow, this.state.limit, "paid")
                 this.getSalesStatusPrint("paid")
             } else if (optionTemp === "unpaid") {
-                this.getCountStatus("unpaid")
                 this.getAllSalesStatus(this.state.pageNow, this.state.limit, "unpaid")
                 this.getSalesStatusPrint("unpaid")
             } else if (optionTemp === "all") {
-                this.getCountSales();
                 this.getAllSales(this.state.pageNow, this.state.limit)
                 this.getAllPrint();
             }
@@ -168,15 +203,12 @@ class Sales extends Component {
         }
         else if(optionSearchTemp !== "Date" || optionSearchTemp !== "Product Name"){
             if (optionTemp === "paid") {
-                this.getCountStatus("paid")
                 this.getAllSalesStatus(this.state.pageNow, this.state.limit, "paid")
                 this.getSalesStatusPrint("paid")
             } else if (optionTemp === "unpaid") {
-                this.getCountStatus("unpaid")
                 this.getAllSalesStatus(this.state.pageNow, this.state.limit, "unpaid")
                 this.getSalesStatusPrint("unpaid")
             } else if (optionTemp === "all") {
-                this.getCountSales();
                 this.getAllSales(this.state.pageNow, this.state.limit)
                 this.getAllPrint();
             }
@@ -197,11 +229,10 @@ class Sales extends Component {
             optionPrint: "all",
             page: 1
         }, ()=> this.getAllSales(this.state.page, this.state.limit))
-        this.getCountSales();
-        
+       
     }
 
-    // -----------------------------------------GET SALES STATUS PRINT---------------------------------------------------------------S
+    // -----------------------------------------GET SALES STATUS (PRINT)---------------------------------------------------------------S
     getSalesStatusPrint = (status) => {
         fetch(`http://localhost:8080/nexchief/sales/filter?distributor=` + this.props.dataLoginUser.id + `&status=` + status+`&dateFirst=`+this.state.dateFirst+`&dateLast=`+this.state.dateLast, {
             method: "get",
@@ -224,7 +255,7 @@ class Sales extends Component {
 
     }
 
-    // --------------------------------------------GET ALL SEARCH AND FILTER-------------------------------------------------
+    // --------------------------------------------GET ALL SEARCH AND FILTER (PRINT)-------------------------------------------------
     getAllSearchFilter = (status, search) => {
         fetch(`http://localhost:8080/nexchief/sales/search/filter/print/?distributor=` + this.props.dataLoginUser.id + `&status=` + status + `&nameProduct=` + search, {
             method: "get",
@@ -267,6 +298,8 @@ class Sales extends Component {
             })
     }
 
+
+
     // -----------------------------------------DETAIL CLICK-----------------------------------------------------
     detailClick = (idSales) => {
         fetch(`http://localhost:8080/nexchief/sales/` + idSales, {
@@ -299,136 +332,30 @@ class Sales extends Component {
         const optionSearchTemp = this.state.optionSearch
         if (optionSearchTemp === "Date") {
             if (optionTemp === "paid") {
-                this.getCountStatus("paid")
                 this.getAllSalesStatus(value, this.state.limit, "paid")
             } else if (optionTemp === "unpaid") {
-                this.getCountStatus("unpaid")
                 this.getAllSalesStatus(value, this.state.limit, "unpaid")
                 this.getSalesStatusPrint("unpaid")
             } else if (optionTemp === "all") {
-                this.getCountSales();
                 this.getAllSales(value, this.state.limit)
                 this.getAllPrint();
             }
         }
         if (searchTemp === "" && optionTemp === "all") {
-            // this.getCountSales();
             this.getAllSales(value, this.state.limit);
         }
         else if (searchTemp === "" && optionTemp === "paid") {
-            this.getCountStatus("paid");
             this.getAllSalesStatus(value, this.state.limit, "paid")
         } else if (searchTemp === "" && optionTemp === "unpaid") {
-            this.getCountStatus("unpaid");
             this.getAllSalesStatus(value, this.state.limit, "unpaid")
         } else if (searchTemp !== "" && optionTemp === "all") {
-            this.getCountProd(searchTemp)
             this.getAllSalesProd(value, this.state.limit, searchTemp)
         } else if (searchTemp !== "" && optionTemp === "paid") {
-            this.getCountFilter("paid", searchTemp)
             this.getAllFilter(value, this.state.limit, "paid", searchTemp)
         } else if (searchTemp !== "" && optionTemp === "unpaid") {
-            this.getCountFilter("unpaid", searchTemp)
             this.getAllFilter(value, this.state.limit, "unpaid", searchTemp)
         }
     }
-
-    // ---------------------------------------GET COUNT ALL DATA--------------------------------------------
-    getCountSales = () => {
-        fetch(`http://localhost:8080/nexchief/sales/count/?distributor=` + this.props.dataLoginUser.id + `&dateFirst=` + this.state.dateFirst + `&dateLast=` + this.state.dateLast, {
-            method: "get",
-            headers: {
-                "Content-Type": "application/json; ; charset=utf-8",
-                "Access-Control-Allow-Headers": "Authorization, Content-Type",
-                "Access-Control-Allow-Origin": "*"
-            }
-        })
-            .then(response => response.json())
-            .then(json => {
-                let limitPage = json / this.state.limit
-                this.setState({
-                    count: Math.ceil(limitPage)
-                }, () => this.getAllSales(this.state.page, this.state.limit))
-                console.log("INI RESPON COUNT Sales ", json)
-            })
-            .catch(() => {
-                alert("Failed fetching")
-            })
-
-    }
-
-    // ----------------------------------------GET COUNT SEARCH AND FILTER BY Status----------------------
-    getCountFilter = (status, search) => {
-        fetch(`http://localhost:8080/nexchief/sales/filter/toggle/?distributor=` + this.props.dataLoginUser.id + `&status=` + status + `&nameProduct=` + search, {
-            method: "get",
-            headers: {
-                "Content-Type": "application/json; ; charset=utf-8",
-                "Access-Control-Allow-Headers": "Authorization, Content-Type",
-                "Access-Control-Allow-Origin": "*"
-            }
-        })
-            .then(response => response.json())
-            .then(json => {
-                let limitPage = json / this.state.limit
-                this.setState({
-                    count: Math.ceil(limitPage)
-                })
-                console.log("INI RESPON COUNT Sales ", json)
-            })
-            .catch(() => {
-                alert("Failed fetching")
-            })
-    }
-
-    // ----------------------------------------GET COUNT ALL STATUS----------------------------------------
-    getCountStatus = (status) => {
-
-        fetch(`http://localhost:8080/nexchief/sales/status/count/?distributor=` + this.props.dataLoginUser.id + `&status=` + 
-        status+`&dateFirst=`+this.state.dateFirst+`&dateLast=`+this.state.dateLast, {
-            method: "get",
-            headers: {
-                "Content-Type": "application/json; ; charset=utf-8",
-                "Access-Control-Allow-Headers": "Authorization, Content-Type",
-                "Access-Control-Allow-Origin": "*"
-            }
-        })
-            .then(response => response.json())
-            .then(json => {
-                let limitPage = json / this.state.limit
-                this.setState({
-                    count: Math.ceil(limitPage)
-                })
-                console.log("INI RESPON COUNT Sales ", json)
-            })
-            .catch(() => {
-                alert("Failed fetching count status")
-            })
-
-    }
-
-    // ----------------------------------------GET COUNT ALL PRODUCT-----------------------------------------------
-    getCountProd = (search) => {
-        fetch(`http://localhost:8080/nexchief/sales/product/count/?distributor=` + this.props.dataLoginUser.id + `&nameProduct=` + search, {
-            method: "get",
-            headers: {
-                "Content-Type": "application/json; ; charset=utf-8",
-                "Access-Control-Allow-Headers": "Authorization, Content-Type",
-                "Access-Control-Allow-Origin": "*"
-            }
-        })
-            .then(response => response.json())
-            .then(json => {
-                let limitPage = json / this.state.limit
-                this.setState({
-                    count: Math.ceil(limitPage)
-                })
-                console.log("INI RESPON COUNT Sales ", json)
-            })
-            .catch(() => {
-                alert("Failed fetching 7")
-            })
-    }
-
 
     // ----------------------------------------GET ALL DATA---------------------------------------------
     getAllSales = (value, limit) => {
@@ -469,8 +396,10 @@ class Sales extends Component {
         })
             .then(response => response.json())
             .then(json => {
+                let limitPage = json.count/this.state.limit
                 this.setState({
-                    sales: json,
+                    sales: json.salesList,
+                    count: Math.ceil(limitPage)
                 });
                 this.props.salesData({ list: json })
                 console.log("ini data sales", this.state.sales);
@@ -494,8 +423,10 @@ class Sales extends Component {
         })
             .then(response => response.json())
             .then(json => {
+                let limitPage = json.count/this.state.limit
                 this.setState({
-                    sales: json,
+                    sales: json.salesList,
+                    count: Math.ceil(limitPage)
                 });
                 this.props.salesData({ list: json })
                 console.log("ini data sales", this.state.sales);
@@ -505,7 +436,7 @@ class Sales extends Component {
             })
     }
 
-    // ----------------------------------------GET ALL PRODUCT-----------------------------------------------
+    // ----------------------------------------GET ALL  PRODUCT-----------------------------------------------
     getAllSalesProd = (value, limit, search) => {
         console.log("stsussssss", search);
         fetch(`http://localhost:8080/nexchief/sales/filter/prod/?page=` + value + `&limit=` + limit + `&distributor=` + this.props.dataLoginUser.id +
@@ -519,8 +450,10 @@ class Sales extends Component {
         })
             .then(response => response.json())
             .then(json => {
+                let limitPage = json.count/this.state.limit
                 this.setState({
-                    sales: json,
+                    sales: json.salesList,
+                    count: Math.ceil(limitPage)
                 });
                 console.log("ini data sales", this.state.sales);
             })
@@ -530,7 +463,7 @@ class Sales extends Component {
 
     }
 
-    // ----------------------------------------GET ALL PRINT--------------------------------------------------
+    // ----------------------------------------GET ALL (PRINT)--------------------------------------------------
     getAllPrint = () => {
         fetch(`http://localhost:8080/nexchief/sales/all/` + this.props.dataLoginUser.id + `?dateFirst=` + this.state.dateFirst +
          `&dateLast=` + this.state.dateLast, {
@@ -578,6 +511,7 @@ class Sales extends Component {
     }
 
 
+    // ---------------------------------------------PRICE FORMAT-------------------------------------------------
     priceFormat = price => {
         var bilangan = price;
 
@@ -599,15 +533,53 @@ class Sales extends Component {
             optionPrint: "all"
         },()=>  this.displaySearchHandler())
     }
+//------------------------------------------------------------------HANDLE Dialog----------------------------------------------------------
+
+handleClickOpen = (idSales) => {
+    fetch(`http://localhost:8080/nexchief/sales/` + idSales, {
+            method: "get",
+            headers: {
+                "Content-Type": "application/json; ; charset=utf-8",
+                "Access-Control-Allow-Headers": "Authorization, Content-Type",
+                "Access-Control-Allow-Origin": "*"
+            }
+        })
+            .then(response => response.json())
+            .then(json => {
+                console.log("ini json",json.productList );
+                this.setState({
+                    salesClick:json,
+                    // productList:json.productList
+                }, ()=>{this.productListMaker()})
+            })
+            .catch(() => {
+                alert("Failed fetching")
+            })
+            this.setState({
+                open:true
+            })
+    
+  };
+
+ productListMaker=()=>{
+     let temp = this.state.salesClick
+     console.log(temp.productList);
+     this.setState({
+         productList: temp.productList
+     })
+ }
+  
+  handleClose = () => {
+    this.setState ({
+        open:false
+    })
+  };
 
     render() {
+        console.log("BACOT :", this.state.salesClick)
         if (this.props.checkLogin === false) {
             this.props.history.push("/")
         }
-        const { checkedPaid, checkedUnpaid } = this.state
-        console.log("option", this.state.search);
-        console.log("sales click", this.state.sales);
-        console.log("optionSearch", this.state.optionSearch);
         return (
             <div className="salesPage">
                 <div className="headerSales">
@@ -688,7 +660,7 @@ class Sales extends Component {
                                                 <td>{this.priceFormat(sales.tax)}</td>
                                                 <td>{this.priceFormat(sales.invoice)}</td>
                                                 <td>{sales.status}</td>
-                                                <td><button style={{ cursor: "pointer" }} onClick={() => this.detailClick(sales.idSales)}>Detail</button>
+                                                <td><button style={{ cursor: "pointer" }} onClick={() => this.handleClickOpen(sales.idSales)}>Detail</button>
                                                     <button className="buttonSales" style={{ cursor: "pointer", display:(sales.status==="UNPAID" ? "" : "none") }} onClick={() => this.editClick(sales.idSales)}>Edit</button></td>
                                             </tr>
 
@@ -710,10 +682,116 @@ class Sales extends Component {
                         <div className="paginationSales">
                             <Pagination color="secondary"  style={{ background: 'white', marginTop: '0' }} page={this.state.page} onChange={this.handleChange} count={this.state.count} />
                         </div>
-
                     </div>
 
                 </div>
+                <div>
+      
+      <Dialog onClose={()=>{this.handleClose()}} aria-labelledby="customized-dialog-title" open={this.state.open}>
+        <DialogTitle id="customized-dialog-title" onClose={()=>{this.handleClose()}}>
+          Sales Detail
+        </DialogTitle>
+        <DialogContent dividers>
+          <div>
+          <div className="detailModal">
+                    <div className="detailModal2" style={{display:"flex", flexDirection:"row"}}>
+                        <div >
+                            <div className="labelModal">
+                                <Label style={{ height: "10px", marginBottom: "10px" }}>Date</Label>
+                            </div>
+                            <div className="labelModal">
+                                <Label>Distributor</Label><br />
+                            </div>
+                            <div className="labelModal">
+                                <Label>Customer</Label>
+                            </div>
+                            <div className="labelModal">
+                                <Label>Discount</Label>
+                            </div>
+                            <div className="labelModal">
+                                <Label style={{ margintop: "10px" }}>Status</Label><br />
+                            </div>
+                        </div>
+                        <div className="inputsModal" style={{marginLeft:"3vh"}}>
+                            <Input value={this.state.salesClick.dateSales} disabled={true} type="Date"></Input><br />
+                            <Input disabled={true}  value={this.state.salesClick.distributor} type="text"></Input><br />
+                            <Input disabled={true} value={this.state.salesClick.customer} type="text" ></Input><br />
+                            <Input disabled={true} value={this.state.salesClick.discount} type="number" ></Input><br />
+                            <select value={this.state.salesClick.namestatus} disabled={true} >
+                                <option value="unpaid">Unpaid</option>
+                                <option value="paid">Paid</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div className="detailModal3">
+                    <center>
+                        <table id="tableModal" cellspasing="0" border="2 black" style={{ cursor: "pointer" }}>
+                            <thead>
+                                <tr className="tableModal2" >
+                                    <th className="tText">Product Code</th>
+                                    <th className="tText">Product Name</th>
+                                    <th className="tText">Quantity</th>
+                                    <th className="tText">Price (Rp)</th>
+                                    <th className="tText">Sub Total (Rp)</th>
+                                </tr>
+                            </thead>
+                            <tbody className="tbodyModal">
+                                {
+                                    this.state.productList.map((detail, index) => {
+                                        console.log(this.state.productList[index].code);
+                                        return (
+                                            <tr key={index} className="detailList" >
+                                                <td>{detail.code}</td>
+                                                <td>{detail.nameProduct}</td>
+                                                <td>{detail.qty}</td>
+                                                <td>{this.priceFormat(detail.price)}</td>
+                                                <td>{this.priceFormat(detail.totalPrice)}</td>
+                                            </tr>
+                                        )
+                                    })
+                                }
+                                {
+                                    (this.state.productList.length > 0) ?
+                                    ""
+                                    :
+                                    <div>
+                                       
+                                    </div>
+                                }
+                                <tr>
+                                    <td colSpan="3"></td>
+                                    <th style={{ backgroundColor: 'white', color: "black" }}>Gross</th>
+                                    <th style={{ backgroundColor: 'white', color: "black" }}>{this.priceFormat(this.state.salesClick.gross)}</th>
+                                </tr>
+                                <tr>
+                                    <td colSpan="3"></td>
+                                    <th style={{ backgroundColor: 'white', color: "black" }}>Discount</th>
+                                    <th style={{ backgroundColor: 'white', color: "black" }}>{this.priceFormat(this.state.salesClick.discount)}</th>
+                                </tr>
+                                <tr>
+                                    <td colSpan="3"></td>
+                                    <th style={{ backgroundColor: 'white', color: "black" }}>Tax (10%)</th>
+                                    <th style={{ backgroundColor: 'white', color: "black" }}>{this.priceFormat(this.state.salesClick.tax)}</th>
+                                </tr>
+                                <tr>
+                                    <td colSpan="3"></td>
+                                    <th style={{ backgroundColor: 'white', color: "black" }}>Total</th>
+                                    <th style={{ backgroundColor: 'white', color: "black" }}>{this.priceFormat(this.state.salesClick.invoice)}</th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </center>
+                </div>
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button autoFocus onClick={()=>{this.handleClose()}} color="primary">
+            CLOSE
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
             </div>
         );
     }

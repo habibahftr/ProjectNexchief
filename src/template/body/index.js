@@ -10,7 +10,6 @@ import SalesDetail from '../../page/salesDetail';
 import ProductReport from '../../page/productReport';
 import SalesReport from '../../page/salesReport';
 import Dashboard from '../../page/dashboard';
-import login from '../../page/login';
 import Error404 from '../../page/erro404';
 
 class Body extends Component {

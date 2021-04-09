@@ -214,6 +214,9 @@ th{
      margin-left: 2vh;
  }
 
+ .labelModal{
+     color: black;
+ }
 /* -------------------------PRINT PAGE------------------------ */
 .headerPrint{
     width: 100%;

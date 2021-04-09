@@ -517,7 +517,7 @@ class SalesDetail extends Component {
 
     // -----------------------------------------------------Save click--------------------------------------------------------------
     saveClick = () => {
-        const { dateSales, distributor, customer, discount, status, productList } = this.state
+        const { dateSales, customer, status} = this.state
         if (this.state.displayAdd === "none") {
             Swal.fire({
                 text: 'Finish or cancel your activity',
@@ -537,7 +537,6 @@ class SalesDetail extends Component {
                 showCancelButton: true,
                 confirmButtonText: `Save`,
             }).then((result) => {
-                /* Read more about isConfirmed, isDenied below */
                 if (result.isConfirmed) {
                     this.updateSales()
                 }
@@ -546,7 +545,6 @@ class SalesDetail extends Component {
     }
     // ---------------------------------------GET ALL DATA PRODUCT-----------------------------------------------------
     getAllProduct = () => {
-        // fetch(`http://localhost:8080/nexchief/product/filter/active/?updated_by=` + this.props.dataLoginUser.id + `&status=active`, {
         fetch(`http://localhost:8080/nexchief/products/` + this.props.dataLoginUser.id, {
             method: "get",
             headers: {
@@ -571,8 +569,6 @@ class SalesDetail extends Component {
     handleQty = (el, idx, key) => {
         let temp = this.state.productList
         let product = this.state.productData.find(elm => elm.code === temp[idx].code);
-        // let stockTemp = product.stock
-        // let stockTemp2 = parseInt(stockTemp)
         let qtyTemp = el.target.value
         let qtyTemp2 = parseInt(qtyTemp)
         if (product !== undefined) {

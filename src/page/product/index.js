@@ -129,7 +129,7 @@ class Product extends Component {
     //-----------------------------------UPDATED CLICK-----------------------------------------------------------------
     updateClick = (obj) => {
         console.log("updateClick");
-        const { nameProduct, packaging, product_desc, category, launch_date, status, price, stock, updated_at, updated_by } = obj;
+        const { nameProduct, packaging, product_desc, category, launch_date, status, price, stock } = obj;
         if (nameProduct === "" || packaging === "" || category === "") {
             Swal.fire({
                 title: 'Insert Product name, Packaging, and Category!',
@@ -232,7 +232,7 @@ class Product extends Component {
 
     //-----------------------------------------------SAVE CLICK--------------------------------------------------------------------------------------
     saveClick = (obj) => {
-        const { code, nameProduct, packaging, product_desc, category, launch_date, status, price, stock, created_at, created_by, updated_at, updated_by } = obj
+        const { code, nameProduct, packaging, product_desc, category, launch_date, status, price, stock} = obj
         console.log("obj", obj);
         let objProduct;
         if (nameProduct === "" || packaging === "" || category === "") {
@@ -503,8 +503,6 @@ class Product extends Component {
 
     //------------------------------------------------SEARCH CLICK---------------------------------------------------------
     searchClick = () => {
-        console.log("src");
-        const searchIconTemp = this.state.searchIcon
         if (this.state.search !== "") {
             this.searchName(this.state.pageNow, this.state.limit)
             this.setState({

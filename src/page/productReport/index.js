@@ -7,11 +7,8 @@ import ComponentToPrint from "./componentToPrint";
 import Button from '../../component/button';
 import { connect } from 'react-redux';
 import ReactToPrint from 'react-to-print';
-// import Toggle from 'react-toggle'
 import Pagination from '@material-ui/lab/Pagination';
 import Switch from '@material-ui/core/Switch';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Grid from '@material-ui/core/Grid';
 
 
