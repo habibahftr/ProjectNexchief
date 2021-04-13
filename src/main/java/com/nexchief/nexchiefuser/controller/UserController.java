@@ -5,14 +5,10 @@ import com.nexchief.nexchiefuser.model.User;
 import com.nexchief.nexchiefuser.service.UserService;
 import com.nexchief.nexchiefuser.util.CustomErrorType;
 import com.nexchief.nexchiefuser.util.CustomSuccessType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,11 +21,9 @@ import java.util.regex.Pattern;
 @RestController
 @RequestMapping("/nexchief")
 public class UserController {
-    public static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     UserService userService;
-    PasswordEncoder encoder = new BCryptPasswordEncoder();
 
     @GetMapping("/users/")
     public ResponseEntity<List<User>> listAllUser(){
@@ -53,7 +47,6 @@ public class UserController {
 
     @GetMapping("/login/") ///-------------------ini login----------------------------------
     public ResponseEntity<?> login(@RequestParam String username, @RequestParam String password) {
-        logger.info("Comparing data!");
 
         System.out.println("Username ==>" + username);
         System.out.println("Password ==>" + password);
@@ -61,7 +54,6 @@ public class UserController {
         User user = userService.login(username, password);
 
         if(user == null) {
-            logger.error("Username or password is wrong!");
             return new ResponseEntity<>(new CustomErrorType("Username or password is wrong!"), HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(user, HttpStatus.OK);

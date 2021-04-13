@@ -34,7 +34,7 @@ public class SalesRepositoryImpl implements SalesRepository{
 
         List<Sales> salesList;
         salesList = jdbcTemplate.query("SELECT s.*, u.name FROM sales s, user u WHERE u.id=s.distributor AND" +
-                        " s.distributor='"+id+"' AND s.date BETWEEN '"+dateFirst+"' AND '"+dateLast+"' ORDER  BY s.date ASC LIMIT " + start + "," + limit + " ;",
+                        " s.distributor='"+id+"' AND s.date BETWEEN '"+dateFirst+"' AND '"+dateLast+"' ORDER  BY s.date DESC LIMIT " + start + "," + limit + " ;",
                 (rs, rowNum) ->
                         new Sales(
                                 rs.getString("idSales"),

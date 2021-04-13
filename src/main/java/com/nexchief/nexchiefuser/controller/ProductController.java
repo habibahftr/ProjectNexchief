@@ -132,6 +132,8 @@ public class ProductController {
                 product.setCode(findProduct.getCode());
                 if(product.getStock()>0)
                     product.setStatus("ACTIVE");
+                else if(product.getStock()<=0)
+                    product.setStatus("INACTIVE");
                 productService.update(product);
                 return new ResponseEntity<>(new CustomSuccessType("Update success!"), HttpStatus.CREATED);
             }
